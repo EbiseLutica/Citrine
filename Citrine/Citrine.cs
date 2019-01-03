@@ -22,8 +22,8 @@ namespace Citrine
 	{
 		MisskeyClient misskey;
 
-		readonly string masterName = "Xeltica";
-		readonly string masterHost = null;
+		readonly string adminName = "Xeltica";
+		readonly string adminHost = null;
 
 		IEnumerable<ModuleBase> modules;
 
@@ -171,6 +171,44 @@ namespace Citrine
 		/// </summary>mi
 		/// <returns>主人であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsMaster(User user) => user.Username?.ToLower() == masterName?.ToLower() && user.Host == masterHost;
+		public bool IsMaster(User user) => user.Username?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
+
+		public Rating GetRatingOf(User user) => IsMaster(user) ? Rating.Partner : Rating.Normal;
+
+		/// <summary>
+		/// ユーザーに対する好感度を上げます。
+		/// </summary>
+		public void Like(User user, int amount = 1) { }
+
+		/// <summary>
+		/// ユーザーに対する好感度を下げます。
+		/// </summary>
+		public void Dislike(User user, int amount = 1) { Like(user, -amount); }
+
 	}
+
+	public enum Rating
+	{
+		/// <summary>
+		/// 嫌い
+		/// </summary>
+		Hate,
+		/// <summary>
+		/// 普通
+		/// </summary>
+		Normal,
+		/// <summary>
+		/// 友達
+		/// </summary>
+		Like,
+		/// <summary>
+		/// 親友
+		/// </summary>
+		BestFriend,
+		/// <summary>
+		/// ご主人様
+		/// </summary>
+		Partner, 
+	}
+
 }

@@ -34,7 +34,9 @@ namespace Citrine
 			}
 			await Citrine.InitializeAsync(
 				new GreetingModule(),
-				new VoteModule() 
+				new VoteModule(),
+				new FortuneModule(),
+				new AdminModule()
 			);
 
 			while (true)
