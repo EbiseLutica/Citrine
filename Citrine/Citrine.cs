@@ -55,7 +55,7 @@ namespace Citrine
 		{
 			// React
 			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
-			await misskey.Notes.Reactions.CreateAsync(mention.Id, IsMaster(mention.User) ? Reaction.Love : Reaction.Pudding);
+			await misskey.Notes.Reactions.CreateAsync(mention.Id, IsAdmin(mention.User) ? Reaction.Love : Reaction.Pudding);
 			Console.WriteLine($"Mentioned: {mention.User.Username}: {mention.Text}");
 			foreach (var mod in modules)
 			{
@@ -167,13 +167,13 @@ namespace Citrine
 		}
 
 		/// <summary>
-		/// 指定したユーザーが主人であるかどうかを取得します。
+		/// 指定したユーザーが管理者であるかどうかを取得します。
 		/// </summary>mi
-		/// <returns>主人であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
+		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsMaster(User user) => user.Username?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
+		public bool IsAdmin(User user) => user.Username?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
 
-		public Rating GetRatingOf(User user) => IsMaster(user) ? Rating.Partner : Rating.Normal;
+		public Rating GetRatingOf(User user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。

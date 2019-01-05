@@ -55,7 +55,7 @@ namespace Citrine
 
 			if (n.Text.Contains("再起動"))
 			{
-				if (core.IsMaster(n.User))
+				if (core.IsAdmin(n.User))
 				{
 					await mi.Notes.CreateAsync(
 						"またねー。",
