@@ -59,8 +59,10 @@ namespace Citrine
 				default:
 					message = "...?";
 					break;
-
 			}
+
+			// メッセージが空であればデフォルトを返す。デフォルトがなければとりあえずエラー
+			message = message ?? reply ?? "バグ";
 
 			// hack 好感度システムを実装したら連携して分岐する
 			await mi.Notes.CreateAsync(
