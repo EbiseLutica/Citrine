@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Citrine
@@ -22,7 +24,7 @@ namespace Citrine
 				}
 				else
 				{
-					throw new Exception(""); 
+					throw new Exception("");
 				}
 			}
 			catch (Exception ex)
@@ -32,12 +34,17 @@ namespace Citrine
 					Console.WriteLine("エラーが発生しました: " + ex.Message);
 
 			}
+
+			var mods = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.IsSubclassOf(typeof(ModuleBase)));
+
+			Console.WriteLine("読み込まれたモジュール: " + string.Join(", ", mods.Select(m => m.Name)));
+
 			await Citrine.InitializeAsync(
-				new GreetingModule(),
-				new VoteModule(),
-				new FortuneModule(),
-				new AdminModule()
+				mods.Select(a => Activator.CreateInstance(a) as ModuleBase)
+					.ToArray()
 			);
+
+			Console.WriteLine("起動しました！");
 
 			while (true)
 				await Task.Delay(1000);
