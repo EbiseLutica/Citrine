@@ -2,14 +2,12 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Disboard.Misskey;
-using Disboard.Misskey.Models;
 
-namespace Citrine
+namespace Citrine.Core.Core
 {
 	public partial class FortuneModule : ModuleBase
 	{
-		public async override Task<bool> ActivateAsync(Note n, MisskeyClient mi, Citrine core)
+		public async override Task<bool> ActivateAsync(Note n, MisskeyClient mi, Server core)
 		{
 			if (n.Text != null && Regex.IsMatch(n.Text.ToLowerInvariant(), "占|運勢|みくじ|fortune"))
 			{
@@ -34,7 +32,7 @@ namespace Citrine
 				await mi.Notes.CreateAsync(
 					builder.ToString(),
 					n.Visibility,
-					cw: "僕が今日の" + (n.User.Name ?? n.User.Username) + "さんの運勢を占いました...",
+					cw: $"僕が今日の{(n.User.Name ?? n.User.Username)}さんの運勢を占ったよ: ",
 					replyId: n.Id);
 
 				return true;
@@ -48,7 +46,7 @@ namespace Citrine
 
 	public class AdminModule : ModuleBase
 	{
-		public override async Task<bool> ActivateAsync(Note n, MisskeyClient mi, Citrine core)
+		public override async Task<bool> ActivateAsync(Note n, MisskeyClient mi, Server core)
 		{
 			if (n.Text == null)
 				return false;
