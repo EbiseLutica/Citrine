@@ -27,22 +27,29 @@ namespace Citrine.Misskey
 
 		public IUser Myself { get; private set; }
 
+		private IDisposable followed, reply, tl;
+
 		private void InitializeBot()
 		{
 			var main = misskey.Streaming.MainAsObservable();
 
+			// 再接続時にいらないストリームを切断
+			followed?.Dispose();
+			reply?.Dispose();
+			tl?.Dispose();
+
 			// フォロバ
-			main.OfType<FollowedMessage>()
+			followed = main.OfType<FollowedMessage>()
 				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((mes) => misskey.Following.CreateAsync(mes.Id));
+				.Subscribe((mes) => misskey.Following.CreateAsync(mes.Id), (e) => InitializeBot());
 
 			// リプライ
-			main.OfType<MentionMessage>()
+			reply = main.OfType<MentionMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => core.HandleMentionAsync(new MiPost(mes), this));
 
 			// Timeline
-			misskey.Streaming.HomeTimelineAsObservable().Merge(misskey.Streaming.LocalTimelineAsObservable())
+			tl = misskey.Streaming.HomeTimelineAsObservable().Merge(misskey.Streaming.LocalTimelineAsObservable())
 				.OfType<NoteMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
