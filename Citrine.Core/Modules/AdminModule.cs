@@ -35,9 +35,9 @@ namespace Citrine.Core.Modules
 				return true;
 			}
 
-			if (n.Text.Contains("/server") || n.Text.Contains("/srv"))
+			if (n.Text.Contains("/version") || n.Text.Contains("/v"))
 			{
-				await shell.ReplyAsync(n, $"");
+				await shell.ReplyAsync(n, $"{Server.Version}");
 				return true;
 			}
 
