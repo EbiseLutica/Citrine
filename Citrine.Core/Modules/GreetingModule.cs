@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Disboard.Misskey;
-using Disboard.Misskey.Models;
+using Citrine.Core.Api;
 
-namespace Citrine
+namespace Citrine.Core.Modules
 {
 	public class GreetingModule : ModuleBase
 	{
@@ -30,7 +29,7 @@ namespace Citrine
 			("___test___nothing___to___say___", null, null, null),
 		};
 
-		public override async Task<bool> ActivateAsync(Note n, MisskeyClient mi, Citrine core)
+		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text == null)
 				return false;
@@ -66,11 +65,7 @@ namespace Citrine
 			message = message ?? reply ?? "バグ";
 
 			// hack 好感度システムを実装したら連携して分岐する
-			await mi.Notes.CreateAsync(
-				message,
-				n.Visibility,
-				replyId: n.Id
-			);
+			await shell.ReplyAsync(n, message);
 
 			return true;
 		}

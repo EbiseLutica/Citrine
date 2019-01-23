@@ -1,4 +1,4 @@
-﻿namespace Citrine
+﻿namespace Citrine.Core.Modules
 {
 	public partial class FortuneModule
 	{

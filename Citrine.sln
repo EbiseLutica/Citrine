@@ -1,11 +1,13 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine", "Citrine\Citrine.csproj", "{56462928-DC54-45B6-BD57-5B40C93354A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Misskey", "Citrine\Citrine.Misskey.csproj", "{56462928-DC54-45B6-BD57-5B40C93354A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disboard.Misskey", "Disboard\Source\Disboard.Misskey\Disboard.Misskey.csproj", "{539B2414-E88B-4F57-A97A-B850E07BA193}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disboard", "Disboard\Source\Disboard\Disboard.csproj", "{4E5BB6AF-014D-40C6-B666-CC842FB4B346}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Core", "Citrine.Core\Citrine.Core.csproj", "{5DAE1E65-42BF-490F-A29D-FBA6179678A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +27,9 @@ Global
 		{4E5BB6AF-014D-40C6-B666-CC842FB4B346}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E5BB6AF-014D-40C6-B666-CC842FB4B346}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E5BB6AF-014D-40C6-B666-CC842FB4B346}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DAE1E65-42BF-490F-A29D-FBA6179678A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DAE1E65-42BF-490F-A29D-FBA6179678A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DAE1E65-42BF-490F-A29D-FBA6179678A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DAE1E65-42BF-490F-A29D-FBA6179678A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
