@@ -27,6 +27,7 @@ namespace Citrine
 			("(可愛|かわい)い", "て、照れます...", "嬉しい❤", "...褒めても何も出ないけど."),
 			("(ほ|褒)めて", ":erait:", "***:erait:***", "...嫌だ."),
 			("ping", "PONG!", null, null),
+			("___test___nothing___to___say___", null, null, null),
 		};
 
 		public override async Task<bool> ActivateAsync(Note n, MisskeyClient mi, Citrine core)
