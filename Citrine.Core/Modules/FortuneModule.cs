@@ -28,7 +28,7 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"金運💰: {GetStar(money, 5)}");
 				builder.AppendLine($"仕事💻: {GetStar(work, 5)}");
 				builder.AppendLine($"勉強📒: {GetStar(study, 5)}");
-				builder.AppendLine($"ラッキーアイテム💎: {itemPrefixes.Random(r)}{items.Random(r)}");
+				builder.AppendLine($"ラッキーアイテム💎: {ItemPrefixes.Random(r)}{Items.Random(r)}");
 
 				await shell.ReplyAsync(n, builder.ToString(), $"僕が今日の{(n.User.Name ?? n.User.ScreenName)}さんの運勢を占ったよ:");
 

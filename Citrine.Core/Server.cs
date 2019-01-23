@@ -26,12 +26,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.0.2";
+		public static string Version => "2.0.3";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.1.2";
+		public static string VersionAsXelticaBot => "3.1.3";
 
 		/// <summary>
 		/// bot を初期化します。
@@ -76,7 +76,8 @@ namespace Citrine.Core
 		{
 			// React
 			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
-			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "");
+			Console.WriteLine($"Mentioned from @{mention.User.Name}");
+			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "🍣");
 			await Task.Delay(1000);
 			foreach (var mod in Modules)
 			{
@@ -114,8 +115,8 @@ namespace Citrine.Core
 
 		public async Task HandleDmAsync(IPost post, IShell shell)
 		{
+			Console.WriteLine($"Mentioned from @{post.User.Name}");
 			await Task.Delay(1000);
-
 			foreach (var mod in Modules)
 			{
 				try

@@ -14,7 +14,8 @@
 			"メガ吉",
 			"ギガ吉",
 		};
-		readonly string[] itemPrefixes = {
+		public static readonly string[] ItemPrefixes = {
+			"",
 			"プラチナ製",
 			"新鮮な",
 			"最新式の",
@@ -130,7 +131,7 @@
 			"哲学的",
 		};
 
-		readonly string[] items = {
+		public static readonly string[] Items = {
 			"ナス",
 			"トマト",
 			"きゅうり",

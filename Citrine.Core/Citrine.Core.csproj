@@ -18,4 +18,8 @@
     <Compile Remove="Class1.cs" />
     <Compile Remove="String.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.109.2" />
+  </ItemGroup>
 </Project>
