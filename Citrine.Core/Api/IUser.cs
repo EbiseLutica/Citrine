@@ -5,13 +5,13 @@
 		string Name { get; }
 		string IconUrl { get; }
 		string ScreenName { get; }
-		string InternalId { get; }
+		string Id { get; }
 		string Description { get; }
+		string Host { get; }
 		bool IsVerified { get; }
 		bool IsBot { get; }
-		string Via { get; }
-		int FollowingsCount { get; }
-		int FollowersCount { get; }
-		int PostsCount { get; }
+		long FollowingsCount { get; }
+		long FollowersCount { get; }
+		long PostsCount { get; }
 	}
 }

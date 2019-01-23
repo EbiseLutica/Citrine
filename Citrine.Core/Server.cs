@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using File = System.IO.File;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Reflection;
+using System.Threading.Tasks;
+using Citrine.Core.Api;
+using Citrine.Core.Modules;
 
 namespace Citrine.Core
 {
@@ -36,25 +35,62 @@ namespace Citrine.Core
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(User user) => user.Username?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
+		public bool IsAdmin(IUser user) => user.Name?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
 
-		public Rating GetRatingOf(User user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
+		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。
 		/// </summary>
-		public void Like(User user, int amount = 1) { }
+		public void Like(IUser user, int amount = 1) { }
 
 		/// <summary>
 		/// ユーザーに対する好感度を下げます。
 		/// </summary>
-		public void Dislike(User user, int amount = 1) { Like(user, -amount); }
-
-
+		public void Dislike(IUser user, int amount = 1) { Like(user, -amount); }
 
 		private static void WriteException(Exception ex)
 		{
 			Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+		}
+
+		public async Task HandleMentionAsync(IPost mention, IShell shell)
+		{
+			// React
+			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
+			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "");
+			Console.WriteLine($"Mentioned: {mention.User.Name}: {mention.Text}");
+			foreach (var mod in modules)
+			{
+				try
+				{
+					// module が true を返したら終わり
+					if (await mod.ActivateAsync(mention, shell, this))
+						break;
+				}
+				catch (Exception ex)
+				{
+					WriteException(ex);
+				}
+			}
+		}
+
+		public async Task HandleTimelineAsync(IPost post, IShell shell)
+		{
+			Console.WriteLine($"Timeline: {post.User.Name}: {post.Text ?? (post.Repost != null ? "RN: " + post.Repost.Text : null)}");
+			foreach (var mod in modules)
+			{
+				try
+				{
+					// module が true を返したら終わり
+					if (await mod.OnTimelineAsync(post, shell, this))
+						break;
+				}
+				catch (Exception ex)
+				{
+					WriteException(ex);
+				}
+			}
 		}
 
 	}

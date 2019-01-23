@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Citrine.Core.Api;
 
-namespace Citrine.Core
+namespace Citrine.Core.Modules
 {
 	/// <summary>
 	/// Citrine のモジュールベース。

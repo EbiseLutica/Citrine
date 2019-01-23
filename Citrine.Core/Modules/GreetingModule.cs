@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
 
-namespace Citrine.Core.Core
+namespace Citrine.Core.Modules
 {
 	public class GreetingModule : ModuleBase
 	{
@@ -64,11 +64,7 @@ namespace Citrine.Core.Core
 			message = message ?? reply ?? "バグ";
 
 			// hack 好感度システムを実装したら連携して分岐する
-			await shell.Notes.CreateAsync(
-				message,
-				n.Visibility,
-				replyId: n.Id
-			);
+			await shell.ReplyAsync(n, message);
 
 			return true;
 		}

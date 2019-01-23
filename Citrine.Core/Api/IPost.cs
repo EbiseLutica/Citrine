@@ -9,7 +9,10 @@
 		IPost Repost { get; }
 		bool IsReply { get; }
 		IPost Reply { get; }
-		bool RepostCount { get; }
+		long RepostCount { get; }
+		Visiblity Visiblity { get; }
+		string NativeVisiblity { get; }
+		string Via { get; }
 		IPoll Poll { get; }
 	}
 }

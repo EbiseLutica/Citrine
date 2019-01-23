@@ -11,19 +11,21 @@ using Disboard.Misskey.Enums;
 using Disboard.Misskey.Models;
 using Disboard.Misskey.Models.Streaming;
 using Newtonsoft.Json;
+using Citrine.Core.Api;
+using System.Linq;
+using Disboard.Misskey.Extensions;
 
 namespace Citrine.Misskey
 {
-	public class Shell
+	public class Shell : IShell
 	{
 		MisskeyClient misskey;
 
 		Server core;
 
-		public Shell()
-		{
+		public bool CanFollow => true;
 
-		}
+		public IUser Myself { get; private set; }
 
 		private void InitializeBot()
 		{
@@ -37,14 +39,14 @@ namespace Citrine.Misskey
 			// リプライ
 			main.OfType<MentionMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe(HandleMention);
+				.Subscribe((mes) => core.HandleMentionAsync(new MiPost(mes), this));
 
 			// Timeline
 			misskey.Streaming.HomeTimelineAsObservable().Merge(misskey.Streaming.LocalTimelineAsObservable())
 				.OfType<NoteMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe(HandleTimeline);
+				.Subscribe((mes) => core.HandleTimelineAsync(new MiPost(mes), this));
 		}
 
 		/// <summary>
@@ -68,49 +70,13 @@ namespace Citrine.Misskey
 				await AuthorizeAsync(mi);
 			}
 
-			return new Shell 
+			var sh = new Shell
 			{
-				
+				core = new Server(),
+				misskey = mi
 			};
-		}
-
-		private async void HandleMention(Note mention)
-		{
-			// React
-			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
-			await misskey.Notes.Reactions.CreateAsync(mention.Id, IsAdmin(mention.User) ? Reaction.Love : Reaction.Pudding);
-			Console.WriteLine($"Mentioned: {mention.User.Username}: {mention.Text}");
-			foreach (var mod in modules)
-			{
-				try
-				{
-					// module が true を返したら終わり
-					if (await mod.ActivateAsync(mention, misskey, this))
-						break;
-				}
-				catch (Exception ex)
-				{
-					WriteException(ex);
-				}
-			}
-		}
-
-		private async void HandleTimeline(Note note)
-		{
-			Console.WriteLine($"Timeline: {note.User.Username}: {note.Text ?? (note.Renote != null ? "RN: " + note.Renote.Text : null)}");
-			foreach (var mod in modules)
-			{
-				try
-				{
-					// module が true を返したら終わり
-					if (await mod.OnTimelineAsync(note, misskey, this))
-						break;
-				}
-				catch (Exception ex)
-				{
-					Server.WriteException(ex);
-				}
-			}
+			sh.InitializeBot();
+			return sh;
 		}
 
 		private static async Task AuthorizeAsync(MisskeyClient mi)
@@ -150,6 +116,82 @@ namespace Citrine.Misskey
 			var credential = JsonConvert.SerializeObject(mi.Credential);
 
 			File.WriteAllText("./token", credential);
+		}
+
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		{
+			if (post is MiDmPost dm)
+			{
+				return new MiDmPost(await misskey.Messaging.Messages.CreateAsync(post.User.Id, $"**{cw}**\n\n{text}"));
+			}
+			else
+			{
+				return new MiPost(await misskey.Notes.CreateAsync(text, MapVisiblity(post, post.Visiblity), cw: cw, replyId: post.Id));
+			}
+		}
+
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		{
+			return new MiPost(await misskey.Notes.CreateAsync(text, visiblity.ToStr(), cw: cw));
+		}
+
+		public async Task ReactAsync(IPost post, string reactionChar)
+		{
+			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
+			await misskey.Notes.Reactions.CreateAsync(post.Id, ConvertReaction(reactionChar));
+		}
+
+		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
+		{
+			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
+			return new MiPost(await misskey.Notes.CreateAsync(text, MapVisiblity(post, visiblity), cw: cw, renoteId: post.Id));
+		}
+
+		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
+		{
+			return new MiDmPost(await misskey.Messaging.Messages.CreateAsync(user.Id, text));
+		}
+
+		public async Task VoteAsync(IPost post, int choice)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string MapVisiblity(IPost post, Visiblity v)
+		{
+			return (v == Visiblity.Default ? post.Visiblity : v).ToStr();
+		}
+
+		public static Reaction ConvertReaction(string reactionChar)
+		{
+			switch (reactionChar)
+			{
+				case "👍":
+					return Reaction.Like;
+				case "❤️":
+					return Reaction.Love;
+				case "😆":
+					return Reaction.Laugh;
+				case "🤔":
+					return Reaction.Hmm;
+				case "😮":
+					return Reaction.Surprise;
+				case "🎉":
+					return Reaction.Congrats;
+				case "💢":
+					return Reaction.Angry;
+				case "😥":
+					return Reaction.Confused;
+				case "😇":
+					return Reaction.Rip;
+				case "🍮":
+				// プリンより寿司が好き
+				case "🍣":
+					return Reaction.Pudding;
+
+				default:
+					throw new ArgumentOutOfRangeException(nameof(reactionChar), reactionChar, null);
+			}
 		}
 	}
 }

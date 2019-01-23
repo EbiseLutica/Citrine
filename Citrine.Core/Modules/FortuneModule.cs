@@ -2,16 +2,17 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Citrine.Core.Api;
 
-namespace Citrine.Core.Core
+namespace Citrine.Core.Modules
 {
 	public partial class FortuneModule : ModuleBase
 	{
-		public async override Task<bool> ActivateAsync(Note n, MisskeyClient mi, Server core)
+		public async override Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text != null && Regex.IsMatch(n.Text.ToLowerInvariant(), "占|運勢|みくじ|fortune"))
 			{
-				var r = new Random(n.UserId.GetHashCode() + DateTime.Now.Day + DateTime.Now.Month - DateTime.Now.Year);
+				var r = new Random(n.User.Id.GetHashCode() + DateTime.Now.Day + DateTime.Now.Month - DateTime.Now.Year);
 
 				int love = r.Next(1, 6),
 					money = r.Next(1, 6),
@@ -29,11 +30,7 @@ namespace Citrine.Core.Core
 				builder.AppendLine($"勉強📒: {GetStar(study, 5)}");
 				builder.AppendLine($"ラッキーアイテム💎: {itemPrefixes.Random(r)}{items.Random(r)}");
 
-				await mi.Notes.CreateAsync(
-					builder.ToString(),
-					n.Visibility,
-					cw: $"僕が今日の{(n.User.Name ?? n.User.Username)}さんの運勢を占ったよ: ",
-					replyId: n.Id);
+				await shell.ReplyAsync(n, builder.ToString(), $"僕が今日の{(n.User.Name ?? n.User.ScreenName)}さんの運勢を占ったよ:");
 
 				return true;
 			}
@@ -46,7 +43,7 @@ namespace Citrine.Core.Core
 
 	public class AdminModule : ModuleBase
 	{
-		public override async Task<bool> ActivateAsync(Note n, MisskeyClient mi, Server core)
+		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text == null)
 				return false;
@@ -55,18 +52,14 @@ namespace Citrine.Core.Core
 			{
 				if (core.IsAdmin(n.User))
 				{
-					await mi.Notes.CreateAsync(
-						"またねー。",
-						n.Visibility,
-						replyId: n.Id
-					);
+					await shell.ReplyAsync(n, "またねー。");
 					// good bye
 					Environment.Exit(0);
 				}
 				else
 				{
 					var mes = core.GetRatingOf(n.User) == Rating.Partner ? "いくらあなたでも, その頼みだけは聞けない. ごめんね..." : "申し訳ないけど, 他の人に言われてもするなって言われてるから...";
-					await mi.Notes.CreateAsync(mes, n.Visibility, replyId: n.Id);
+					await shell.ReplyAsync(n, mes);
 				}
 				return true;
 			}
