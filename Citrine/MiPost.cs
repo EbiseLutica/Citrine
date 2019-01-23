@@ -20,6 +20,7 @@ namespace Citrine.Misskey
 			RepostCount = note.RenoteCount;
 			Poll = note.Poll != default ? new MiPoll(note.Poll) : default;
 			Via = note.App?.Name;
+			Visiblity = note.Visibility.ToVisiblity();
 			NativeVisiblity = note.Visibility;
 		}
 

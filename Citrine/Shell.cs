@@ -21,7 +21,7 @@ namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
-		public static string Version => "1.1.0";
+		public static string Version => "1.1.1";
 
 		MisskeyClient misskey;
 
@@ -159,7 +159,7 @@ namespace Citrine.Misskey
 			}
 			else
 			{
-				return new MiPost(await misskey.Notes.CreateAsync(text, MapVisiblity(post, post.Visiblity), cw: cw, replyId: post.Id));
+				return new MiPost(await misskey.Notes.CreateAsync(text, MapVisiblity(post, visiblity), cw: cw, replyId: post.Id));
 			}
 		}
 
