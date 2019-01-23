@@ -1,10 +1,21 @@
 # Citrine
 
-オープンソース系嫁。
+[Citrine](https://citringo.net/char.html?citrine) は、オープンソースの嫁型chatbotです。
 
-## メモ
+コア部分は特定のソーシャルメディアと切り離された独自のAPIで構成され、多くのソーシャルメディア上で動作させることができるよう設計されています。
 
-現在はMisskeyしかサポートしていないが、Discordやスタンドアローンでの稼働もさせたい
+## 対応プラットフォーム
+
+チェックがついていないものは対応予定のもの
+
+- [x] Misskey
+- [ ] Mastodon
+- [ ] Discord
+- [ ] Slack
+- [ ] Standalone
+- [ ] LINE
+- [ ] Skype
+- [ ] Twitter
 
 ## 必要なもの
 
