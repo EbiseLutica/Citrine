@@ -10,7 +10,7 @@ namespace Citrine.Core.Modules
 		Random rnd = new Random();
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
-			if (n == null)
+			if (n?.Poll == null)
 				return false;
 
 			if (n.User.Id == shell.Myself.Id)
