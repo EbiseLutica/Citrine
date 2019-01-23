@@ -1,6 +1,8 @@
-﻿using System;
+﻿#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
+#pragma warning disable CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
+
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -29,7 +31,8 @@ namespace Citrine.Misskey
 
 		public IUser Myself { get; private set; }
 
-		private IDisposable followed, reply, tl;
+		private IDisposable followed, reply, tl, dm;
+
 
 		private void InitializeBot()
 		{
@@ -39,6 +42,7 @@ namespace Citrine.Misskey
 			followed?.Dispose();
 			reply?.Dispose();
 			tl?.Dispose();
+			dm?.Dispose();
 
 			// フォロバ
 			followed = main.OfType<FollowedMessage>()
@@ -59,6 +63,16 @@ namespace Citrine.Misskey
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => core.HandleTimelineAsync(new MiPost(mes), this));
 			Console.WriteLine("タイムライン監視開始");
+
+			// Direct Message
+			dm = main.OfType<Message>()
+				.Delay(new TimeSpan(0, 0, 1))
+				.Subscribe(async (mes) =>
+				{
+					await misskey.Messaging.Messages.ReadAsync(mes.Id);
+					await core.HandleDmAsync(new MiDmPost(mes), this);
+				});
+			Console.WriteLine("トーク監視開始");
 		}
 
 		/// <summary>

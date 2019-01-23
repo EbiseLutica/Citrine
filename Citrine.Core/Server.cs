@@ -111,6 +111,25 @@ namespace Citrine.Core
 			}
 		}
 
+		public async Task HandleDmAsync(IPost post, IShell shell)
+		{
+			await Task.Delay(1000);
+
+			foreach (var mod in modules)
+			{
+				try
+				{
+					// module が true を返したら終わり
+					if (await mod.OnDmReceivedAsync(post, shell, this))
+						break;
+				}
+				catch (Exception ex)
+				{
+					WriteException(ex);
+				}
+			}
+		}
+
 	}
 
 	public enum Rating
