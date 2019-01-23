@@ -41,31 +41,4 @@ namespace Citrine.Core.Modules
 		static string GetStar(int value, int maxValue) => new string('★', value) + new string('☆', maxValue - value);
 	}
 
-	public class AdminModule : ModuleBase
-	{
-		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
-		{
-			if (n.Text == null)
-				return false;
-
-			if (n.Text.Contains("再起動"))
-			{
-				if (core.IsAdmin(n.User))
-				{
-					await shell.ReplyAsync(n, "またねー。");
-					// good bye
-					Environment.Exit(0);
-				}
-				else
-				{
-					var mes = core.GetRatingOf(n.User) == Rating.Partner ? "いくらあなたでも, その頼みだけは聞けない. ごめんね..." : "申し訳ないけど, 他の人に言われてもするなって言われてるから...";
-					await shell.ReplyAsync(n, mes);
-				}
-				return true;
-			}
-
-			return false;
-		}
-	}
-
 }
