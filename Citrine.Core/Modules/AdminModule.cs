@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
 
@@ -12,7 +13,11 @@ namespace Citrine.Core.Modules
 			if (n.Text == null)
 				return false;
 
-			if (n.Text.Contains("/restart"))
+			var text = Regex.Replace(n.Text.Trim(), @"^@[a-zA-Z0-9_]+(@[a-zA-Z0-9\-\.]+)", "").Trim();
+
+			var cmd = text.Split(' ');
+
+			if (text.StartsWith("/restart", StringComparison.Ordinal))
 			{
 				if (core.IsAdmin(n.User))
 				{
@@ -28,18 +33,67 @@ namespace Citrine.Core.Modules
 				return true;
 			}
 
-			if (n.Text.Contains("/modules") || n.Text.Contains("/mods"))
+			if (text.StartsWith("/modules", StringComparison.Ordinal) || text.StartsWith("/mods", StringComparison.Ordinal))
 			{
 				var mods = core.Modules.Select(mod => mod.GetType().Name);
 				await shell.ReplyAsync(n, string.Join(",", mods), $"モジュール数: {mods.Count()}");
 				return true;
 			}
 
-			if (n.Text.Contains("/version") || n.Text.Contains("/v"))
+			if (text.StartsWith("/version", StringComparison.Ordinal) || text.StartsWith("/v", StringComparison.Ordinal))
 			{
 				await shell.ReplyAsync(n, $"{Server.Version}");
 				return true;
 			}
+
+			const string usage = "/love <inc|dec|set|query> <id> <amount>";
+			if (cmd[0] == "/love")
+			{
+				var output = usage;
+				if (core.IsAdmin(n.User))
+				{
+					if (cmd.Length > 2)
+					{
+						if (cmd[2] == "me")
+							cmd[2] = n.User.Id;
+						switch (cmd[1])
+						{
+							case "inc":
+								if (cmd.Length > 3)
+								{
+									core.Like(cmd[2], int.Parse(cmd[3]));
+									output = "OK";
+								}
+								break;
+							case "dec":
+								if (cmd.Length > 3)
+								{
+									core.Dislike(cmd[2], int.Parse(cmd[3]));
+									output = "OK";
+								}
+								break;
+							case "set":
+								if (cmd.Length > 3)
+								{
+									core.Like(cmd[2], int.Parse(cmd[3]) - core.GetRatingNumber(cmd[2]));
+									output = "OK";
+								}
+								break;
+							case "query":
+								output = core.GetRatingNumber(cmd[2]).ToString();
+								break;
+						}
+					}
+				}
+				else
+				{
+					output = "permission denied"; 
+				}
+				await shell.ReplyAsync(n, output);
+				return true;
+			}
+
+
 
 			return false;
 		}
