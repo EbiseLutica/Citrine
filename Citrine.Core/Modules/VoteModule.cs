@@ -16,8 +16,6 @@ namespace Citrine.Core.Modules
 			if (n.User.Id == shell.Myself.Id)
 				return false;
 
-			await Task.Delay(1000);
-
 			// ランダムで投票する
 			await shell.VoteAsync(n, rnd.Next(n.Poll.Choices.Count()));
 

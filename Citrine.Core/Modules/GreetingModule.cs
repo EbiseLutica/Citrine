@@ -39,8 +39,6 @@ namespace Citrine.Core.Modules
 			if (pattern == null)
 				return false;
 
-			await Task.Delay(1000);
-
 			string message;
 
 			switch (core.GetRatingOf(n.User))

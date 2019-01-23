@@ -79,6 +79,7 @@ namespace Citrine.Core
 			// React
 			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
 			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "");
+			await Task.Delay(1000);
 			foreach (var mod in modules)
 			{
 				try
@@ -96,6 +97,8 @@ namespace Citrine.Core
 
 		public async Task HandleTimelineAsync(IPost post, IShell shell)
 		{
+			await Task.Delay(1000);
+
 			foreach (var mod in modules)
 			{
 				try
