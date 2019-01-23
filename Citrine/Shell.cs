@@ -21,7 +21,7 @@ namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
-		public static string Version => "1.0.0";
+		public static string Version => "1.1.0";
 
 		MisskeyClient misskey;
 
@@ -97,10 +97,16 @@ namespace Citrine.Misskey
 				await AuthorizeAsync(mi);
 			}
 
+
+			var myself = await mi.IAsync();
+
+			Console.WriteLine($"bot ユーザーを取得しました");
+
 			var sh = new Shell
 			{
 				core = new Server(),
-				misskey = mi
+				misskey = mi,
+				Myself = new MiUser(myself),
 			};
 			sh.InitializeBot();
 			return sh;
