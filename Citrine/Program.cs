@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Citrine.Core;
+using static System.Console;
 
 namespace Citrine.Misskey
 {
@@ -12,9 +13,13 @@ namespace Citrine.Misskey
 		const string ConfigPath = "./config";
 		static async Task Main(string[] args)
 		{
+			WriteLine($"Citrine version{Server.Version}");
+			WriteLine($"XelticaBot version{Server.VersionAsXelticaBot}");
+			WriteLine($"Citrine.Misskey version{Shell.Version}");
+			WriteLine();
+			WriteLine("起動中...");
 			await Shell.InitializeAsync();
-
-			Console.WriteLine("起動しました！");
+			WriteLine("起動しました！");
 
 			while (true)
 				await Task.Delay(1000);

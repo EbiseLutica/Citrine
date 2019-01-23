@@ -19,6 +19,8 @@ namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
+		public static string Version => "1.0.0";
+
 		MisskeyClient misskey;
 
 		Server core;
@@ -42,18 +44,21 @@ namespace Citrine.Misskey
 			followed = main.OfType<FollowedMessage>()
 				.Delay(new TimeSpan(0, 0, 5))
 				.Subscribe((mes) => misskey.Following.CreateAsync(mes.Id), (e) => InitializeBot());
+			Console.WriteLine("フォロー監視開始");
 
 			// リプライ
 			reply = main.OfType<MentionMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => core.HandleMentionAsync(new MiPost(mes), this));
-
+			Console.WriteLine("リプライ監視開始");
+		
 			// Timeline
 			tl = misskey.Streaming.HomeTimelineAsObservable().Merge(misskey.Streaming.LocalTimelineAsObservable())
 				.OfType<NoteMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => core.HandleTimelineAsync(new MiPost(mes), this));
+			Console.WriteLine("タイムライン監視開始");
 		}
 
 		/// <summary>
@@ -67,6 +72,7 @@ namespace Citrine.Misskey
 			{
 				var cred = System.IO.File.ReadAllText("./token");
 				mi = new MisskeyClient(JsonConvert.DeserializeObject<Disboard.Models.Credential>(cred));
+				Console.WriteLine("Misskey に接続しました。");
 			}
 			catch (Exception ex)
 			{

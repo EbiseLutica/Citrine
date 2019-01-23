@@ -17,7 +17,23 @@ namespace Citrine.Core
 		readonly string adminName = "Xeltica";
 		readonly string adminHost = null;
 
-		IEnumerable<ModuleBase> modules;
+		private IEnumerable<ModuleBase> modules;
+
+		/// <summary>
+		/// 読み込まれているバージョンを列挙します。
+		/// </summary>
+		/// <value>The modules.</value>
+		public IEnumerable<ModuleBase> Modules => Modules;
+
+		/// <summary>
+		/// バージョンを取得します。
+		/// </summary>
+		public static string Version => "2.0.1";
+
+		/// <summary>
+		/// XelticaBot 換算でのバージョン表記を取得します。
+		/// </summary>
+		public static string VersionAsXelticaBot => "3.1.1";
 
 		/// <summary>
 		/// bot を初期化します。
@@ -28,6 +44,7 @@ namespace Citrine.Core
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
 						.OrderBy(mod => mod.Priority);
+			Console.WriteLine($"読み込まれたモジュール({modules.Count()}): {string.Join(", ", modules.Select(mod => mod.GetType().Name))})");
 		}
 
 		/// <summary>
@@ -37,6 +54,9 @@ namespace Citrine.Core
 		/// <param name="user">ユーザー。</param>
 		public bool IsAdmin(IUser user) => user.Name?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
 
+		/// <summary>
+		/// 指定したユーザーの好感度を取得します。
+		/// </summary>
 		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
 
 		/// <summary>
@@ -59,7 +79,6 @@ namespace Citrine.Core
 			// React
 			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
 			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "");
-			Console.WriteLine($"Mentioned: {mention.User.Name}: {mention.Text}");
 			foreach (var mod in modules)
 			{
 				try
@@ -77,7 +96,6 @@ namespace Citrine.Core
 
 		public async Task HandleTimelineAsync(IPost post, IShell shell)
 		{
-			Console.WriteLine($"Timeline: {post.User.Name}: {post.Text ?? (post.Repost != null ? "RN: " + post.Repost.Text : null)}");
 			foreach (var mod in modules)
 			{
 				try
