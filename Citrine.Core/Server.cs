@@ -13,9 +13,8 @@ namespace Citrine.Core
 	/// </summary>
 	public class Server
 	{
-
-		readonly string adminName = "Xeltica";
-		readonly string adminHost = null;
+		// hack 止めよう、ハードコーディング
+		readonly string adminId = "592820066e11ab2ed07f414b";
 
 		/// <summary>
 		/// 読み込まれているバージョンを列挙します。
@@ -26,12 +25,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.0.3";
+		public static string Version => "2.1.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.1.3";
+		public static string VersionAsXelticaBot => "3.2.0";
 
 		/// <summary>
 		/// bot を初期化します。
@@ -50,22 +49,34 @@ namespace Citrine.Core
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(IUser user) => user.Name?.ToLower() == adminName?.ToLower() && user.Host == adminHost;
+		public bool IsAdmin(IUser user) => IsAdmin(user.Id);
+
+		public bool IsAdmin(string userId) => userId == adminId;
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
 		/// </summary>
-		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
+		public Rating GetRatingOf(IUser user) => GetRatingOf(user.Id);
+
+		/// <summary>
+		/// 指定したユーザーの好感度を取得します。
+		/// </summary>
+		public Rating GetRatingOf(string userId) => IsAdmin(userId) ? Rating.Partner : Rating.Normal;
+
+		/// <summary>
+		/// 指定したユーザーの好感度を取得します。
+		/// </summary>
+		public int GetRatingNumber(string userId) => IsAdmin(userId) ? 100 : 0;
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。
 		/// </summary>
-		public void Like(IUser user, int amount = 1) { }
+		public void Like(string userId, int amount = 1) { }
 
 		/// <summary>
 		/// ユーザーに対する好感度を下げます。
 		/// </summary>
-		public void Dislike(IUser user, int amount = 1) { Like(user, -amount); }
+		public void Dislike(string userId, int amount = 1) { Like(userId, -amount); }
 
 		private static void WriteException(Exception ex)
 		{
