@@ -21,7 +21,7 @@ namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
-		public static string Version => "1.1.1";
+		public static string Version => "1.1.2";
 
 		MisskeyClient misskey;
 
@@ -65,10 +65,12 @@ namespace Citrine.Misskey
 			Console.WriteLine("タイムライン監視開始");
 
 			// Direct Message
-			dm = main.OfType<Message>()
+			dm = main.OfType<MessageMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe(async (mes) =>
+				.Subscribe(async (mes) => 
 				{
+					if (mes.UserId == Myself.Id)
+						return;
 					await misskey.Messaging.Messages.ReadAsync(mes.Id);
 					await core.HandleDmAsync(new MiDmPost(mes), this);
 				});
@@ -155,7 +157,7 @@ namespace Citrine.Misskey
 		{
 			if (post is MiDmPost dm)
 			{
-				return new MiDmPost(await misskey.Messaging.Messages.CreateAsync(post.User.Id, $"**{cw}**\n\n{text}"));
+				return new MiDmPost(await misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}"));
 			}
 			else
 			{
