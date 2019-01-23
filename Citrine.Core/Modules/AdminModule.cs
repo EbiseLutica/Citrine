@@ -13,7 +13,7 @@ namespace Citrine.Core.Modules
 			if (n.Text == null)
 				return false;
 
-			var text = Regex.Replace(n.Text.Trim(), @"^@[a-zA-Z0-9_]+(@[a-zA-Z0-9\-\.]+)", "").Trim();
+			var text = Regex.Replace(n.Text.Trim(), @"^@[a-zA-Z0-9_]+(@[a-zA-Z0-9\-\.]+)?", "").Trim();
 
 			var cmd = text.Split(' ');
 
