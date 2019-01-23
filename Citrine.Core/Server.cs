@@ -17,34 +17,32 @@ namespace Citrine.Core
 		readonly string adminName = "Xeltica";
 		readonly string adminHost = null;
 
-		private IEnumerable<ModuleBase> modules;
-
 		/// <summary>
 		/// 読み込まれているバージョンを列挙します。
 		/// </summary>
 		/// <value>The modules.</value>
-		public IEnumerable<ModuleBase> Modules => Modules;
+		public IEnumerable<ModuleBase> Modules { get; }
 
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.0.1";
+		public static string Version => "2.0.2";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.1.1";
+		public static string VersionAsXelticaBot => "3.1.2";
 
 		/// <summary>
 		/// bot を初期化します。
 		/// </summary>
 		public Server()
 		{
-			modules = Assembly.GetExecutingAssembly().GetTypes()
+			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
 						.OrderBy(mod => mod.Priority);
-			Console.WriteLine($"読み込まれたモジュール({modules.Count()}): {string.Join(", ", modules.Select(mod => mod.GetType().Name))})");
+			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
 		}
 
 		/// <summary>
@@ -80,7 +78,7 @@ namespace Citrine.Core
 			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
 			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "");
 			await Task.Delay(1000);
-			foreach (var mod in modules)
+			foreach (var mod in Modules)
 			{
 				try
 				{
@@ -99,7 +97,7 @@ namespace Citrine.Core
 		{
 			await Task.Delay(1000);
 
-			foreach (var mod in modules)
+			foreach (var mod in Modules)
 			{
 				try
 				{
@@ -118,7 +116,7 @@ namespace Citrine.Core
 		{
 			await Task.Delay(1000);
 
-			foreach (var mod in modules)
+			foreach (var mod in Modules)
 			{
 				try
 				{
