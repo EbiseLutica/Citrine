@@ -43,6 +43,8 @@ namespace Citrine.Core.Modules
 
 			return false;
 		}
+
+		public override Task<bool> OnDmReceivedAsync(IPost n, IShell shell, Server core) => ActivateAsync(n, shell, core);
 	}
 
 }
