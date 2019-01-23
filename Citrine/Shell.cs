@@ -181,7 +181,7 @@ namespace Citrine.Misskey
 
 		public async Task VoteAsync(IPost post, int choice)
 		{
-			throw new NotImplementedException();
+			await misskey.Notes.Polls.VoteAsync(post.Id, choice);
 		}
 
 		public string MapVisiblity(IPost post, Visiblity v)
