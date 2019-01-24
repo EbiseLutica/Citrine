@@ -15,7 +15,7 @@ namespace Citrine.Core.Modules
 	 */
 	public class GreetingModule : ModuleBase
 	{
-	List<IPattern> patterns = new List<IPattern>();
+		List<IPattern> patterns = new List<IPattern>();
 		readonly Random random = new Random();
 		public GreetingModule()
 		{
@@ -112,9 +112,15 @@ namespace Citrine.Core.Modules
 				"そう.", "あっそ.", "僕は嫌いだけどね.", "気持ち悪い.", "...", ""
 			}));
 			Add(new MultiplePattern("なでなで", new[] {
-				"わっ, びっくりした...", "うにゃ!? びっくりしました..."
+				"わっ, びっくりした...", 
+				"うにゃ!? びっくりしました...",
+				"もう, 急になでられたらビックリしますよ."
 			}, new[] {
-				"えへへ.", "うにゅ〜.\n\nなんか飼い猫みたいななで方するよね、 $user$って.", "嬉しみ☺️"
+				"えへへ", 
+				"うにゅ〜", 
+				"嬉しみ☺️",
+				"にゅふ〜",
+				"ぐりぐり",
 			}, new[] {
 				"は?", "触らないで.", "気持ち悪い.", "...", ""
 			}));
