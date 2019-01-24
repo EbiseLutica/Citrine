@@ -65,15 +65,15 @@ namespace Citrine.Misskey
 			Console.WriteLine("タイムライン監視開始");
 
 			// Direct Message
-			//dm = main.OfType<MessageMessage>()
-				//.Delay(new TimeSpan(0, 0, 1))
-				//.Subscribe(async (mes) => 
-				//{
-				//	if (mes.UserId == Myself.Id)
-				//		return;
-				//	await misskey.Messaging.Messages.ReadAsync(mes.Id);
-				//	await core.HandleDmAsync(new MiDmPost(mes), this);
-				//});
+			dm = main.OfType<MessagingMessage>()
+				.Delay(new TimeSpan(0, 0, 1))
+				.Subscribe(async (mes) => 
+				{
+					if (mes.UserId == Myself.Id)
+						return;
+					await misskey.Messaging.Messages.ReadAsync(mes.Id);
+					await core.HandleDmAsync(new MiDmPost(mes), this);
+				});
 			Console.WriteLine("トーク監視開始");
 		}
 
@@ -86,7 +86,7 @@ namespace Citrine.Misskey
 			MisskeyClient mi;
 			try
 			{
-				var cred = System.IO.File.ReadAllText("./token");
+				var cred = File.ReadAllText("./token");
 				mi = new MisskeyClient(JsonConvert.DeserializeObject<Disboard.Models.Credential>(cred));
 				Console.WriteLine("Misskey に接続しました。");
 			}
@@ -101,6 +101,7 @@ namespace Citrine.Misskey
 
 
 			var myself = await mi.IAsync();
+			await mi.Streaming.ConnectAsync();
 
 			Console.WriteLine($"bot ユーザーを取得しました");
 
@@ -110,6 +111,7 @@ namespace Citrine.Misskey
 				misskey = mi,
 				Myself = new MiUser(myself),
 			};
+
 			sh.InitializeBot();
 			return sh;
 		}

@@ -1,0 +1,3 @@
+[submodule "disboard"]
+	path = disboard
+	url = https://github.com/xeltica/disboard

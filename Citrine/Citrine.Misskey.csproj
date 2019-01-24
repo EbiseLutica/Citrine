@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Citrine.Core\Citrine.Core.csproj" />
+    <ProjectReference Include="..\disboard\Source\Disboard\Disboard.csproj" />
+    <ProjectReference Include="..\disboard\Source\Disboard.Misskey\Disboard.Misskey.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Citrine.cs" />

@@ -41,6 +41,7 @@ namespace Citrine.Core
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
 						.OrderBy(mod => mod.Priority);
+
 			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
 		}
 
