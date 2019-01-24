@@ -11,12 +11,12 @@ namespace Citrine.Core.Modules
 	 * $user$ は相手のユーザー名に置き換わる
 	 * $prefix$ はラッキーアイテムの修飾子辞書からランダムに取る
 	 * $item$ はラッキーアイテム辞書からランダムに取る
-	 * 
+	 * $rndA,B$はAからBまでの乱数
 	 */
 	public class GreetingModule : ModuleBase
 	{
 	List<IPattern> patterns = new List<IPattern>();
-
+		readonly Random random = new Random();
 		public GreetingModule()
 		{
 			Add(new MultiplePattern("お(はよ|早)う?", new[] { 
@@ -215,6 +215,12 @@ namespace Citrine.Core.Modules
 						.Replace("$user$", "あなた")
 						.Replace("$prefix$", FortuneModule.ItemPrefixes.Random())
 						.Replace("$item$", FortuneModule.Items.Random());
+
+			// 乱数
+			Regex.Replace(message, @"$rnd(\d+),(\d+)$", (m) =>
+			{
+				return random.Next(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value)).ToString();
+			});
 
 			// hack 好感度システムを実装したら連携して分岐する
 			// からっぽは既読無視
