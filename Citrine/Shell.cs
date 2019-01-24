@@ -65,15 +65,15 @@ namespace Citrine.Misskey
 			Console.WriteLine("タイムライン監視開始");
 
 			// Direct Message
-			dm = main.OfType<MessageMessage>()
-				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe(async (mes) => 
-				{
-					if (mes.UserId == Myself.Id)
-						return;
-					await misskey.Messaging.Messages.ReadAsync(mes.Id);
-					await core.HandleDmAsync(new MiDmPost(mes), this);
-				});
+			//dm = main.OfType<MessageMessage>()
+				//.Delay(new TimeSpan(0, 0, 1))
+				//.Subscribe(async (mes) => 
+				//{
+				//	if (mes.UserId == Myself.Id)
+				//		return;
+				//	await misskey.Messaging.Messages.ReadAsync(mes.Id);
+				//	await core.HandleDmAsync(new MiDmPost(mes), this);
+				//});
 			Console.WriteLine("トーク監視開始");
 		}
 

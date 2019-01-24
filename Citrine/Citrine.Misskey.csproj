@@ -19,7 +19,6 @@
     <None Remove="config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Disboard\Source\Disboard.Misskey\Disboard.Misskey.csproj" />
     <ProjectReference Include="..\Citrine.Core\Citrine.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
