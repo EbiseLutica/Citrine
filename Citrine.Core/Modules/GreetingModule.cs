@@ -222,7 +222,7 @@ namespace Citrine.Core.Modules
 				""
 			}));
 
-			Add(new MultiplePattern(@"[良いよ]い(です)?よ[〜ー。．！!\?？]*$", new[] {
+			Add(new MultiplePattern(@"[良いよ]い(です)?よ?[〜ー。．！!\?？]*$", new[] {
 				"やった〜",
 				"わーい",
 				"ありがとうございます",
@@ -232,7 +232,7 @@ namespace Citrine.Core.Modules
 				"",
 			}));
 
-			Add(new MultiplePattern(@"(ダメ|だめ|駄目)(です|だ)?よ[〜ー。．！!\?？]*$", new[] {
+			Add(new MultiplePattern(@"(ダメ|だめ|駄目)(です|だ)?よ?[〜ー。．！!\?？]*$", new[] {
 				"つらい",
 				"えー...",
 				"かなしい",
