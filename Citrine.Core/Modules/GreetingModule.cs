@@ -394,7 +394,7 @@ namespace Citrine.Core.Modules
 						.Replace("$item$", FortuneModule.Items.Random());
 
 			// 乱数
-			Regex.Replace(message, @"\$rnd(\d+),(\d+)\$", (m) =>
+			message = Regex.Replace(message, @"\$rnd(\d+),(\d+)\$", (m) =>
 			{
 				return random.Next(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value)).ToString();
 			});
