@@ -342,7 +342,7 @@ namespace Citrine.Core.Modules
 				"僕だよ."
 			}, null, null));
 
-			Add(new MultiplePattern(@"[?？]$", new[] {
+			Add(new MultiplePattern(@"[\?？]$", new[] {
 				"うん",
 				"ううん",
 				"いいえ",
