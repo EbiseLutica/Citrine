@@ -5,6 +5,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
 
+// メモ
+// idariti 5
+// godzhigella 3 
+// 2vg 1
+
 namespace Citrine.Core.Modules
 {
 	/* === リプライ文字列の仕様 ===
@@ -35,6 +40,36 @@ namespace Citrine.Core.Modules
 				"頑張ってきてね.", "いってらっしゃい!", "てら!", "てら〜", "がんばれ〜"
 			}, new[] {
 				"そう.", "はい.", ""
+			}));
+
+			Add(new MultiplePattern("よろし(く|ゅう)", new[] {
+				"よろしくね.", "よろしくおねがいします.", "よろしくです.", "こちらこそ!"
+			}, null, new[] {
+				"うん...", "はい.", ""
+			}));
+
+			Add(new MultiplePattern("(はじ|初)めまして", new[] {
+				"はじめまして.", "こちらこそ.", "よろしくおねがいします."
+			}, null, null));
+
+			Add(new MultiplePattern("お(久|ひさ)しぶり|おひさ", new[] {
+				"お久しぶりです.", "おひさしぶりです.ちゃんと覚えてますよ.", "お久しぶり."
+			}, new[] {
+				"おひさしぶり! どこいってたの?", "もう逢えないかと思ってた. おかえり", "おひさしぶり! 元気にしてた?"
+			}, new[] {
+				"... また帰ってきたの?", "...君か", "...", ""
+			}));
+
+			Add(new MultiplePattern(@"(お[出で]かけ|デート|散歩)しよ[\?？]?$", new[] {
+				"いいね〜 どこいこっか",
+				"いいね〜 僕$prefix$場所に行きたいな",
+				"ごめん, 今はちょっと忙しくて...",
+				"いいね〜 僕$item$を買いに行きたいな",
+				"いいね〜 僕$prefix$$item$を買いに行きたいな",
+			}));
+
+			Add(new MultiplePattern("何[がを]?でき(る|ます)", new[] {
+				"みんなの話を聞いたり, みんなとお話したりしてるよ. あとは占いもしてる. 僕はあまり占い好きじゃないんだけどね, 科学的根拠とかないし. でも, 占ってって言ってくれたら, よしなに占ってあげる."
 			}));
 
 			Add(new MultiplePattern("おやす|[寝ね]る",  new[] { 
@@ -92,6 +127,12 @@ namespace Citrine.Core.Modules
 				"こっちおいで... (ぎゅ", "なでなで げんきだして", "よしよし, つらかったね...", "ぎゅー. 大丈夫だよ, 僕はここにいる."
 			}, new[] {
 				 "かわいそ.", "そう.", "はい.", "...", ""
+			}));
+
+			Add(new MultiplePattern("ごろー?ん|ゴロー?ン", new[] {
+				"なでなで", "なでなで〜"
+			}, new[] {
+				 ""
 			}));
 
 			Add(new MultiplePattern("(いた|痛)い", new[] { 
@@ -164,6 +205,68 @@ namespace Citrine.Core.Modules
 			Add(new PrimitivePattern("(ほ|褒)めて", "えらいっ!", "えらいっ! ﾖｼﾖｼ", "...嫌だ."));
 			Add(new PrimitivePattern("ping", "PONG!", null, null));
 			Add(new PrimitivePattern("___test___nothing___to___say___", null, null, null));
+
+			Add(new MultiplePattern("[ね寝][ろて]|[寝ね]なさい|おねんねして", new[] {
+				"うーん, まだねむくないんですよ",
+				"だいじょうぶです, まだまだがんばれます",
+				"まだやることがあって..."
+			}, new[] {
+				"そうしよっかな...",
+				"でもまだやることが...",
+				"ん〜まだ眠くなくて",
+				"ちょっとやすもうかな...",
+			}, new[] {
+				"余計なお世話.",
+				"...何?",
+				"...",
+				""
+			}));
+
+			Add(new MultiplePattern(@"[良いよ]い(です)?よ[〜ー。．！!\?？]*$", new[] {
+				"やった〜",
+				"わーい",
+				"ありがとうございます",
+				"ありがと",
+				"やったね"
+			}, null, new[] {
+				"",
+			}));
+
+			Add(new MultiplePattern(@"(ダメ|だめ|駄目)(です|だ)?よ[〜ー。．！!\?？]*$", new[] {
+				"つらい",
+				"えー...",
+				"かなしい",
+				"なんで〜",
+				"わかった..."
+			}, null, new[] {
+				"",
+			}));
+
+			Add(new MultiplePattern(@"にゃ[〜ーあ]*ん?$", new[] {
+				"にゃーん",
+				"なでなで",
+				"にゃあ!",
+				"にゃ!"
+			}, null, new[] {
+				"",
+			}));
+
+			Add(new MultiplePattern(@"こゃ[〜ーあ]*ん?$", new[] {
+				"こゃーん",
+				"なでなで",
+				"こゃあ!",
+				"こゃ!"
+			}, null, new[] {
+				"",
+			}));
+
+			//Add(new MultiplePattern("", new[] {
+			//	"",
+			//}, new[] {
+			//	"",
+			//}, new[] {
+			//	"",
+			//}));
 
 			Add(new MultiplePattern("しとりん|シトリン", new[] {
 				"ん?", "どうしました?"
@@ -282,7 +385,7 @@ namespace Citrine.Core.Modules
 						.Replace("$item$", FortuneModule.Items.Random());
 
 			// 乱数
-			Regex.Replace(message, @"$rnd(\d+),(\d+)$", (m) =>
+			Regex.Replace(message, @"\$rnd(\d+),(\d+)\$", (m) =>
 			{
 				return random.Next(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value)).ToString();
 			});
