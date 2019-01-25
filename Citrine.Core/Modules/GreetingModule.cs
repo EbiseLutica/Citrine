@@ -341,6 +341,15 @@ namespace Citrine.Core.Modules
 				"君だよ.",
 				"僕だよ."
 			}, null, null));
+
+			Add(new MultiplePattern(@"[?？]$", new[] {
+				"うん",
+				"ううん",
+				"いいえ",
+				"はい",
+				"いや?",
+				"わかんない"
+			}, null, null));
 		}
 
 		void Add(IPattern p) => patterns.Add(p);
