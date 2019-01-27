@@ -21,13 +21,13 @@ namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
-		public static string Version => "1.1.2";
+		public static string Version => "1.2.0";
 
 		MisskeyClient misskey;
 
 		Server core;
 
-		public bool CanFollow => true;
+		public bool CanCreatePoll => true;
 
 		public IUser Myself { get; private set; }
 
@@ -229,6 +229,22 @@ namespace Citrine.Misskey
 				default:
 					throw new ArgumentOutOfRangeException(nameof(reactionChar), reactionChar, null);
 			}
+		}
+
+		public async Task<IPost> GetPostAsync(string id) => new MiPost(await misskey.Notes.ShowAsync(id));
+
+		public async Task<IUser> GetUserAsync(string id) => new MiUser((await misskey.Users.ShowAsync(userId: id)).First());
+
+		public async Task<IUser> GetUserByNameAsync(string name) => new MiUser((await misskey.Users.ShowAsync(username: name)).First());
+	
+		public async Task LikeAsync(IPost post)
+		{
+			await misskey.Notes.Reactions.CreateAsync(post.Id, Reaction.Like);
+		}
+
+		public async Task UnlikeAsync(IPost post)
+		{
+			await misskey.Notes.Reactions.DeleteAsync(post.Id);
 		}
 	}
 }
