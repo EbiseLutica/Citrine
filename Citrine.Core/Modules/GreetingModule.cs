@@ -132,7 +132,7 @@ namespace Citrine.Core.Modules
 
 			Add(new MultiplePattern("ごろー?ん|ゴロー?ン", new[] {
 				"なでなで", "なでなで〜"
-			}, new[] {
+			}, null, new[] {
 				 ""
 			}));
 
@@ -210,6 +210,7 @@ namespace Citrine.Core.Modules
 			Add(new MultiplePattern("[ね寝][ろて]|[寝ね]なさい|おねんねして", new[] {
 				"うーん, まだねむくないんですよ",
 				"だいじょうぶです, まだまだがんばれます",
+				"お気遣いありがとうございます, でも、まだ起きてたいんです",
 				"まだやることがあって..."
 			}, new[] {
 				"そうしよっかな...",
