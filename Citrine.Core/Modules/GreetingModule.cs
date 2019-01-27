@@ -60,7 +60,7 @@ namespace Citrine.Core.Modules
 				"... また帰ってきたの?", "...君か", "...", ""
 			}));
 
-			Add(new MultiplePattern(@"(お[出で]かけ|デート|散歩)(しよ|[行い]こ)[うー〜]*[\?？!！\.。．]?$", new[] {
+			Add(new MultiplePattern(@"(お[出で]かけ|デート|散歩)(しよ|[行い]こ)[うー〜]*[\?？!！\.。．]*", new[] {
 				"いいね〜 どこいこっか",
 				"いいね〜 僕$prefix$場所に行きたいな",
 				"ごめん, 今はちょっと忙しくて...",
@@ -242,7 +242,7 @@ namespace Citrine.Core.Modules
 				"",
 			}));
 
-			Add(new MultiplePattern(@"にゃ[〜ーあ]*ん?$", new[] {
+			Add(new MultiplePattern(@"にゃ[〜ーあ]*ん?", new[] {
 				"にゃーん",
 				"なでなで",
 				"にゃあ!",
@@ -251,7 +251,7 @@ namespace Citrine.Core.Modules
 				"",
 			}));
 
-			Add(new MultiplePattern(@"こゃ[〜ーあ]*ん?$", new[] {
+			Add(new MultiplePattern(@"こゃ[〜ーあ]*ん?", new[] {
 				"こゃーん",
 				"なでなで",
 				"こゃあ!",
@@ -360,7 +360,7 @@ namespace Citrine.Core.Modules
 				return false;
 
 
-			var pattern = patterns.FirstOrDefault(record => record.Regex.IsMatch(n.Text.Replace("にゃ", "な")));
+			var pattern = patterns.FirstOrDefault(record => record.Regex.IsMatch(n.Text.Trim().Replace("にゃ", "な")));
 
 			if (pattern == null)
 				return false;

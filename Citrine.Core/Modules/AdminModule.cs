@@ -92,9 +92,6 @@ namespace Citrine.Core.Modules
 				await shell.ReplyAsync(n, output);
 				return true;
 			}
-
-
-
 			return false;
 		}
 
