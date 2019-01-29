@@ -27,6 +27,5 @@ namespace Citrine.Core
 
 			for (int i = 0; i < length; i++) yield return 'ー';
 		}
-
 	}
 }
