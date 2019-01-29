@@ -23,7 +23,7 @@ namespace Citrine.Misskey
 	{
 		public static string Version => "1.2.0";
 
-		MisskeyClient misskey;
+		public MisskeyClient Misskey { get; private set; }
 
 		Server core;
 
@@ -36,7 +36,7 @@ namespace Citrine.Misskey
 
 		private void InitializeBot()
 		{
-			var main = misskey.Streaming.MainAsObservable();
+			var main = Misskey.Streaming.MainAsObservable();
 
 			// 再接続時にいらないストリームを切断
 			followed?.Dispose();
@@ -47,7 +47,7 @@ namespace Citrine.Misskey
 			// フォロバ
 			followed = main.OfType<FollowedMessage>()
 				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((mes) => misskey.Following.CreateAsync(mes.Id), (e) => InitializeBot());
+				.Subscribe((mes) => Misskey.Following.CreateAsync(mes.Id), (e) => InitializeBot());
 			Console.WriteLine("フォロー監視開始");
 
 			// リプライ
@@ -57,7 +57,7 @@ namespace Citrine.Misskey
 			Console.WriteLine("リプライ監視開始");
 		
 			// Timeline
-			tl = misskey.Streaming.HomeTimelineAsObservable().Merge(misskey.Streaming.LocalTimelineAsObservable())
+			tl = Misskey.Streaming.HomeTimelineAsObservable().Merge(Misskey.Streaming.LocalTimelineAsObservable())
 				.OfType<NoteMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
@@ -71,7 +71,7 @@ namespace Citrine.Misskey
 				{
 					if (mes.UserId == Myself.Id)
 						return;
-					await misskey.Messaging.Messages.ReadAsync(mes.Id);
+					await Misskey.Messaging.Messages.ReadAsync(mes.Id);
 					await core.HandleDmAsync(new MiDmPost(mes), this);
 				});
 			Console.WriteLine("トーク監視開始");
@@ -108,7 +108,7 @@ namespace Citrine.Misskey
 			var sh = new Shell
 			{
 				core = new Server(),
-				misskey = mi,
+				Misskey = mi,
 				Myself = new MiUser(myself),
 			};
 
@@ -159,39 +159,39 @@ namespace Citrine.Misskey
 		{
 			if (post is MiDmPost dm)
 			{
-				return new MiDmPost(await misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}"));
+				return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}"));
 			}
 			else
 			{
-				return new MiPost(await misskey.Notes.CreateAsync(text, MapVisiblity(post, visiblity), cw: cw, replyId: post.Id));
+				return new MiPost(await Misskey.Notes.CreateAsync(text, MapVisiblity(post, visiblity), cw: cw, replyId: post.Id));
 			}
 		}
 
 		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
-			return new MiPost(await misskey.Notes.CreateAsync(text, visiblity.ToStr(), cw: cw));
+			return new MiPost(await Misskey.Notes.CreateAsync(text, visiblity.ToStr(), cw: cw));
 		}
 
 		public async Task ReactAsync(IPost post, string reactionChar)
 		{
 			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
-			await misskey.Notes.Reactions.CreateAsync(post.Id, ConvertReaction(reactionChar));
+			await Misskey.Notes.Reactions.CreateAsync(post.Id, ConvertReaction(reactionChar));
 		}
 
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
 			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
-			return new MiPost(await misskey.Notes.CreateAsync(text, MapVisiblity(post, visiblity), cw: cw, renoteId: post.Id));
+			return new MiPost(await Misskey.Notes.CreateAsync(text, MapVisiblity(post, visiblity), cw: cw, renoteId: post.Id));
 		}
 
 		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
 		{
-			return new MiDmPost(await misskey.Messaging.Messages.CreateAsync(user.Id, text));
+			return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(user.Id, text));
 		}
 
 		public async Task VoteAsync(IPost post, int choice)
 		{
-			await misskey.Notes.Polls.VoteAsync(post.Id, choice);
+			await Misskey.Notes.Polls.VoteAsync(post.Id, choice);
 		}
 
 		public string MapVisiblity(IPost post, Visiblity v)
@@ -231,20 +231,20 @@ namespace Citrine.Misskey
 			}
 		}
 
-		public async Task<IPost> GetPostAsync(string id) => new MiPost(await misskey.Notes.ShowAsync(id));
+		public async Task<IPost> GetPostAsync(string id) => new MiPost(await Misskey.Notes.ShowAsync(id));
 
-		public async Task<IUser> GetUserAsync(string id) => new MiUser((await misskey.Users.ShowAsync(userId: id)).First());
+		public async Task<IUser> GetUserAsync(string id) => new MiUser((await Misskey.Users.ShowAsync(userId: id)).First());
 
-		public async Task<IUser> GetUserByNameAsync(string name) => new MiUser((await misskey.Users.ShowAsync(username: name)).First());
+		public async Task<IUser> GetUserByNameAsync(string name) => new MiUser((await Misskey.Users.ShowAsync(username: name)).First());
 	
 		public async Task LikeAsync(IPost post)
 		{
-			await misskey.Notes.Reactions.CreateAsync(post.Id, Reaction.Like);
+			await Misskey.Notes.Reactions.CreateAsync(post.Id, Reaction.Like);
 		}
 
 		public async Task UnlikeAsync(IPost post)
 		{
-			await misskey.Notes.Reactions.DeleteAsync(post.Id);
+			await Misskey.Notes.Reactions.DeleteAsync(post.Id);
 		}
 	}
 }
