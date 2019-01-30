@@ -22,28 +22,34 @@ namespace Citrine.Core
 		/// <value>The modules.</value>
 		public IEnumerable<ModuleBase> Modules { get; }
 
+		List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
+
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.1.0";
+		public static string Version => "2.2.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.2.0";
+		public static string VersionAsXelticaBot => "3.3.0";
 
 		/// <summary>
 		/// bot を初期化します。
 		/// </summary>
-		public Server()
+		public Server(params ModuleBase[] additionalModules)
 		{
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
-						.OrderBy(mod => mod.Priority);
+						.Concat(additionalModules)
+						.OrderBy(mod => mod.Priority)
+						.ToList();
 
 			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
 		}
+
+		public void AddModule(ModuleBase mod) => ModulesAsList?.Add(mod);
 
 		/// <summary>
 		/// 指定したユーザーが管理者であるかどうかを取得します。
@@ -91,7 +97,9 @@ namespace Citrine.Core
 			Console.WriteLine($"Mentioned from @{mention.User.Name}");
 			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "🍣");
 			await Task.Delay(1000);
-			foreach (var mod in Modules)
+
+			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+			foreach (var mod in Modules.ToList())
 			{
 				try
 				{
@@ -110,7 +118,8 @@ namespace Citrine.Core
 		{
 			await Task.Delay(1000);
 
-			foreach (var mod in Modules)
+			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+			foreach (var mod in Modules.ToList())
 			{
 				try
 				{
@@ -129,7 +138,9 @@ namespace Citrine.Core
 		{
 			Console.WriteLine($"Mentioned from @{post.User.Name}");
 			await Task.Delay(1000);
-			foreach (var mod in Modules)
+
+			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+			foreach (var mod in Modules.ToList())
 			{
 				try
 				{
