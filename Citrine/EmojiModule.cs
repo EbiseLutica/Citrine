@@ -31,6 +31,8 @@ namespace Citrine.Misskey
 			if (!(shell.Myself is MiUser u)) return false;
 			if (!(n is MiPost note)) return false;
 
+			var senderIsAdmin = ((n.User as MiUser).Native.IsAdmin ?? false) || ((n.User as MiUser).Native.IsModerator ?? false) || core.IsAdmin(n.User);
+
 			// /emoji add <name> <url> <alias...>
 			// /emoji list
 			if (DateTime.Now - lastResetAt > limitTime)
@@ -43,16 +45,25 @@ namespace Citrine.Misskey
 
 			if (cmd[0] == "/emoji")
 			{
-				var output = "使い方:\n/emoji add <name> [url] [alias...]: 絵文字を追加。urlの代わりに添付ファイルも可\n/emoji list: ここにある絵文字をぜんぶ並べる";
+				var output = @"使い方:
+/emoji add <name> [url] [alias...]: 絵文字を追加。urlの代わりに添付ファイルも可
+/emoji list: ここにある絵文字をぜんぶ並べる
+";
+				if (senderIsAdmin)
+				{
+					// 管理者であればヘルプ追加
+					output += "/emoji copyfrom <hostname>: 他のインスタンスから絵文字をコピーする";
+				}
+
 				string cw = default;
 				if ((u.Native.IsAdmin ?? false) || (u.Native.IsModerator ?? false))
 				{
-					switch (cmd[1])
+					switch (cmd[1].ToLowerInvariant())
 					{
 						case "add":
 							try
 							{
-								if (IsRateLimitExceeded)
+								if (IsRateLimitExceeded && !senderIsAdmin)
 								{
 									output = $"ちょっと追加しすぎ...もう少し待って欲しいな. あと{getRemainingTime()}くらいね。";
 								}
@@ -97,6 +108,43 @@ namespace Citrine.Misskey
 							catch (Exception ex)
 							{
 								output = $"エラー {ex.GetType().Name} {ex.Message}";
+							}
+							break;
+						case "copyfrom":
+							if (senderIsAdmin)
+							{
+								if (cmd.Length > 2)
+								{
+									try
+									{
+										var emojisInMyHost = await s.Misskey.Admin.Emoji.ListAsync();
+
+										var emojis = (await s.Misskey.Admin.Emoji.ListAsync(cmd[2])).Where(e => emojisInMyHost.Any(ee => ee.Name == e.Name));
+
+										foreach (var emoji in emojis)
+										{
+											await s.Misskey.Admin.Emoji.AddAsync(emoji.Name, emoji.Id, emoji.Aliases);
+										}
+
+
+										output = string.Concat(emojis.Select(e => $":{e.Name}:"));
+
+										cw = $"{cmd[2]} にある絵文字を {emojis.Count()} 種類追加しました.";
+									}
+									catch (DisboardException ex)
+									{
+										output = "失敗しちゃった...";
+										Console.WriteLine(ex.Response);
+									}
+									catch (Exception ex)
+									{
+										output = $"エラー {ex.GetType().Name} {ex.Message}";
+									}
+								}
+							}
+							else
+							{
+								output = "それ, 危険すぎるので, 鯖管以外に言われてもやるなと言われてるの."; 
 							}
 							break;
 					}

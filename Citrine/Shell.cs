@@ -22,7 +22,7 @@ namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
-		public static string Version => "1.4.0";
+		public static string Version => "1.5.0";
 
 		public MisskeyClient Misskey { get; private set; }
 
