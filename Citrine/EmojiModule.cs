@@ -19,6 +19,7 @@ namespace Citrine.Misskey
 		DateTime lastResetAt = DateTime.Now;
 		int registeredCount = 0;
 		int limit = 10;
+		TimeSpan limitTime = new TimeSpan(0, 5, 0);
 
 		bool IsRateLimitExceeded => registeredCount > limit;
 
@@ -32,11 +33,14 @@ namespace Citrine.Misskey
 
 			// /emoji add <name> <url> <alias...>
 			// /emoji list
-			if (DateTime.Now - lastResetAt > new TimeSpan(0, 5, 0))
+			if (DateTime.Now - lastResetAt > limitTime)
 			{
 				lastResetAt = DateTime.Now;
 				registeredCount = 0; 
 			}
+			var r = limitTime - (DateTime.Now - lastResetAt);
+			string getRemainingTime() => r.Hours > 0 ? r.Minutes + "時間" : r.Minutes > 0 ? r.Minutes + "分" : r.Seconds + "秒";
+
 			if (cmd[0] == "/emoji")
 			{
 				var output = "使い方:\n/emoji add <name> [url] [alias...]: 絵文字を追加。urlの代わりに添付ファイルも可\n/emoji list: ここにある絵文字をぜんぶ並べる";
@@ -48,7 +52,11 @@ namespace Citrine.Misskey
 						case "add":
 							try
 							{
-								if (cmd.Length > 2)
+								if (IsRateLimitExceeded)
+								{
+									output = $"ちょっと追加しすぎ...もう少し待って欲しいな. あと{getRemainingTime()}くらいね。";
+								}
+								else if (cmd.Length > 2)
 								{
 									string url = default;
 									if (cmd.Length > 3)
