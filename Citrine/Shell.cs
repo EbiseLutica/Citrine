@@ -16,12 +16,13 @@ using Newtonsoft.Json;
 using Citrine.Core.Api;
 using System.Linq;
 using Disboard.Misskey.Extensions;
+using Citrine.Core.Modules;
 
 namespace Citrine.Misskey
 {
 	public class Shell : IShell
 	{
-		public static string Version => "1.2.0";
+		public static string Version => "1.4.0";
 
 		public MisskeyClient Misskey { get; private set; }
 
@@ -77,11 +78,13 @@ namespace Citrine.Misskey
 			Console.WriteLine("トーク監視開始");
 		}
 
+		public void AddModule(ModuleBase mod) => core.AddModule(mod);
+
 		/// <summary>
 		/// bot を初期化します。
 		/// </summary>
 		/// <returns>初期化された <see cref="Shell"/> のインスタンス。</returns>
-		public static async Task<Shell> InitializeAsync()
+		public static async Task<Shell> InitializeAsync(params ModuleBase[] additionalModule)
 		{
 			MisskeyClient mi;
 			try
@@ -107,7 +110,7 @@ namespace Citrine.Misskey
 
 			var sh = new Shell
 			{
-				core = new Server(),
+				core = new Server(additionalModule),
 				Misskey = mi,
 				Myself = new MiUser(myself),
 			};
