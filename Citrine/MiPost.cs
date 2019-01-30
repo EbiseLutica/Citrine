@@ -6,22 +6,22 @@ namespace Citrine.Misskey
 {
 	public class MiPost : IPost
 	{
-		readonly Note note;
+		public Note Native { get; }
 		public MiPost(Note n)
 		{
-			note = n;
-			Id = note.Id;
-			User = new MiUser(note.User);
-			Text = note.Text;
-			IsRepost = note.Renote != default;
-			Repost = IsRepost ? new MiPost(note.Renote) : default;
-			IsReply = note.Reply != default;
-			Reply = IsReply ? new MiPost(note.Reply) : default;
-			RepostCount = note.RenoteCount;
-			Poll = note.Poll != default ? new MiPoll(note.Poll) : default;
-			Via = note.App?.Name;
-			Visiblity = note.Visibility.ToVisiblity();
-			NativeVisiblity = note.Visibility;
+			Native = n;
+			Id = Native.Id;
+			User = new MiUser(Native.User);
+			Text = Native.Text;
+			IsRepost = Native.Renote != default;
+			Repost = IsRepost ? new MiPost(Native.Renote) : default;
+			IsReply = Native.Reply != default;
+			Reply = IsReply ? new MiPost(Native.Reply) : default;
+			RepostCount = Native.RenoteCount;
+			Poll = Native.Poll != default ? new MiPoll(Native.Poll) : default;
+			Via = Native.App?.Name;
+			Visiblity = Native.Visibility.ToVisiblity();
+			NativeVisiblity = Native.Visibility;
 		}
 
 		public string Id  { get; }

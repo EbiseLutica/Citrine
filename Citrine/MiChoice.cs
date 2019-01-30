@@ -5,10 +5,10 @@ namespace Citrine.Misskey
 {
 	public class MiChoice : IChoice
 	{
-		readonly Choice choice;
+		public Choice Native { get; }
 		public MiChoice(Choice c)
 		{
-			choice = c;
+			Native = c;
 			Id = c.Id;
 			Text = c.Text;
 			Count = c.Votes;

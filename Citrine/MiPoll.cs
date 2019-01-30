@@ -7,10 +7,10 @@ namespace Citrine.Misskey
 {
 	public class MiPoll : IPoll
 	{
-		readonly Poll poll;
+		public Poll Native { get; }
 		public MiPoll(Poll p)
 		{
-			poll = p;
+			Native = p;
 			// 一括変換
 			Choices = from c in p.Choices select new MiChoice(c);
 		}

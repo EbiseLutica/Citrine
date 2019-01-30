@@ -5,10 +5,10 @@ namespace Citrine.Misskey
 {
 	public class MiDmPost : IPost
 	{
-		readonly Message message;
+		public Message Native { get; }
 		public MiDmPost(Message mes)
 		{
-			message = mes;
+			Native = mes;
 
 			Id = mes.Id;
 			User = new MiUser(mes.User);

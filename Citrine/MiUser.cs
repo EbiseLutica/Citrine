@@ -5,10 +5,10 @@ namespace Citrine.Misskey
 {
 	public class MiUser : IUser
 	{
-		readonly User user;
+		public User Native { get; }
 		public MiUser(User u)
 		{
-			user = u;
+			Native = u;
 			Name = u.Username;
 			IconUrl = u.AvatarUrl;
 			ScreenName = u.Name;
