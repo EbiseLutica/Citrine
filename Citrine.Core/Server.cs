@@ -49,13 +49,13 @@ namespace Citrine.Core
 
 			if (File.Exists("./admin"))
 			{
-				adminId = File.ReadAllText("./admin");
+				adminId = File.ReadAllText("./admin").Trim().ToLower();
 				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
 			else
 			{
 				Console.Write("Admin's ID > ");
-				adminId = Console.ReadLine();
+				adminId = Console.ReadLine().Trim().ToLower();
 				File.WriteAllText("./admin", adminId);
 				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
@@ -73,7 +73,7 @@ namespace Citrine.Core
 		/// <param name="user">ユーザー。</param>
 		public bool IsAdmin(IUser user) => IsAdmin(user.Id);
 
-		public bool IsAdmin(string userId) => userId == adminId;
+		public bool IsAdmin(string userId) => userId.ToLower() == adminId.ToLower();
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
