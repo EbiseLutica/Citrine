@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Citrine.Core
 	public class Server
 	{
 		// hack 止めよう、ハードコーディング
-		readonly string adminId = "592820066e11ab2ed07f414b";
+		readonly string adminId;
 
 		/// <summary>
 		/// 読み込まれているバージョンを列挙します。
@@ -27,12 +28,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.2.0";
+		public static string Version => "2.3.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.3.0";
+		public static string VersionAsXelticaBot => "3.4.0";
 
 		/// <summary>
 		/// bot を初期化します。
@@ -45,6 +46,18 @@ namespace Citrine.Core
 						.Concat(additionalModules)
 						.OrderBy(mod => mod.Priority)
 						.ToList();
+
+			if (File.Exists("./admin"))
+			{
+				adminId = File.ReadAllText("./admin");
+			}
+			else
+			{
+				Console.Write("Admin's ID > ");
+				adminId = Console.ReadLine();
+				File.WriteAllText("./admin", adminId);
+			}
+
 
 			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
 		}
