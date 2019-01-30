@@ -50,12 +50,14 @@ namespace Citrine.Core
 			if (File.Exists("./admin"))
 			{
 				adminId = File.ReadAllText("./admin");
+				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
 			else
 			{
 				Console.Write("Admin's ID > ");
 				adminId = Console.ReadLine();
 				File.WriteAllText("./admin", adminId);
+				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
 
 
