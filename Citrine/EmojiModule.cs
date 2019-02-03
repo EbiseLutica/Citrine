@@ -115,7 +115,7 @@ namespace Citrine.Misskey
 									{
 										var emojisInMyHost = await s.Misskey.Admin.Emoji.ListAsync();
 
-										var emojis = (await s.Misskey.Admin.Emoji.ListAsync(cmd[2])).Where(e => emojisInMyHost.Any(ee => ee.Name == e.Name));
+										var emojis = (await s.Misskey.Admin.Emoji.ListAsync(cmd[2])).Where(e => emojisInMyHost.All(ee => ee.Name != e.Name));
 
 										foreach (var emoji in emojis)
 										{
