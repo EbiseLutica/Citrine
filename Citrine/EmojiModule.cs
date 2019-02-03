@@ -124,8 +124,10 @@ namespace Citrine.Misskey
 
 
 										output = string.Concat(emojis.Select(e => $":{e.Name}:"));
-
-										cw = $"{cmd[2]} にある絵文字を {emojis.Count()} 種類追加しました.";
+										if (output?.Length > 0)
+											cw = $"{cmd[2]} にある絵文字を {emojis.Count()} 種類追加しました.";
+										if (output?.Length < 1)
+											output = "何も追加できませんでした.";
 									}
 									catch (Exception ex)
 									{
