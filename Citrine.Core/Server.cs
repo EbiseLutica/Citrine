@@ -25,6 +25,10 @@ namespace Citrine.Core
 
 		List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
 
+		List<ModuleBase> AllLoadedModules;
+
+		List<string> unloadedModules;
+
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
@@ -40,7 +44,7 @@ namespace Citrine.Core
 		/// </summary>
 		public Server(params ModuleBase[] additionalModules)
 		{
-			Modules = Assembly.GetExecutingAssembly().GetTypes()
+			AllLoadedModules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
 						.Concat(additionalModules)
@@ -60,6 +64,10 @@ namespace Citrine.Core
 				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
 
+			unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
+
+			// unloaded でないかどうか
+			Modules = AllLoadedModules.Where(m => unloadedModules.All(um => um.ToLower() != m.GetType().Name.ToLower()));
 
 			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
 		}
@@ -99,6 +107,36 @@ namespace Citrine.Core
 		/// ユーザーに対する好感度を下げます。
 		/// </summary>
 		public void Dislike(string userId, int amount = 1) { Like(userId, -amount); }
+
+		/// <summary>
+		/// モジュールをアンロードします。
+		/// </summary>
+		public void Unload(string name)
+		{
+			unloadedModules.Add(name);
+			ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
+			WriteUnloadedConfig();
+		}
+
+		/// <summary>
+		/// モジュールをロードします。
+		/// </summary>
+		public void Load(string name)
+		{
+			unloadedModules.Add(name);
+			ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
+			WriteUnloadedConfig();
+		}
+
+		private void WriteUnloadedConfig()
+		{
+			File.WriteAllLines("./unloaded", unloadedModules);
+		}
+
+		private void ReadUnloadedConfig()
+		{
+			unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
+		}
 
 		private static void WriteException(Exception ex)
 		{
