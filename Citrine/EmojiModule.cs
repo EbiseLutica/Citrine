@@ -46,7 +46,7 @@ namespace Citrine.Misskey
 			if (cmd[0] == "/emoji")
 			{
 				var output = @"使い方:
-/emoji add <name> [url] [alias...]: 絵文字を追加。urlの代わりに添付ファイルも可
+/emoji add <name> [url] [alias...]: 絵文字を追加. urlの代わりに添付ファイルも可
 /emoji list: ここにある絵文字をぜんぶ並べる
 ";
 				if (senderIsAdmin)
@@ -65,7 +65,7 @@ namespace Citrine.Misskey
 							{
 								if (IsRateLimitExceeded && !senderIsAdmin)
 								{
-									output = $"ちょっと追加しすぎ...もう少し待って欲しいな. あと{getRemainingTime()}くらいね。";
+									output = $"ちょっと追加しすぎ...もう少し待って欲しいな. あと{getRemainingTime()}くらいね.";
 								}
 								else if (cmd.Length > 2)
 								{
@@ -83,14 +83,12 @@ namespace Citrine.Misskey
 									registeredCount++;
 								}
 							}
-							catch (DisboardException ex)
-							{
-								output = "失敗しちゃった...";
-								Console.WriteLine(ex.Response);
-							}
 							catch (Exception ex)
 							{
-								output = $"エラー {ex.GetType().Name} {ex.Message}";
+								cw = "失敗しちゃいました... 報告書見ますか?";
+								output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+								Console.WriteLine(ex.Message);
+								Console.WriteLine(ex.StackTrace);
 							}
 							break;
 						case "list":
@@ -100,14 +98,12 @@ namespace Citrine.Misskey
 								output = string.Concat(list.Select(e => $":{e.Name}:"));
 								cw = $"絵文字総数: {list.Count}個";
 							}
-							catch (DisboardException ex)
-							{
-								output = "失敗しちゃった...";
-								Console.WriteLine(ex.Response);
-							}
 							catch (Exception ex)
 							{
-								output = $"エラー {ex.GetType().Name} {ex.Message}";
+								cw = "失敗しちゃいました... 報告書見ますか?";
+								output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+								Console.WriteLine(ex.Message);
+								Console.WriteLine(ex.StackTrace);
 							}
 							break;
 						case "copyfrom":
@@ -131,14 +127,12 @@ namespace Citrine.Misskey
 
 										cw = $"{cmd[2]} にある絵文字を {emojis.Count()} 種類追加しました.";
 									}
-									catch (DisboardException ex)
-									{
-										output = "失敗しちゃった...";
-										Console.WriteLine(ex.Response);
-									}
 									catch (Exception ex)
 									{
-										output = $"エラー {ex.GetType().Name} {ex.Message}";
+										cw = "失敗しちゃいました... 報告書見ますか?";
+										output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+										Console.WriteLine(ex.Message);
+										Console.WriteLine(ex.StackTrace);
 									}
 								}
 							}
