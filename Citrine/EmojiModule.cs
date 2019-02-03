@@ -119,7 +119,7 @@ namespace Citrine.Misskey
 
 										foreach (var emoji in emojis)
 										{
-											await s.Misskey.Admin.Emoji.AddAsync(emoji.Name, emoji.Id, emoji.Aliases);
+											await s.Misskey.Admin.Emoji.AddAsync(emoji.Name, emoji.Url, emoji.Aliases);
 										}
 
 
