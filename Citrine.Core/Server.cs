@@ -9,229 +9,227 @@ using Citrine.Core.Modules;
 
 namespace Citrine.Core
 {
-	/// <summary>
-	/// Citrine's Core.
-	/// </summary>
-	public class Server
-	{
-		// hack 止めよう、ハードコーディング
-		readonly string adminId;
+    /// <summary>
+    /// Citrine's Core.
+    /// </summary>
+    public class Server
+    {
+        readonly string adminId;
 
-		/// <summary>
-		/// 読み込まれているバージョンを列挙します。
-		/// </summary>
-		/// <value>The modules.</value>
-		public IEnumerable<ModuleBase> Modules { get; }
+        /// <summary>
+        /// 読み込まれているバージョンを列挙します。
+        /// </summary>
+        /// <value>The modules.</value>
+        public IEnumerable<ModuleBase> Modules { get; }
 
-		List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
+        List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
 
-		List<ModuleBase> AllLoadedModules;
+        List<ModuleBase> AllLoadedModules;
 
-		List<string> unloadedModules;
+        List<string> unloadedModules;
 
-		/// <summary>
-		/// バージョンを取得します。
-		/// </summary>
-		public static string Version => "2.3.0";
+        /// <summary>
+        /// バージョンを取得します。
+        /// </summary>
+        public static string Version => "2.4.0";
 
-		/// <summary>
-		/// XelticaBot 換算でのバージョン表記を取得します。
-		/// </summary>
-		public static string VersionAsXelticaBot => "3.4.0";
+        /// <summary>
+        /// XelticaBot 換算でのバージョン表記を取得します。
+        /// </summary>
+        public static string VersionAsXelticaBot => "3.5.0";
 
-		/// <summary>
-		/// bot を初期化します。
-		/// </summary>
-		public Server(params ModuleBase[] additionalModules)
-		{
-			AllLoadedModules = Assembly.GetExecutingAssembly().GetTypes()
-						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
-						.Select(a => Activator.CreateInstance(a) as ModuleBase)
-						.Concat(additionalModules)
-						.OrderBy(mod => mod.Priority)
-						.ToList();
+        /// <summary>
+        /// bot を初期化します。
+        /// </summary>
+        public Server(params ModuleBase[] additionalModules)
+        {
+            AllLoadedModules = Assembly.GetExecutingAssembly().GetTypes()
+                        .Where(a => a.IsSubclassOf(typeof(ModuleBase)))
+                        .Select(a => Activator.CreateInstance(a) as ModuleBase)
+                        .Concat(additionalModules)
+                        .OrderBy(mod => mod.Priority)
+                        .ToList();
 
-			if (File.Exists("./admin"))
-			{
-				adminId = File.ReadAllText("./admin").Trim().ToLower();
-				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
-			}
-			else
-			{
-				Console.Write("Admin's ID > ");
-				adminId = Console.ReadLine().Trim().ToLower();
-				File.WriteAllText("./admin", adminId);
-				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
-			}
+            if (File.Exists("./admin"))
+            {
+                adminId = File.ReadAllText("./admin").Trim().ToLower();
+                Console.WriteLine($"管理者はID {adminId ?? "null"}。");
+            }
+            else
+            {
+                Console.Write("Admin's ID > ");
+                adminId = Console.ReadLine().Trim().ToLower();
+                File.WriteAllText("./admin", adminId);
+                Console.WriteLine($"管理者はID {adminId ?? "null"}。");
+            }
 
-			unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
+            unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
 
-			// unloaded でないかどうか
-			Modules = AllLoadedModules.Where(m => unloadedModules.All(um => um.ToLower() != m.GetType().Name.ToLower()));
+            // unloaded でないかどうか
+            Modules = AllLoadedModules.Where(m => unloadedModules.All(um => um.ToLower() != m.GetType().Name.ToLower()));
 
-			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
-		}
+            Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
+        }
 
-		public void AddModule(ModuleBase mod) => ModulesAsList?.Add(mod);
+        public void AddModule(ModuleBase mod) => ModulesAsList?.Add(mod);
 
-		/// <summary>
-		/// 指定したユーザーが管理者であるかどうかを取得します。
-		/// </summary>mi
-		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
-		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(IUser user) => IsAdmin(user.Id);
+        /// <summary>
+        /// 指定したユーザーが管理者であるかどうかを取得します。
+        /// </summary>mi
+        /// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
+        /// <param name="user">ユーザー。</param>
+        public bool IsAdmin(IUser user) => IsAdmin(user.Name);
 
-		public bool IsAdmin(string userId) => userId.ToLower() == adminId.ToLower();
+        public bool IsAdmin(string userId) => userId.ToLower() == adminId.ToLower();
 
-		/// <summary>
-		/// 指定したユーザーの好感度を取得します。
-		/// </summary>
-		public Rating GetRatingOf(IUser user) => GetRatingOf(user.Id);
+        /// <summary>
+        /// 指定したユーザーの好感度を取得します。
+        /// </summary>
+        public Rating GetRatingOf(IUser user) => GetRatingOf(user.Id);
 
-		/// <summary>
-		/// 指定したユーザーの好感度を取得します。
-		/// </summary>
-		public Rating GetRatingOf(string userId) => IsAdmin(userId) ? Rating.Partner : Rating.Normal;
+        /// <summary>
+        /// 指定したユーザーの好感度を取得します。
+        /// </summary>
+        public Rating GetRatingOf(string userId) => IsAdmin(userId) ? Rating.Partner : Rating.Normal;
 
-		/// <summary>
-		/// 指定したユーザーの好感度を取得します。
-		/// </summary>
-		public int GetRatingNumber(string userId) => IsAdmin(userId) ? 100 : 0;
+        /// <summary>
+        /// 指定したユーザーの好感度を取得します。
+        /// </summary>
+        public int GetRatingNumber(string userId) => IsAdmin(userId) ? 100 : 0;
 
-		/// <summary>
-		/// ユーザーに対する好感度を上げます。
-		/// </summary>
-		public void Like(string userId, int amount = 1) { }
+        /// <summary>
+        /// ユーザーに対する好感度を上げます。
+        /// </summary>
+        public void Like(string userId, int amount = 1) { }
 
-		/// <summary>
-		/// ユーザーに対する好感度を下げます。
-		/// </summary>
-		public void Dislike(string userId, int amount = 1) { Like(userId, -amount); }
+        /// <summary>
+        /// ユーザーに対する好感度を下げます。
+        /// </summary>
+        public void Dislike(string userId, int amount = 1) { Like(userId, -amount); }
 
-		/// <summary>
-		/// モジュールをアンロードします。
-		/// </summary>
-		public void Unload(string name)
-		{
-			unloadedModules.Add(name);
-			ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
-			WriteUnloadedConfig();
-		}
+        /// <summary>
+        /// モジュールをアンロードします。
+        /// </summary>
+        public void Unload(string name)
+        {
+            unloadedModules.Add(name);
+            ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
+            WriteUnloadedConfig();
+        }
 
-		/// <summary>
-		/// モジュールをロードします。
-		/// </summary>
-		public void Load(string name)
-		{
-			unloadedModules.Add(name);
-			ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
-			WriteUnloadedConfig();
-		}
+        /// <summary>
+        /// モジュールをロードします。
+        /// </summary>
+        public void Load(string name)
+        {
+            unloadedModules.Add(name);
+            ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
+            WriteUnloadedConfig();
+        }
 
-		private void WriteUnloadedConfig()
-		{
-			File.WriteAllLines("./unloaded", unloadedModules);
-		}
+        private void WriteUnloadedConfig()
+        {
+            File.WriteAllLines("./unloaded", unloadedModules);
+        }
 
-		private void ReadUnloadedConfig()
-		{
-			unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
-		}
+        private void ReadUnloadedConfig()
+        {
+            unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
+        }
 
-		private static void WriteException(Exception ex)
-		{
-			Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
-		}
+        private static void WriteException(Exception ex)
+        {
+            Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+        }
 
-		public async Task HandleMentionAsync(IPost mention, IShell shell)
-		{
-			// React
-			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
-			Console.WriteLine($"Mentioned from @{mention.User.Name}");
-			await shell.ReactAsync(mention, IsAdmin(mention.User) ? "❤️" : "🍣");
-			await Task.Delay(1000);
+        public async Task HandleMentionAsync(IPost mention, IShell shell)
+        {
+            // React
+            // hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
+            Console.WriteLine($"Mentioned from @{mention.User.Name}");
+            await Task.Delay(1000);
 
-			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
-			foreach (var mod in Modules.ToList())
-			{
-				try
-				{
-					// module が true を返したら終わり
-					if (await mod.ActivateAsync(mention, shell, this))
-						break;
-				}
-				catch (Exception ex)
-				{
-					WriteException(ex);
-				}
-			}
-		}
+            // 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+            foreach (var mod in Modules.ToList())
+            {
+                try
+                {
+                    // module が true を返したら終わり
+                    if (await mod.ActivateAsync(mention, shell, this))
+                        break;
+                }
+                catch (Exception ex)
+                {
+                    WriteException(ex);
+                }
+            }
+        }
 
-		public async Task HandleTimelineAsync(IPost post, IShell shell)
-		{
-			await Task.Delay(1000);
+        public async Task HandleTimelineAsync(IPost post, IShell shell)
+        {
+            await Task.Delay(1000);
 
-			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
-			foreach (var mod in Modules.ToList())
-			{
-				try
-				{
-					// module が true を返したら終わり
-					if (await mod.OnTimelineAsync(post, shell, this))
-						break;
-				}
-				catch (Exception ex)
-				{
-					WriteException(ex);
-				}
-			}
-		}
+            // 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+            foreach (var mod in Modules.ToList())
+            {
+                try
+                {
+                    // module が true を返したら終わり
+                    if (await mod.OnTimelineAsync(post, shell, this))
+                        break;
+                }
+                catch (Exception ex)
+                {
+                    WriteException(ex);
+                }
+            }
+        }
 
-		public async Task HandleDmAsync(IPost post, IShell shell)
-		{
-			Console.WriteLine($"Mentioned from @{post.User.Name}");
-			await Task.Delay(1000);
+        public async Task HandleDmAsync(IPost post, IShell shell)
+        {
+            Console.WriteLine($"Mentioned from @{post.User.Name}");
+            await Task.Delay(1000);
 
-			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
-			foreach (var mod in Modules.ToList())
-			{
-				try
-				{
-					// module が true を返したら終わり
-					if (await mod.OnDmReceivedAsync(post, shell, this))
-						break;
-				}
-				catch (Exception ex)
-				{
-					WriteException(ex);
-				}
-			}
-		}
+            // 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+            foreach (var mod in Modules.ToList())
+            {
+                try
+                {
+                    // module が true を返したら終わり
+                    if (await mod.OnDmReceivedAsync(post, shell, this))
+                        break;
+                }
+                catch (Exception ex)
+                {
+                    WriteException(ex);
+                }
+            }
+        }
 
-	}
+    }
 
-	public enum Rating
-	{
-		/// <summary>
-		/// 嫌い
-		/// </summary>
-		Hate,
-		/// <summary>
-		/// 普通
-		/// </summary>
-		Normal,
-		/// <summary>
-		/// 友達
-		/// </summary>
-		Like,
-		/// <summary>
-		/// 親友
-		/// </summary>
-		BestFriend,
-		/// <summary>
-		/// ご主人様
-		/// </summary>
-		Partner, 
-	}
+    public enum Rating
+    {
+        /// <summary>
+        /// 嫌い
+        /// </summary>
+        Hate,
+        /// <summary>
+        /// 普通
+        /// </summary>
+        Normal,
+        /// <summary>
+        /// 友達
+        /// </summary>
+        Like,
+        /// <summary>
+        /// 親友
+        /// </summary>
+        BestFriend,
+        /// <summary>
+        /// ご主人様
+        /// </summary>
+        Partner,
+    }
 
 }
