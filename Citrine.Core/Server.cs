@@ -31,12 +31,12 @@ namespace Citrine.Core
         /// <summary>
         /// バージョンを取得します。
         /// </summary>
-        public static string Version => "2.4.0";
+        public static string Version => "2.5.0";
 
         /// <summary>
         /// XelticaBot 換算でのバージョン表記を取得します。
         /// </summary>
-        public static string VersionAsXelticaBot => "3.5.0";
+        public static string VersionAsXelticaBot => "3.6.0";
 
         /// <summary>
         /// bot を初期化します。
