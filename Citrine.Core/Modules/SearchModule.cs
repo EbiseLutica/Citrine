@@ -81,6 +81,8 @@ namespace Citrine.Core.Modules
 				return default;
 			}
 			var pages = q["pages"].First.First;
+			if (pages["extract"] == default)
+				return default;
 			var text = pages["extract"].ToObject<string>();
 			var title = pages["title"].ToObject<string>();
 
