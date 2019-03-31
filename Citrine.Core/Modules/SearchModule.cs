@@ -62,7 +62,7 @@ namespace Citrine.Core.Modules
 			Console.WriteLine(CreateUrl(CalcApiUrl, query));
 			var json = JsonConvert.DeserializeObject<CalcModel>(res);
 			if (json.Status > 0)
-				return json.Status == 60 ? $"{json.Expression} は計算できないよ..." : default;
+				return json.Status == 60 ? $"{query} は計算できないよ..." : default;
 			return $"{json.Expression} = {json.Value[0].CalculatedValue}";
 		}
 
