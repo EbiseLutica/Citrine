@@ -95,7 +95,7 @@ namespace Citrine.Core.Modules
 			return $@"「{title}」について調べてきたよ〜.
 > {text}
 
-出典: https://ja.wikipedia.org/wiki/{HttpUtility.UrlEncode(title)}";
+出典: https://ja.wikipedia.org/wiki/{HttpUtility.UrlEncode(title.Replace(" ", "_"))}";
 		}
 
 		public static string CreateUrl(string path, params string[] pars) => string.Format(path, pars.Select(HttpUtility.UrlEncode).ToArray());
