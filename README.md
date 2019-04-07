@@ -12,7 +12,7 @@
 - [ ] Mastodon
 - [ ] Discord
 - [ ] Slack
-- [ ] Standalone
+- [x] Standalone
 - [ ] LINE
 - [ ] Skype
 - [ ] Twitter

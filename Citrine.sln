@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disboard", "disboard\Source
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disboard.Misskey", "disboard\Source\Disboard.Misskey\Disboard.Misskey.csproj", "{628D7FC6-E046-4CB8-93E4-19C97AE9344A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Standalone", "Citrine.Standalone\Citrine.Standalone.csproj", "{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,5 +33,9 @@ Global
 		{628D7FC6-E046-4CB8-93E4-19C97AE9344A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{628D7FC6-E046-4CB8-93E4-19C97AE9344A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{628D7FC6-E046-4CB8-93E4-19C97AE9344A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
