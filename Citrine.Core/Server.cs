@@ -146,7 +146,6 @@ namespace Citrine.Core
         {
             // React
             // hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
-            Console.WriteLine($"Mentioned from @{mention.User.Name}");
             await Task.Delay(1000);
 
             // 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
@@ -187,7 +186,6 @@ namespace Citrine.Core
 
         public async Task HandleDmAsync(IPost post, IShell shell)
         {
-            Console.WriteLine($"Mentioned from @{post.User.Name}");
             await Task.Delay(1000);
 
             // 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン

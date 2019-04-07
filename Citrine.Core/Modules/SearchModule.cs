@@ -16,8 +16,16 @@ namespace Citrine.Core.Modules
 		private static readonly HttpClient TheClient = new HttpClient();
 		private static readonly string CalcApiUrl = "http://www.rurihabachi.com/web/webapi/calculator/json?exp={0}";
 		private static readonly string WikipediaApiUrl = "https://ja.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
-		private static readonly Regex regexMath = new Regex(@"([1234567890\+\-\*/\(\)\^piesqrtlogabnc]+?)(っ?て|と?は|[=＝])");
+		private static readonly string EnWikipediaApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
+		private static readonly string NicopediaApiUrl = "http://api.nicodic.jp/page.summary/n/a/{0}";
+		private static readonly Regex regexMath = new Regex(@"^([1234567890\+\-\*/\(\)\^piesqrtlogabnc]+?)(っ?て|と?は|[=＝])");
 		private static readonly Regex regexPedia = new Regex(@"(.+?)(っ?て|と?は)(何|なに|なん|誰|だれ|どなた|何方)");
+
+		private static readonly (string regex, string value)[] myDictionary = {
+			("シトリン|citrine|しとりん", "僕の名前だよ. 詳しくは https://xeltica.work/char.html?citrine を見るといいかも."),
+			("ゼルチカ|ぜるちか|xeltica|ぜるち", "僕の生みの親だよ."),
+			("生命、?宇宙、?そして万物についての究極の疑問の(答|こた)え|answer to the ultimate question of life,? the universe,? and everything|人類、?宇宙、?(全|すべ)ての(答|こた)え", "42"),
+		};
 
 		public SearchModule()
 		{
@@ -46,7 +54,10 @@ namespace Citrine.Core.Modules
 				else if (mpedia.Success)
 				{
 					query = mpedia.Groups[1].Value.TrimMentions();
-					response = await FromWikipediaAsync(query);
+					response = FromMyKnowledge(query);
+					response = response ?? await FromWikipediaAsync(query, WikipediaApiUrl, "ja");
+					response = response ?? await FromWikipediaAsync(query, EnWikipediaApiUrl, "en");
+					response = response ?? await FromNicopediaAsync(query);
 				}
 
 				response = response ?? $"{query} について調べてみたけどわからなかった. ごめん...";
@@ -56,19 +67,39 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
+		private string FromMyKnowledge(string query)
+			=> myDictionary.FirstOrDefault(dic => Regex.IsMatch(query, dic.regex)).value;
+
+		private async Task<string> FromNicopediaAsync(string query)
+		{
+			var json = await (await TheClient.GetAsync(CreateUrl(NicopediaApiUrl, query))).Content.ReadAsStringAsync();
+			// JSONP なので対策
+			json = json.Remove(json.Length - 2, 2).Remove(0, 2);
+			if (json.Trim() == "null")
+				return null;
+			var res = JObject.Parse(json);
+			var summary = res["summary"].ToObject<string>();
+			var title = res["title"].ToObject<string>().Replace(" ", "_");
+			return $@"「{title}」について調べてきたよ〜.
+> {summary}...
+
+出典: https://dic.nicovideo.jp/a/{HttpUtility.UrlEncode(title)}
+";
+			
+		}
+
 		private async Task<string> FromCalcAsync(string query)
 		{
 			var res = await (await TheClient.GetAsync(CreateUrl(CalcApiUrl, query))).Content.ReadAsStringAsync();
-			Console.WriteLine(CreateUrl(CalcApiUrl, query));
 			var json = JsonConvert.DeserializeObject<CalcModel>(res);
 			if (json.Status > 0)
 				return json.Status == 60 ? $"{query} は計算できないよ..." : default;
 			return $"{json.Expression} = {json.Value[0].CalculatedValue}";
 		}
 
-		public async Task<string> FromWikipediaAsync(string query)
+		public async Task<string> FromWikipediaAsync(string query, string url, string langCode)
 		{
-			var res = JObject.Parse(await (await TheClient.GetAsync(CreateUrl(WikipediaApiUrl, query))).Content.ReadAsStringAsync());
+			var res = JObject.Parse(await (await TheClient.GetAsync(CreateUrl(url, query))).Content.ReadAsStringAsync());
 			if (!res.ContainsKey("query"))
 			{
 				Console.WriteLine("res has no query");
@@ -97,7 +128,7 @@ namespace Citrine.Core.Modules
 			return $@"「{title}」について調べてきたよ〜.
 > {text}
 
-出典: https://ja.wikipedia.org/wiki/{HttpUtility.UrlEncode(title.Replace(" ", "_"))}";
+出典: https://{langCode}.wikipedia.org/wiki/{HttpUtility.UrlEncode(title.Replace(" ", "_"))}";
 		}
 
 		public static string CreateUrl(string path, params string[] pars) => string.Format(path, pars.Select(HttpUtility.UrlEncode).ToArray());
@@ -121,7 +152,6 @@ namespace Citrine.Core.Modules
 				public string CalculatedValue { get; set; }
 			}
 		}
-
 
 	}
 }
