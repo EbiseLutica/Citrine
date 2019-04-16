@@ -1,6 +1,6 @@
 # Citrine
 
-[Citrine](https://citringo.net/char.html?citrine) は、オープンソースの嫁型chatbotです。
+[Citrine](https://citringo.net/char.html?citrine) は、オープンソースの娘型chatbotです。
 
 コア部分は特定のソーシャルメディアと切り離された独自のAPIで構成され、多くのソーシャルメディア上で動作させることができるよう設計されています。
 
