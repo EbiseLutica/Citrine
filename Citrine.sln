@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disboard.Misskey", "disboar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Standalone", "Citrine.Standalone\Citrine.Standalone.csproj", "{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disboard.Mastodon", "disboard\Source\Disboard.Mastodon\Disboard.Mastodon.csproj", "{0B64CD7E-1EBC-4A4F-977F-02A9A9F2F186}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Citrine.Mastodon", "Citrine.Mastodon\Citrine.Mastodon.csproj", "{CFF9722D-F289-40DD-952E-5CF975A32F8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,5 +41,13 @@ Global
 		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38B9A44D-B5DD-4D0B-86CC-FFD8BC87C683}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B64CD7E-1EBC-4A4F-977F-02A9A9F2F186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B64CD7E-1EBC-4A4F-977F-02A9A9F2F186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B64CD7E-1EBC-4A4F-977F-02A9A9F2F186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B64CD7E-1EBC-4A4F-977F-02A9A9F2F186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFF9722D-F289-40DD-952E-5CF975A32F8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFF9722D-F289-40DD-952E-5CF975A32F8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFF9722D-F289-40DD-952E-5CF975A32F8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFF9722D-F289-40DD-952E-5CF975A32F8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
