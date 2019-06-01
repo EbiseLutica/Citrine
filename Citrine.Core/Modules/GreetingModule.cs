@@ -202,7 +202,7 @@ namespace Citrine.Core.Modules
 				"$item$でも食べろ.", 
 				""
 			}));
-			Add(new PrimitivePattern("(可愛|かわい)い", "て、照れます...", "嬉しい❤", "...褒めても何も出ないけど."));
+			Add(new PrimitivePattern("(可愛|かわい)い", "て, 照れます...", "嬉しい❤", "...褒めても何も出ないけど."));
 			Add(new PrimitivePattern("(ほ|褒)め", "えらいっ!", "えらいっ! ﾖｼﾖｼ", "...嫌だ."));
 			Add(new PrimitivePattern("ping", "PONG!", null, null));
 			Add(new PrimitivePattern("___test___nothing___to___say___", null, null, null));
@@ -210,7 +210,7 @@ namespace Citrine.Core.Modules
 			Add(new MultiplePattern("[ね寝][ろて]|[寝ね]なさい|おねんねして", new[] {
 				"うーん, まだねむくないんですよ",
 				"だいじょうぶです, まだまだがんばれます",
-				"お気遣いありがとうございます, でも、まだ起きてたいんです",
+				"お気遣いありがとうございます, でも, まだ起きてたいんです",
 				"まだやることがあって..."
 			}, new[] {
 				"そうしよっかな...",
@@ -391,7 +391,7 @@ namespace Citrine.Core.Modules
 			message = message ?? pattern.Reply ?? "null";
 
 			message = message
-						.Replace("$user$", "あなた")
+						.Replace("$user$", core.GetNicknameOf(n.User.Id))
 						.Replace("$prefix$", FortuneModule.ItemPrefixes.Random())
 						.Replace("$item$", FortuneModule.Items.Random());
 
