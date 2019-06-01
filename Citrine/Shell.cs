@@ -30,8 +30,11 @@ namespace Citrine.Misskey
 
 		public IUser Myself { get; private set; }
 
-        public Shell()
-        {
+        public Shell(ModuleBase[] additionalModule, MisskeyClient mi, User myself)
+        {				
+			core = new Server(additionalModule);
+			Misskey = mi;
+			Myself = new MiUser(myself);
             SubscribeStreams();
         }
 
@@ -63,12 +66,7 @@ namespace Citrine.Misskey
             // 呼ばないとストリームの初期化ができないらしい
 			await mi.Streaming.ConnectAsync();
 
-			var sh = new Shell
-			{
-				core = new Server(additionalModule),
-				Misskey = mi,
-				Myself = new MiUser(myself),
-			};
+			var sh = new Shell(additionalModule, mi, myself);
 			return sh;
 		}
 
