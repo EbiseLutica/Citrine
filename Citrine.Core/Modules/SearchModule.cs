@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,10 +9,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Citrine.Core.Modules
 {
-	public class SearchModule : ModuleBase
+    public class SearchModule : ModuleBase
 	{
 		public override int Priority => -100;
-		private static readonly HttpClient TheClient = new HttpClient();
+
 		private static readonly string CalcApiUrl = "http://www.rurihabachi.com/web/webapi/calculator/json?exp={0}";
 		private static readonly string WikipediaApiUrl = "https://ja.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
 		private static readonly string EnWikipediaApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
@@ -30,7 +29,6 @@ namespace Citrine.Core.Modules
 		public SearchModule()
 		{
 			// UA を指定する
-			TheClient.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} XelticaBot/{Server.VersionAsXelticaBot} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
 		}
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
@@ -72,7 +70,7 @@ namespace Citrine.Core.Modules
 
 		private async Task<string> FromNicopediaAsync(string query)
 		{
-			var json = await (await TheClient.GetAsync(CreateUrl(NicopediaApiUrl, query))).Content.ReadAsStringAsync();
+			var json = await (await Server.Http.GetAsync(CreateUrl(NicopediaApiUrl, query))).Content.ReadAsStringAsync();
 			// JSONP なので対策
 			json = json.Remove(json.Length - 2, 2).Remove(0, 2);
 			if (json.Trim() == "null")
@@ -90,7 +88,7 @@ namespace Citrine.Core.Modules
 
 		private async Task<string> FromCalcAsync(string query)
 		{
-			var res = await (await TheClient.GetAsync(CreateUrl(CalcApiUrl, query))).Content.ReadAsStringAsync();
+			var res = await (await Server.Http.GetAsync(CreateUrl(CalcApiUrl, query))).Content.ReadAsStringAsync();
 			var json = JsonConvert.DeserializeObject<CalcModel>(res);
 			if (json.Status > 0)
 				return json.Status == 60 ? $"{query} は計算できないよ..." : default;
@@ -99,7 +97,7 @@ namespace Citrine.Core.Modules
 
 		public async Task<string> FromWikipediaAsync(string query, string url, string langCode)
 		{
-			var res = JObject.Parse(await (await TheClient.GetAsync(CreateUrl(url, query))).Content.ReadAsStringAsync());
+			var res = JObject.Parse(await (await Server.Http.GetAsync(CreateUrl(url, query))).Content.ReadAsStringAsync());
 			if (!res.ContainsKey("query"))
 			{
 				Console.WriteLine("res has no query");

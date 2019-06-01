@@ -25,7 +25,7 @@ namespace Citrine.Core.Modules
                 if (m.Success)
                 {
                     var url = $"https://script.google.com/macros/s/AKfycbweJFfBqKUs5gGNnkV2xwTZtZPptI6ebEhcCU2_JvOmHwM2TCk/exec?text={HttpUtility.UrlEncode(m.Groups[1].Value)}&source=&target={lang.code}";
-                    var result = await (await cli.GetAsync(url)).Content.ReadAsStringAsync();
+                    var result = await (await Server.Http.GetAsync(url)).Content.ReadAsStringAsync();
                     await shell.ReplyAsync(n, result);
                     return true;
                 }
@@ -35,8 +35,6 @@ namespace Citrine.Core.Modules
             // 多分競合しないから常にfalse
             return false;
         }
-
-        private readonly HttpClient cli = new HttpClient();
         private (string pattern, string code)[] langs = {
             ("アイスランド語", "is"),
             ("アイルランド語", "ga"),

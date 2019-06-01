@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
@@ -14,19 +15,13 @@ namespace Citrine.Core
     /// </summary>
     public class Server
     {
-        readonly string adminId;
-
         /// <summary>
         /// 読み込まれているバージョンを列挙します。
         /// </summary>
         /// <value>The modules.</value>
         public IEnumerable<ModuleBase> Modules { get; }
 
-        List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
-
-        List<ModuleBase> AllLoadedModules;
-
-        List<string> unloadedModules;
+		public List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
 
         /// <summary>
         /// バージョンを取得します。
@@ -36,7 +31,11 @@ namespace Citrine.Core
         /// <summary>
         /// XelticaBot 換算でのバージョン表記を取得します。
         /// </summary>
-        public static string VersionAsXelticaBot => "3.6.0";
+
+        static Server()
+        {
+			Http.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} XelticaBot/{Server.VersionAsXelticaBot} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
+        }
 
         /// <summary>
         /// bot を初期化します。
@@ -204,6 +203,10 @@ namespace Citrine.Core
             }
         }
 
+		public static readonly HttpClient Http = new HttpClient();
+		List<ModuleBase> AllLoadedModules;
+		List<string> unloadedModules;
+		readonly string adminId;
     }
 
     public enum Rating
