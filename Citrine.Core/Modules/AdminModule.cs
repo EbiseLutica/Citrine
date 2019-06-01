@@ -51,53 +51,7 @@ namespace Citrine.Core.Modules
                 await shell.ReplyAsync(n, Server.Http.DefaultRequestHeaders.UserAgent.ToString());
                 return true;
             }
-
-            const string usage = "/love <inc|dec|set|query> <id> <amount>";
-            if (cmd[0] == "/love")
-            {
-                var output = usage;
-                if (core.IsAdmin(n.User))
-                {
-                    if (cmd.Length > 2)
-                    {
-                        if (cmd[2] == "me")
-                            cmd[2] = n.User.Id;
-                        switch (cmd[1])
-                        {
-                            case "inc":
-                                if (cmd.Length > 3)
-                                {
-                                    core.Like(cmd[2], int.Parse(cmd[3]));
-                                    output = "OK";
-                                }
-                                break;
-                            case "dec":
-                                if (cmd.Length > 3)
-                                {
-                                    core.Dislike(cmd[2], int.Parse(cmd[3]));
-                                    output = "OK";
-                                }
-                                break;
-                            case "set":
-                                if (cmd.Length > 3)
-                                {
-                                    core.Like(cmd[2], int.Parse(cmd[3]) - core.GetRatingNumber(cmd[2]));
-                                    output = "OK";
-                                }
-                                break;
-                            case "query":
-                                output = core.GetRatingNumber(cmd[2]).ToString();
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    output = "permission denied";
-                }
-                await shell.ReplyAsync(n, output);
-                return true;
-            }
+            
             return false;
         }
 

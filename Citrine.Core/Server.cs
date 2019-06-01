@@ -30,12 +30,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.7.0";
+		public static string Version => "2.8.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.7.0";
+		public static string VersionAsXelticaBot => "3.8.0";
 
         static Server()
         {
@@ -94,24 +94,13 @@ namespace Citrine.Core
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(IUser user) => IsAdmin(user.Name);
-
-		public bool IsAdmin(string userId) => userId.ToLower() == adminId.ToLower();
+		public bool IsAdmin(IUser user) => user.Id.ToLower() == adminId.ToLower() && string.IsNullOrEmpty(user.Host);
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
 		/// </summary>
-		public Rating GetRatingOf(IUser user) => GetRatingOf(user.Name);
+		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
 
-		/// <summary>
-		/// 指定したユーザーの好感度を取得します。
-		/// </summary>
-		public Rating GetRatingOf(string userId) => IsAdmin(userId) ? Rating.Partner : Rating.Normal;
-
-		/// <summary>
-		/// 指定したユーザーの好感度を取得します。
-		/// </summary>
-		public int GetRatingNumber(string userId) => IsAdmin(userId) ? 100 : 0;
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。
