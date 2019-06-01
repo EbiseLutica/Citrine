@@ -15,6 +15,6 @@ namespace Citrine.Core.Modules
 
         public virtual async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core) => false;
 
-        public virtual async Task<bool> OnDmReceivedAsync(IPost n, IShell shell, Server core) => false;
+        public virtual async Task<bool> OnDmReceivedAsync(IPost n, IShell shell, Server core) => await ActivateAsync(n, shell, core);
     }
 }
