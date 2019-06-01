@@ -23,6 +23,8 @@ namespace Citrine.Core
 
 		public List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
 
+		public Dictionary<string, string> NicknameMap { get; }
+
         /// <summary>
         /// バージョンを取得します。
         /// </summary>
@@ -67,6 +69,18 @@ namespace Citrine.Core
             // unloaded でないかどうか
             Modules = AllLoadedModules.Where(m => unloadedModules.All(um => um.ToLower() != m.GetType().Name.ToLower()));
 
+			NicknameMap = new Dictionary<string, string>();
+			if (File.Exists("./nicknames"))
+			{
+				var lines = File.ReadAllLines("./nicknames");
+				lines.Select(l => {
+					var kv = l.Split(',');
+					return new KeyValuePair<string, string>(kv[0], string.Concat(kv.Skip(1)));
+				})
+				.ForEach(kv => NicknameMap[kv.Key] = kv.Value);
+				Console.WriteLine($"Load {lines.Length} user's nickname");
+			}
+
             Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
         }
 
@@ -105,6 +119,34 @@ namespace Citrine.Core
         /// ユーザーに対する好感度を下げます。
         /// </summary>
         public void Dislike(string userId, int amount = 1) { Like(userId, -amount); }
+
+		/// <summary>
+		/// ユーザーのニックネームを取得します。
+		/// </summary>
+		public string GetNicknameOf(IUser user) => NicknameMap.ContainsKey(user.Id) ? NicknameMap[user.Id] : $"{user.Name}さん";
+
+		/// <summary>
+		/// ユーザーのニックネームを設定します。
+		/// </summary>
+		public void SetNicknameOf(IUser user, string name)
+		{
+			NicknameMap[user.Id] = name;
+			SaveNicknames();
+		}
+
+		/// <summary>
+		/// ユーザーのニックネームを破棄します。
+		/// </summary>
+		public void ResetNicknameOf(IUser user)
+		{
+			NicknameMap.Remove(user.Id);
+			SaveNicknames();
+		} 
+
+		private void SaveNicknames()
+		{
+			File.WriteAllLines("./nicknames", NicknameMap.Select(kv => $"{kv.Key},{kv.Value}"));
+		}
 
         /// <summary>
         /// モジュールをアンロードします。
