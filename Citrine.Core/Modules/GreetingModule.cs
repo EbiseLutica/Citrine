@@ -203,7 +203,7 @@ namespace Citrine.Core.Modules
 				""
 			}));
 			Add(new PrimitivePattern("(可愛|かわい)い", "て、照れます...", "嬉しい❤", "...褒めても何も出ないけど."));
-			Add(new PrimitivePattern("(ほ|褒)めて", "えらいっ!", "えらいっ! ﾖｼﾖｼ", "...嫌だ."));
+			Add(new PrimitivePattern("(ほ|褒)め", "えらいっ!", "えらいっ! ﾖｼﾖｼ", "...嫌だ."));
 			Add(new PrimitivePattern("ping", "PONG!", null, null));
 			Add(new PrimitivePattern("___test___nothing___to___say___", null, null, null));
 
