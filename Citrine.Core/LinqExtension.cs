@@ -12,6 +12,14 @@ namespace Citrine.Core
 
 		public static T Random<T>(this IEnumerable<T> list, Random r = null) => !list.Any() ? default : list.Skip((r ?? LinqExtension.r).Next(list.Count() - 1)).First();
 
+		public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+		{
+			foreach (var value in enumerable)
+			{
+				action(value);
+			}
+		}
+
 		public static IEnumerable<char> Wa()
 		{
 			yield return '#';
