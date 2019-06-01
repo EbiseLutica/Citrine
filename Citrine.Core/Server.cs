@@ -84,7 +84,7 @@ namespace Citrine.Core
         /// <summary>
         /// 指定したユーザーの好感度を取得します。
         /// </summary>
-        public Rating GetRatingOf(IUser user) => GetRatingOf(user.Id);
+		public Rating GetRatingOf(IUser user) => GetRatingOf(user.Name);
 
         /// <summary>
         /// 指定したユーザーの好感度を取得します。
