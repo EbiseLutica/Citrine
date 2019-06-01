@@ -17,7 +17,7 @@ namespace Citrine.Core.Modules
 
             var cmd = text.Split(' ');
 
-            if (text.StartsWith("/restart", StringComparison.Ordinal))
+            if (text.StartsWith("/stop", StringComparison.Ordinal))
             {
                 if (core.IsAdmin(n.User))
                 {
