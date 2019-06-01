@@ -10,7 +10,7 @@ namespace Citrine.Core.Modules
         {
             if (n.Text == null)
                 return false;
-            var m = Regex.Match(n.Text, @"(.+)(って|と)呼[べびん]");
+            var m = Regex.Match(n.Text.TrimMentions(), @"(.+)(って|と)呼[べびん]");
             if (m.Success)
             {
                 var nick = m.Groups[1].Value;
