@@ -30,7 +30,7 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"勉強📒: {GetStar(study, 5)}");
 				builder.AppendLine($"ラッキーアイテム💎: {ItemPrefixes.Random(r)}{Items.Random(r)}");
 
-				await shell.ReplyAsync(n, builder.ToString(), $"僕が今日の{(n.User.Name ?? n.User.ScreenName)}さんの運勢を占ったよ:");
+				await shell.ReplyAsync(n, builder.ToString(), $"僕が今日の{core.GetNicknameOf(n.User)}の運勢を占ったよ:");
 
 				return true;
 			}
