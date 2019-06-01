@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -42,7 +42,7 @@ namespace Citrine.Core.Modules
 
             if (text.StartsWith("/version", StringComparison.Ordinal) || text.StartsWith("/v", StringComparison.Ordinal))
             {
-                await shell.ReplyAsync(n, $"{Server.Version}");
+                await shell.ReplyAsync(n, $"Citrine v{Server.Version} / XelticaBot v{Server.VersionAsXelticaBot}");
                 return true;
             }
 
