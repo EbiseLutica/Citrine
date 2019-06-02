@@ -26,6 +26,7 @@
 ```
 git clone https://github.com/Xeltica/Citrine.git
 cd Citrine
+git submodule update --init
 dotnet build
 dotnet run --project Citrine
 ```
