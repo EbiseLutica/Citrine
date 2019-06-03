@@ -18,7 +18,7 @@ namespace Citrine.Core
 	public class Server
 	{
 		/// <summary>
-		/// 読み込まれているバージョンを列挙します。
+		/// 読み込まれているモジュールを列挙します。
 		/// </summary>
 		/// <value>The modules.</value>
 		public IEnumerable<ModuleBase> Modules { get; }
