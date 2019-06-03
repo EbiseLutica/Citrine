@@ -11,9 +11,10 @@ namespace Citrine.Core
 
 		public override PermissionFlag Permission => PermissionFlag.AdminOnly;
 
-		public override async Task<string> OnActivatedAsync(IPost source, Server core, IShell shell, string[] args, string body)
+		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			await shell.ReplyAsync(source, "またねー。");
+			if (sender is PostCommandSender s)
+				await shell.ReplyAsync(s.Post, "またねー。");
 			return null;
 		}
 	}

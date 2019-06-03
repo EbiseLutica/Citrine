@@ -22,7 +22,7 @@ namespace Citrine.Misskey
 
 	public class Shell : IShell
 	{
-		public static string Version => "1.6.0";
+		public static string Version => "2.0.0";
 
 		public MisskeyClient Misskey { get; private set; }
 
@@ -32,7 +32,7 @@ namespace Citrine.Misskey
 
 		public Shell(ModuleBase[] additionalModule, MisskeyClient mi, User myself)
 		{
-			core = new Server(additionalModule);
+			core = new Server(this, additionalModule);
 			Misskey = mi;
 			Myself = new MiUser(myself);
 			SubscribeStreams();
@@ -223,7 +223,7 @@ namespace Citrine.Misskey
 			// リプライ
 			reply = main.OfType<MentionMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleMentionAsync(new MiPost(mes), this));
+				.Subscribe((mes) => core.HandleMentionAsync(new MiPost(mes)));
 			WriteLine("リプライ監視開始");
 
 			// Timeline
@@ -231,7 +231,7 @@ namespace Citrine.Misskey
 				.OfType<NoteMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleTimelineAsync(new MiPost(mes), this));
+				.Subscribe((mes) => core.HandleTimelineAsync(new MiPost(mes)));
 			WriteLine("タイムライン監視開始");
 
 			// Direct Message
@@ -242,7 +242,7 @@ namespace Citrine.Misskey
 					if (mes.UserId == Myself.Id)
 						return;
 					await Misskey.Messaging.Messages.ReadAsync(mes.Id);
-					await core.HandleDmAsync(new MiDmPost(mes), this);
+					await core.HandleDmAsync(new MiDmPost(mes));
 				});
 			WriteLine("トーク監視開始");
 		}

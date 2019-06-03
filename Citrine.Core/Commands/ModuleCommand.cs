@@ -14,7 +14,7 @@ namespace Citrine.Core
 
 		public override string[] Aliases { get; } = { "mods" };
 
-		public override async Task<string> OnActivatedAsync(IPost source, Server core, IShell shell, string[] args, string body)
+		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			var mods = core.Modules.Select(mod => mod.GetType().Name);
 			return $"モジュール数: {mods.Count()}\n{string.Join(",", mods)}";

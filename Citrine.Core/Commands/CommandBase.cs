@@ -42,7 +42,7 @@ namespace Citrine.Core
 		/// <param name="args">引数。</param>
 		/// <param name="body">コマンドに渡された、名前を除く全データ。</param>
 		/// <returns>リプライに含まれる文字列。<c>null</c> を返した場合リプライが行われません。</returns>
-		public abstract Task<string> OnActivatedAsync(IPost source, Server core, IShell shell, string[] args, string body);
+		public abstract Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body);
 	}
 
 	/// <summary>

@@ -14,7 +14,7 @@ namespace Citrine.Standalone
 		{
 			WriteLine($"Citrine.Standalone version {Version}");
 			var shell = new Shell();
-			var server = new Server();
+			var server = new Server(shell);
 			WriteLine($"Citrine version {Core.Server.Version}");
 			WriteLine($"XelticaBot version {Core.Server.VersionAsXelticaBot}");
 			WriteLine("(C)2019 Xeltica");
@@ -34,8 +34,8 @@ namespace Citrine.Standalone
 				WriteLine($"{post.User.ScreenName}: {post.Text}");
 				await Task.WhenAll
 				(
-					server.HandleMentionAsync(post, shell),
-					server.HandleTimelineAsync(post, shell)
+					server.HandleMentionAsync(post),
+					server.HandleTimelineAsync(post)
 				);
 			}
 		}

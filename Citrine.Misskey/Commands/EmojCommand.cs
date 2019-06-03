@@ -29,11 +29,13 @@ namespace Citrine.Misskey
 
 		public override PermissionFlag Permission => PermissionFlag.LocalOnly;
 
-		public override async Task<string> OnActivatedAsync(IPost source, Server core, IShell shell, string[] args, string body)
+		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
+			if (!(sender is PostCommandSender p))
+				return "このコマンドはユーザーが実行してください.";
 			var u = (shell.Myself as MiUser).Native;
 			var s = shell as Shell;
-			var note = (source as MiPost).Native;
+			var note = (p.Post as MiPost).Native;
 
 			if (u == null || note == null || s == null)
 			{
@@ -78,7 +80,7 @@ namespace Citrine.Misskey
 			{
 				return "僕はここの管理者じゃないから, それはできないんだ...ごめんね";
 			}
-			await shell.ReplyAsync(source, output, cw);
+			await shell.ReplyAsync(p.Post, output, cw);
 			return null;
 		}
 

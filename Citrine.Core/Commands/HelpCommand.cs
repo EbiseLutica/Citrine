@@ -17,7 +17,7 @@ namespace Citrine.Core
 
 		public override string[] Aliases { get; } = { "h" };
 
-		public override async Task<string> OnActivatedAsync(IPost source, Server core, IShell shell, string[] args, string body)
+		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			if (args.Length == 0)
 			{

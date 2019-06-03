@@ -11,9 +11,13 @@ namespace Citrine.Core
 
 		public override string Usage => "/dump";
 
-		public override async Task<string> OnActivatedAsync(IPost n, Server core, IShell shell, string[] args, string body)
+		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-				Console.WriteLine($@"Dumped Post
+			if (!(sender is PostCommandSender p))
+				return "このコマンドはユーザーが実行してください.";
+			var n = p.Post;
+
+			Console.WriteLine($@"Dumped Post
 id: {n.Id}
 name: {n.User.Name ?? "NULL"}
 screenName: {n.User.ScreenName ?? "NULL"}
