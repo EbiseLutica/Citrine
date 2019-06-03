@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
+#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
 #pragma warning disable CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
 
 using System;
@@ -183,7 +183,15 @@ namespace Citrine.Misskey
 
 			var session = await mi.Auth.Session.GenerateAsync();
 
-			Server.OpenUrl(session.Url);
+            try
+            {
+                Server.OpenUrl(session.Url);
+            }
+            catch (Exception)
+            {
+                WriteLine("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
+                WriteLine("> " + session.Url);
+            }
 
 			WriteLine("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールで何かキーを押してください。");
 
