@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
 
@@ -17,6 +18,7 @@ namespace Citrine.Core
 		{
 			if (sender is PostCommandSender s)
 				await shell.ReplyAsync(s.Post, "またねー。");
+			Environment.Exit(0);
 			return null;
 		}
 	}
