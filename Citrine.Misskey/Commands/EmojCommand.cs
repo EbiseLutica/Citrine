@@ -54,7 +54,7 @@ namespace Citrine.Misskey
 					switch (args[0])
 					{
 						case "add":
-							(output, cw) = await AddAsync(args, note, u, s);
+							(output, cw) = await AddAsync(args, note, s);
 							break;
 						case "list":
 							var list = await s.Misskey.Admin.Emoji.ListAsync();
@@ -62,7 +62,9 @@ namespace Citrine.Misskey
 							cw = $"絵文字総数: {list.Count}個";
 							break;
 						case "copyfrom":
-							(output, cw) = await CopyFromAsync(args, note, u, s);
+							if (sender.IsAdmin)
+								throw new AdminOnlyException();
+							(output, cw) = await CopyFromAsync(args, s);
 							break;
 						default:
 							throw new CommandException();
@@ -86,7 +88,7 @@ namespace Citrine.Misskey
 
 	// emoji add <name> <url> [aliases...]
 	// emoji add <name> (with a file)
-	private async Task<(string, string)> AddAsync(string[] args, Note note, User user, Shell shell)
+	private async Task<(string, string)> AddAsync(string[] args, Note note, Shell shell)
 		{
 			if (args.Length < 2)
 				throw new CommandException();
@@ -104,14 +106,8 @@ namespace Citrine.Misskey
 		}
 
 		// /emoji copyfrom <host>
-		private async Task<(string, string)> CopyFromAsync(string[] args, Note note, User user, Shell s)
+		private async Task<(string, string)> CopyFromAsync(string[] args, Shell s)
 		{
-			var isAdmin = note.User.IsAdmin ?? false;
-			var isMod = note.User.IsModerator ?? false;
-			// 危険だから
-			if (!isAdmin && !isMod)
-				throw new AdminOnlyException();
-
 			if (args.Length < 2)
 				throw new CommandException();
 

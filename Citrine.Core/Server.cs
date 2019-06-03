@@ -55,6 +55,7 @@ namespace Citrine.Core
 		/// </summary>
 		public Server(IShell shell, params ModuleBase[] additionalModules)
 		{
+			Shell = shell;
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
@@ -122,12 +123,13 @@ namespace Citrine.Core
 			var cnl = c.Name.ToLowerInvariant();
 			var nl = n.ToLowerInvariant();
 			var nameIsMatch = c.IgnoreCase ? (cnl == nl) : cn == n;
-			var lowerAliases = c.Aliases.Select(a => a.ToLowerInvariant());
+			var lowerAliases = c.Aliases?.Select(a => a.ToLowerInvariant());
 			return c.Aliases == default ? nameIsMatch : nameIsMatch || (c.IgnoreCase ? lowerAliases.Contains(nl) : c.Aliases.Contains(n));
 		});
 
 		public async Task<string> ExecCommand(ICommandSender sender, string command)
 		{
+
 			if (command == null)
 				throw new ArgumentNullException(nameof(command));
 			if (command.StartsWith("/"))
@@ -136,7 +138,45 @@ namespace Citrine.Core
 			var cmd = TryGetCommand(splitted.First());
 			if (cmd == default)
 				throw new NoSuchCommandException();
-			return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), string.Join(" ", splitted));
+
+			if (cmd.Permission.HasFlag(PermissionFlag.AdminOnly) && !sender.IsAdmin)
+				throw new AdminOnlyException();
+
+			if (sender is PostCommandSender p)
+			{
+				if (cmd.Permission.HasFlag(PermissionFlag.LocalOnly) && !string.IsNullOrEmpty(p.User.Host))
+					throw new LocalOnlyException();
+
+				if (cmd.Permission.HasFlag(PermissionFlag.RemoteOnly) && string.IsNullOrEmpty(p.User.Host))
+					throw new RemoteOnlyException();
+			}
+
+			try
+			{
+				return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), string.Join(" ", splitted));
+			}
+			catch (CommandException)
+			{
+				return cmd.Usage;
+			}
+		}
+
+		/// <summary>
+		/// コマンドを実行します。
+		/// </summary>
+		/// <param name="command"></param>
+		/// <returns></returns>
+		public Task<string> ExecCommand(string command)
+		{
+			return ExecCommand(InternalCommandSender.Instance, command);
+		}
+
+		/// <summary>
+		/// Admin 権限としてコマンドを実行します。
+		/// </summary>
+		public Task<string> SudoCommand(string command)
+		{
+			return ExecCommand(SuperInternalCommandSender.Instance, command);
 		}
 
 		/// <summary>

@@ -52,7 +52,8 @@ namespace Citrine.Core
 	public enum PermissionFlag
 	{
 		Any = 0,
-		AdminOnly,
-		LocalOnly,
+		AdminOnly = 1,
+		LocalOnly = 2,
+		RemoteOnly = 4,
 	}
 }

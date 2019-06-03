@@ -8,9 +8,12 @@ namespace Citrine.Core
 
 		public IUser User => Post?.User;
 
-		public PostCommandSender(IPost post)
+		public bool IsAdmin { get; }
+
+		public PostCommandSender(IPost post, bool isAdmin)
 		{
 			Post = post;
+			IsAdmin = isAdmin;
 		}
     }
 }
