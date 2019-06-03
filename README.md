@@ -9,7 +9,7 @@
 チェックがついていないものは対応予定のもの
 
 - [x] Misskey
-- [ ] Mastodon
+- [x] Mastodon
 - [ ] Discord
 - [ ] Slack
 - [x] Standalone
@@ -30,6 +30,17 @@ git submodule update --init
 dotnet build
 dotnet run --project Citrine
 ```
+
+## Contributing
+
+-[不具合 / 要望](//github.com/xeltica/citrine/issues/new)
+-[プルリクエスト](//github.com/xeltica/citrine/compare)
+
+### これまでの貢献者
+
+- @u1-liquid
+
+[その他...](//github.com/Xeltica/Citrine/graphs/contributors)
 
 ## ライセンス
 
