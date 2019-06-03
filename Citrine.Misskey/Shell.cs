@@ -30,9 +30,11 @@ namespace Citrine.Misskey
 
 		public IUser Myself { get; private set; }
 
-		public Shell(ModuleBase[] additionalModule, MisskeyClient mi, User myself)
+		public Server Core { get; private set; }
+
+		public Shell(MisskeyClient mi, User myself)
 		{
-			core = new Server(this, additionalModule);
+			Core = new Server(this);
 			Misskey = mi;
 			Myself = new MiUser(myself);
 			SubscribeStreams();
@@ -42,7 +44,7 @@ namespace Citrine.Misskey
 		/// bot を初期化します。
 		/// </summary>
 		/// <returns>初期化された <see cref="Shell"/> のインスタンス。</returns>
-		public static async Task<Shell> InitializeAsync(params ModuleBase[] additionalModule)
+		public static async Task<Shell> InitializeAsync()
 		{
 			MisskeyClient mi;
 			try
@@ -66,16 +68,8 @@ namespace Citrine.Misskey
 			// 呼ばないとストリームの初期化ができないらしい
 			await mi.Streaming.ConnectAsync();
 
-			var sh = new Shell(additionalModule, mi, myself);
+			var sh = new Shell(mi, myself);
 			return sh;
-		}
-
-		/// <summary>
-		/// モジュールを追加します。
-		/// </summary>
-		public void AddModule(ModuleBase mod)
-		{
-			core.AddModule(mod);
 		}
 
 		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
@@ -223,7 +217,7 @@ namespace Citrine.Misskey
 			// リプライ
 			reply = main.OfType<MentionMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleMentionAsync(new MiPost(mes)));
+				.Subscribe((mes) => Core.HandleMentionAsync(new MiPost(mes)));
 			WriteLine("リプライ監視開始");
 
 			// Timeline
@@ -231,7 +225,7 @@ namespace Citrine.Misskey
 				.OfType<NoteMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleTimelineAsync(new MiPost(mes)));
+				.Subscribe((mes) => Core.HandleTimelineAsync(new MiPost(mes)));
 			WriteLine("タイムライン監視開始");
 
 			// Direct Message
@@ -242,12 +236,11 @@ namespace Citrine.Misskey
 					if (mes.UserId == Myself.Id)
 						return;
 					await Misskey.Messaging.Messages.ReadAsync(mes.Id);
-					await core.HandleDmAsync(new MiDmPost(mes));
+					await Core.HandleDmAsync(new MiDmPost(mes));
 				});
 			WriteLine("トーク監視開始");
 		}
 
 		private IDisposable followed, reply, tl, dm;
-		private Server core;
 	}
 }

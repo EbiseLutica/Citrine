@@ -53,13 +53,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// bot を初期化します。
 		/// </summary>
-		public Server(IShell shell, params ModuleBase[] additionalModules)
+		public Server(IShell shell)
 		{
 			Shell = shell;
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
-						.Concat(additionalModules)
 						.OrderBy(mod => mod.Priority)
 						.ToList();
 
@@ -92,9 +91,6 @@ namespace Citrine.Core
 				.ForEach(kv => NicknameMap[kv.Key] = kv.Value);
 				Console.WriteLine($"Load {lines.Length} user's nickname");
 			}
-
-			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
-			Console.WriteLine($"読み込まれたコマンド({Commands.Count()}): {string.Join(", ", Commands.Select(cmd => cmd.GetType().Name))})");
 		}
 
 		/// <summary>

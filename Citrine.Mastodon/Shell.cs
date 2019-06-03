@@ -30,9 +30,11 @@ namespace Citrine.Mastodon
 
 		public MastodonClient Mastodon { get; private set; }
 
-		public Shell(ModuleBase[] additionalModule, MastodonClient don, Account myself)
+		public Server Core { get; private set; }
+
+		public Shell(MastodonClient don, Account myself)
 		{
-			core = new Server(this, additionalModule);
+			Core = new Server(this);
             Mastodon = don;
             Myself = new DonUser(myself);
             SubscribeStreams();
@@ -42,7 +44,7 @@ namespace Citrine.Mastodon
 		/// bot を初期化します。
 		/// </summary>
 		/// <returns>初期化された <see cref="Shell"/> のインスタンス。</returns>
-		public static async Task<Shell> InitializeAsync(params ModuleBase[] additionalModule)
+		public static async Task<Shell> InitializeAsync()
 		{
 			MastodonClient don;
 			try
@@ -64,13 +66,8 @@ namespace Citrine.Mastodon
 
 			WriteLine($"bot ユーザーを取得しました");
 
-            var sh = new Shell(additionalModule, don, myself);
+            var sh = new Shell(don, myself);
 			return sh;
-		}
-
-		public void AddModule(ModuleBase mod)
-		{
-			core.AddModule(mod);
 		}
 
 		public async Task<IPost> GetPostAsync(string id)
@@ -174,7 +171,7 @@ namespace Citrine.Mastodon
 			reply = main.OfType<NotificationMessage>()
 				.Where(notif => notif.Type == NotificationType.Mention)
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleMentionAsync(new DonPost(mes.Status, this)));
+				.Subscribe((mes) => Core.HandleMentionAsync(new DonPost(mes.Status, this)));
 			WriteLine("リプライ監視開始");
 
 			// Timeline
@@ -182,7 +179,7 @@ namespace Citrine.Mastodon
 				.OfType<StatusMessage>()
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleTimelineAsync(new DonPost(mes, this)));
+				.Subscribe((mes) => Core.HandleTimelineAsync(new DonPost(mes, this)));
 			WriteLine("タイムライン監視開始");
 		}
 
@@ -214,6 +211,5 @@ namespace Citrine.Mastodon
 		}
 
 		private IDisposable followed, reply, tl;
-		private Server core;
 	}
 }
