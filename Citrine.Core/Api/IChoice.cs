@@ -1,4 +1,4 @@
-﻿namespace Citrine.Core.Api
+namespace Citrine.Core.Api
 {
 	public interface IChoice
 	{

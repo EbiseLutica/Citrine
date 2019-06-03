@@ -1,4 +1,4 @@
-﻿#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
+#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
 #pragma warning disable CS4014 // この呼び出しは待機されなかったため、現在のメソッドの実行は呼び出しの完了を待たずに続行されます
 
 using System;
@@ -38,7 +38,7 @@ namespace Citrine.Misskey
 			if (DateTime.Now - lastResetAt > limitTime)
 			{
 				lastResetAt = DateTime.Now;
-				registeredCount = 0; 
+				registeredCount = 0;
 			}
 			var r = limitTime - (DateTime.Now - lastResetAt);
 			string getRemainingTime() => r.Hours > 0 ? r.Minutes + "時間" : r.Minutes > 0 ? r.Minutes + "分" : r.Seconds + "秒";
@@ -140,14 +140,14 @@ namespace Citrine.Misskey
 							}
 							else
 							{
-								output = "それ, 危険すぎるので, 鯖管以外に言われてもやるなと言われてるの."; 
+								output = "それ, 危険すぎるので, 鯖管以外に言われてもやるなと言われてるの.";
 							}
 							break;
 					}
 				}
 				else
 				{
-					output = "僕はここの管理者じゃないから, それはできないんだ...ごめんね"; 
+					output = "僕はここの管理者じゃないから, それはできないんだ...ごめんね";
 				}
 				await shell.ReplyAsync(n, output, cw);
 				return true;

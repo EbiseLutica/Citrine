@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -37,10 +37,10 @@ namespace Citrine.Core
 		/// </summary>
 		public static string VersionAsXelticaBot => "3.8.0";
 
-        static Server()
-        {
+		static Server()
+		{
 			Http.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} XelticaBot/{Server.VersionAsXelticaBot} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
-        }
+		}
 
 		/// <summary>
 		/// bot を初期化します。
@@ -133,7 +133,7 @@ namespace Citrine.Core
 		{
 			NicknameMap.Remove(user.Id);
 			SaveNicknames();
-		} 
+		}
 
 		private void SaveNicknames()
 		{
@@ -239,25 +239,25 @@ namespace Citrine.Core
 
 		public static void OpenUrl(string url)
 		{
-            // from https://brockallen.com/2016/09/24/process-start-for-urls-on-net-core/
-            // hack because of this: https://github.com/dotnet/corefx/issues/10361
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                url = url.Replace("&", "^&");
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start("xdg-open", url);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Process.Start("open", url);
-            }
-            else
-            {
-                throw new NotSupportedException("このプラットフォームはサポートされていません。");
-            }
+			// from https://brockallen.com/2016/09/24/process-start-for-urls-on-net-core/
+			// hack because of this: https://github.com/dotnet/corefx/issues/10361
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				url = url.Replace("&", "^&");
+				Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				Process.Start("xdg-open", url);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				Process.Start("open", url);
+			}
+			else
+			{
+				throw new NotSupportedException("このプラットフォームはサポートされていません。");
+			}
 		}
 
 		public static readonly HttpClient Http = new HttpClient();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Citrine.Core.Api;
 
 namespace Citrine.Misskey

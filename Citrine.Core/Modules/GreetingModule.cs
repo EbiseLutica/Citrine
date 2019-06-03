@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,7 +7,7 @@ using Citrine.Core.Api;
 
 // メモ
 // idariti 5
-// godzhigella 3 
+// godzhigella 3
 // 2vg 1
 
 namespace Citrine.Core.Modules
@@ -24,10 +24,10 @@ namespace Citrine.Core.Modules
 		readonly Random random = new Random();
 		public GreetingModule()
 		{
-			Add(new MultiplePattern("お(はよ|早)う?", new[] { 
+			Add(new MultiplePattern("お(はよ|早)う?", new[] {
 				"おはようございます.",
 				"おはようございます, $user$."
-			}, new[] { 
+			}, new[] {
 				"おはよ〜", "おはよ", "おはよっ", "おはよ🎉",
 				"おはよう, $user$!",
 			}, null));
@@ -69,37 +69,37 @@ namespace Citrine.Core.Modules
 				"いいね〜 僕$item$を買いに行きたいな",
 				"いいね〜 僕$prefix$$item$を買いに行きたいな",
 			}));
-			
+
 			Add(new MultiplePattern("何[がを]?でき(る|ます)", new[] {
 				"みんなの話を聞いたり, みんなとお話したりしてるよ. あとは占いもしてる. 僕はあまり占い好きじゃないんだけどね, 科学的根拠とかないし. でも, 占ってって言ってくれたら, よしなに占ってあげる."
 			}));
 
-			Add(new MultiplePattern("おやす|[寝ね]る",  new[] { 
-				"おやすみなさい, $user$.", "よい夢を, $user$." 
-			}, new[] { 
-				"おやすみ, $user$!", "おやすみ〜", "おやすみ💤", "おやすみ. また明日ね" 
+			Add(new MultiplePattern("おやす|[寝ね]る",  new[] {
+				"おやすみなさい, $user$.", "よい夢を, $user$."
+			}, new[] {
+				"おやすみ, $user$!", "おやすみ〜", "おやすみ💤", "おやすみ. また明日ね"
 			}, null));
 
-			Add(new MultiplePattern("(ねむ|眠)い", new[] { 
-				"寝ましょう", "そろそろ寝たほうが", "早く寝たほうが良いかと" 
-			}, new[] { 
+			Add(new MultiplePattern("(ねむ|眠)い", new[] {
+				"寝ましょう", "そろそろ寝たほうが", "早く寝たほうが良いかと"
+			}, new[] {
 				"一緒にねよ?", "お布団あっためといたよ", "眠いなら, 寝ようよ〜", "寝よ!", "眠いときは無理しないで寝ようね. ほらおいで, $user$."
-			},  new[] { 
+			},  new[] {
 				"かわいそ.", "そう.", "はい.", "寝れば.", "早く寝ればいいのに.", ""
 			}));
 
-			Add(new MultiplePattern("(さ[みび]|寂)しい", new[] { 
-				"よしよし, 僕は急にいなくなったりしませんから.", 
-				"僕はずっとここにいますから, 良かったら拠り所にでもしてください.", 
-				"僕はずっと$user$さんの味方ですよ.", 
-			}, new[] { 
-				"こっちおいで... (ぎゅ", 
+			Add(new MultiplePattern("(さ[みび]|寂)しい", new[] {
+				"よしよし, 僕は急にいなくなったりしませんから.",
+				"僕はずっとここにいますから, 良かったら拠り所にでもしてください.",
+				"僕はずっと$user$さんの味方ですよ.",
+			}, new[] {
+				"こっちおいで... (ぎゅ",
 				"なでなで げんきだして, ね?",
 				"僕は急にいなくなったりしないから, 大丈夫.",
 				"僕はずっと$user$と一緒だよ.",
-				"げんきだして, ずっと$user$のとこいるからさ", 
+				"げんきだして, ずっと$user$のとこいるからさ",
 				"ぎゅ〜, 大丈夫だよ"
-			}, new[] { 
+			}, new[] {
 			 	"あっそ.", "そう.", "はい.", "...", "",
 			}));
 
@@ -117,11 +117,11 @@ namespace Citrine.Core.Modules
 				 ""
 			}));
 
-			Add(new MultiplePattern("(いた|痛)い", new[] { 
-				"いたそう...", "よしよし, いたいよね..." 
+			Add(new MultiplePattern("(いた|痛)い", new[] {
+				"いたそう...", "よしよし, いたいよね..."
 			}, new[] {
 				"だいじょうぶ? さすさす...", "いたそう... なでなで", "痛いの痛いの飛んでけー."
-			}, new[] { 
+			}, new[] {
 				"かわいそ.", "そう.", "はい.", "...", ""
 			}));
 
@@ -136,12 +136,12 @@ namespace Citrine.Core.Modules
 			}));
 
 			Add(new MultiplePattern("なでなで", new[] {
-				"わっ, びっくりした...", 
+				"わっ, びっくりした...",
 				"うにゃ!? びっくりしました...",
 				"もう, 急になでられたらビックリしますよ."
 			}, new[] {
-				"えへへ", 
-				"うにゅ〜", 
+				"えへへ",
+				"うにゅ〜",
 				"嬉しみ☺️",
 				"にゅふ〜",
 				"ぐりぐり",
@@ -181,7 +181,7 @@ namespace Citrine.Core.Modules
 			}, new[] {
 				"...食べてくれば.",
 				"はい.",
-				"$item$でも食べろ.", 
+				"$item$でも食べろ.",
 				""
 			}));
 
@@ -274,22 +274,22 @@ namespace Citrine.Core.Modules
 				"ん?", "ん, なに", "なんでしょうか, $user$", "なーに? $user$", "ん〜?"
 			}, new[] {
 				"...何?", "...", "何ですか", ""
-			})); 
+			}));
 
-			
+
 
 			Add(new MultiplePattern("こら|おい|ゴル[ァア]|ふざけて?[るん]な|(怒|おこ)った[ぞよわ]", new[] {
 				"ごめんなさい.",
 				"ごめん $user$ そんなつもりじゃ."
 			}, new[] {
-				"う, ごめん $user$.", 
+				"う, ごめん $user$.",
 				"うう, ごめんなさい $user$.",
 				"ううう, ごめんね $user$.",
-				"ごめんなさい $user$.", 
-				"ごめんね $user$ 怒らせちゃって.", 
+				"ごめんなさい $user$.",
+				"ごめんね $user$ 怒らせちゃって.",
 			}, new[] {
 				"...何?", "...", "何ですか", ""
-			})); 
+			}));
 
 			Add(new MultiplePattern("(また|じゃ[あー])ね|また(後|あと)で", new[] {
 				"またね.", "いってら〜", "うん, また後でね"

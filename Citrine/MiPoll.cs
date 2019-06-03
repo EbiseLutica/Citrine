@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Citrine.Core.Api;
 using Disboard.Misskey.Models;

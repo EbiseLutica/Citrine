@@ -11,7 +11,7 @@
 - [x] Misskey
 - [x] Mastodon
 - [x] Standalone
-  - ターミナル上でインタラクティブに動作するバージョン
+	- ターミナル上でインタラクティブに動作するバージョン
 - [ ] Slack
 - [ ] Discord
 - [ ] LINE

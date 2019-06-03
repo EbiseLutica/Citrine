@@ -1,4 +1,4 @@
-﻿using Citrine.Core.Api;
+using Citrine.Core.Api;
 using Disboard.Misskey.Models;
 
 namespace Citrine.Misskey

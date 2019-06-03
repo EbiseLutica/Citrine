@@ -18,9 +18,9 @@ using Citrine.Core.Modules;
 
 namespace Citrine.Misskey
 {
-    using static Console;
-	
-    public class Shell : IShell
+	using static Console;
+
+	public class Shell : IShell
 	{
 		public static string Version => "1.6.0";
 
@@ -30,13 +30,13 @@ namespace Citrine.Misskey
 
 		public IUser Myself { get; private set; }
 
-        public Shell(ModuleBase[] additionalModule, MisskeyClient mi, User myself)
-        {				
+		public Shell(ModuleBase[] additionalModule, MisskeyClient mi, User myself)
+		{
 			core = new Server(additionalModule);
 			Misskey = mi;
 			Myself = new MiUser(myself);
-            SubscribeStreams();
-        }
+			SubscribeStreams();
+		}
 
 		/// <summary>
 		/// bot を初期化します。
@@ -63,20 +63,20 @@ namespace Citrine.Misskey
 			var myself = await mi.IAsync();
 			WriteLine($"bot ユーザーを取得しました");
 
-            // 呼ばないとストリームの初期化ができないらしい
+			// 呼ばないとストリームの初期化ができないらしい
 			await mi.Streaming.ConnectAsync();
 
 			var sh = new Shell(additionalModule, mi, myself);
 			return sh;
 		}
 
-        /// <summary>
-        /// モジュールを追加します。
-        /// </summary>
+		/// <summary>
+		/// モジュールを追加します。
+		/// </summary>
 		public void AddModule(ModuleBase mod)
-        {
-            core.AddModule(mod);
-        }
+		{
+			core.AddModule(mod);
+		}
 
 		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
@@ -177,21 +177,21 @@ namespace Citrine.Misskey
 			await Misskey.Notes.Reactions.DeleteAsync(post.Id);
 		}
 
-        private static async Task AuthorizeAsync(MisskeyClient mi)
+		private static async Task AuthorizeAsync(MisskeyClient mi)
 		{
 			var app = await mi.App.CreateAsync("Citrine for Misskey", "バーチャル嫁bot", ((Permission[])Enum.GetValues(typeof(Permission))).Select(p => p.ToStr()).ToArray(), "http://xeltica.work");
 
 			var session = await mi.Auth.Session.GenerateAsync();
 
-            try
-            {
-                Server.OpenUrl(session.Url);
-            }
-            catch (Exception)
-            {
-                WriteLine("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
-                WriteLine("> " + session.Url);
-            }
+			try
+			{
+				Server.OpenUrl(session.Url);
+			}
+			catch (Exception)
+			{
+				WriteLine("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
+				WriteLine("> " + session.Url);
+			}
 
 			WriteLine("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールで何かキーを押してください。");
 

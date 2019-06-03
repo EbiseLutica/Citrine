@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Citrine.Core.Modules
 {
-    public class SearchModule : ModuleBase
+	public class SearchModule : ModuleBase
 	{
 		public override int Priority => -100;
 
@@ -83,7 +83,7 @@ namespace Citrine.Core.Modules
 
 出典: https://dic.nicovideo.jp/a/{HttpUtility.UrlEncode(title)}
 ";
-			
+
 		}
 
 		private async Task<string> FromCalcAsync(string query)
