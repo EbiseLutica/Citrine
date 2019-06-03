@@ -31,7 +31,15 @@ namespace Citrine.Core
 				var cmd = core.TryGetCommand(name);
 				if (cmd == default)
 					return $"コマンド {name} は見つかりませんでした.";
-				return $"{GetDescription(cmd)}\n使い方: {cmd.Usage}\nエイリアス: {string.Join(", ", cmd.Aliases)}\n{DumpPermission(cmd.Permission)}";
+				var sb = new StringBuilder();
+				sb.AppendLine(GetDescription(cmd));
+				sb.Append("使い方: ");
+				sb.AppendLine(cmd.Usage);
+				if (cmd.Aliases != null)
+					sb.AppendLine(string.Join(", ", cmd.Aliases));
+				sb.AppendLine(DumpPermission(cmd.Permission));
+
+				return sb.ToString();
 			}
 		}
 
