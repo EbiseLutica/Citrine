@@ -1,3 +1,4 @@
+#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
 using System;
 using System.Threading.Tasks;
 using Citrine.Core.Api;

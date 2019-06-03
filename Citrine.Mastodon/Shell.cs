@@ -29,7 +29,7 @@ namespace Citrine.Mastodon
 
 		public MastodonClient Mastodon { get; private set; }
 
-		IDisposable followed, reply, tl, dm;
+		IDisposable followed, reply, tl;
 
 		Server core;
 
@@ -41,7 +41,6 @@ namespace Citrine.Mastodon
 			followed?.Dispose();
 			reply?.Dispose();
 			tl?.Dispose();
-			dm?.Dispose();
 
 			// フォロバ
 			followed = main.OfType<NotificationMessage>()
@@ -64,9 +63,6 @@ namespace Citrine.Mastodon
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => core.HandleTimelineAsync(new DonPost(mes, this), this));
 			Console.WriteLine("タイムライン監視開始");
-
-			// Direct Message
-			// unsupported
 		}
 
 		public void AddModule(ModuleBase mod) => core.AddModule(mod);
