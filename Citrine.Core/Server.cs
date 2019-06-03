@@ -23,6 +23,8 @@ namespace Citrine.Core
 		/// <value>The modules.</value>
 		public IEnumerable<ModuleBase> Modules { get; }
 
+		public List<CommandBase> Commands { get; }
+
 		public List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
 
 		public Dictionary<string, string> NicknameMap { get; }
@@ -30,12 +32,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.8.0";
+		public static string Version => "3.0.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.8.0";
+		public static string VersionAsXelticaBot => "4.0.0";
 
 		static Server()
 		{
@@ -52,6 +54,12 @@ namespace Citrine.Core
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
 						.Concat(additionalModules)
 						.OrderBy(mod => mod.Priority)
+						.ToList();
+
+
+			Commands = Assembly.GetExecutingAssembly().GetTypes()
+						.Where(a => a.IsSubclassOf(typeof(CommandBase)))
+						.Select(a => Activator.CreateInstance(a) as CommandBase)
 						.ToList();
 
 			if (File.Exists("./admin"))
@@ -85,9 +93,12 @@ namespace Citrine.Core
 			}
 
 			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
+			Console.WriteLine($"読み込まれたコマンド({Commands.Count()}): {string.Join(", ", Commands.Select(cmd => cmd.GetType().Name))})");
 		}
 
 		public void AddModule(ModuleBase mod) => ModulesAsList?.Add(mod);
+
+		public void AddCommand(CommandBase cmd) => Commands.Add(cmd);
 
 		/// <summary>
 		/// 指定したユーザーが管理者であるかどうかを取得します。
@@ -101,6 +112,12 @@ namespace Citrine.Core
 		/// </summary>
 		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
 
+		/// <summary>
+		/// 指定したユーザーがローカルユーザーであるかどうかを取得します。
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
+		public bool IsLocal(IUser user) => user.Host == "";
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。
