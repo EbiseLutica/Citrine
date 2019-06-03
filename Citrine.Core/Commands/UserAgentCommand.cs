@@ -12,6 +12,8 @@ namespace Citrine.Core
 
 		public override string[] Aliases { get; } = { "ua" };
 
+		public override string Description => "シトリンが使用する HTTP Client のユーザーエージェントを取得します。";
+
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			return Server.Http.DefaultRequestHeaders.UserAgent.ToString();

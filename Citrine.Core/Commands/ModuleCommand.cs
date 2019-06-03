@@ -14,6 +14,8 @@ namespace Citrine.Core
 
 		public override string[] Aliases { get; } = { "mods" };
 
+		public override string Description => "全モジュールを列挙します。";
+
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			var mods = core.Modules.Select(mod => mod.GetType().Name);

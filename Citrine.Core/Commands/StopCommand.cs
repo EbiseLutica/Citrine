@@ -11,6 +11,8 @@ namespace Citrine.Core
 
 		public override PermissionFlag Permission => PermissionFlag.AdminOnly;
 
+		public override string Description => "シトリンを停止します。";
+
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			if (sender is PostCommandSender s)

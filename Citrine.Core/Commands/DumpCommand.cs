@@ -11,6 +11,8 @@ namespace Citrine.Core
 
 		public override string Usage => "/dump";
 
+		public override string Description => "このコマンドを含む投稿の情報を、アプリケーションの標準入出力に表示します。";
+
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			if (!(sender is PostCommandSender p))

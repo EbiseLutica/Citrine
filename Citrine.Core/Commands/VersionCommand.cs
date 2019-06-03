@@ -12,6 +12,8 @@ namespace Citrine.Core
 
 		public override string[] Aliases { get; } = { "ver", "v" };
 
+		public override string Description => "バージョン情報を取得します。";
+
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			return $"Citrine v{Server.Version} / XelticaBot v{Server.VersionAsXelticaBot}";

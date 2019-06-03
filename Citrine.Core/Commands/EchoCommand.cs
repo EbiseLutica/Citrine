@@ -10,6 +10,8 @@ namespace Citrine.Core
 
 		public override string Usage => "/echo <text>";
 
+		public override string Description => "引数をそのままオウム返しします。";
+
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			return body;
