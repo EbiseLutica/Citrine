@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Citrine.Core.Api;
 using Disboard.Mastodon.Enums;
 using Disboard.Mastodon.Models;
@@ -39,7 +40,7 @@ namespace Citrine.Mastodon
 			Native = toot;
 			Id = toot.Id.ToString();
 			User = new DonUser(toot.Account);
-			Text = toot.Content;
+			Text = Regex.Replace(toot.Content, @"<("".*?""|'.*?'|[^'""])*?>", "");
 			IsReply = toot.InReplyToId != default;
 			Reply = IsReply ? shell.GetPostAsync(toot.InReplyToId.ToString()).Result : default;
 			RepostCount = toot.ReblogsCount;
