@@ -18,7 +18,7 @@ namespace Citrine.Misskey
 			WriteLine($"Citrine.Misskey version{Shell.Version}");
 			WriteLine();
 			WriteLine("起動中...");
-			await Shell.InitializeAsync(new EmojiModule());
+			await Shell.InitializeAsync();
 			WriteLine("起動しました！");
 
 			while (true)
