@@ -4,15 +4,17 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class EchoCommand : CommandBase
+    public class UserAgentCommand : CommandBase
 	{
-		public override string Name => "echo";
+		public override string Name => "useragent";
 
-		public override string Usage => "/echo <text>";
+		public override string Usage => "/useragent or /ua";
+
+		public override string[] Aliases { get; } = { "ua" };
 
 		public override async Task<string> OnActivatedAsync(IPost source, Server core, IShell shell, string[] args, string body)
 		{
-			return body;
+			return Server.Http.DefaultRequestHeaders.UserAgent.ToString();
 		}
 	}
 }
