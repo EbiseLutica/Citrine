@@ -3,7 +3,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class StopCommand : CommandBase
+	public class StopCommand : CommandBase
 	{
 		public override string Name => "stop";
 

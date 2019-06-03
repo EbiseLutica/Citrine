@@ -17,9 +17,9 @@ namespace Citrine.Misskey
 	/// </summary>
 	public class EmojiCommand : CommandBase
 	{
-        public override string Name => "emoji";
+	public override string Name => "emoji";
 
-        public override string Usage => @"使い方:
+	public override string Usage => @"使い方:
 /emoji add <name> [url] [alias...]
 /emoji add <name> [url] [alias...]
 /emoji list
@@ -82,9 +82,9 @@ namespace Citrine.Misskey
 			return null;
 		}
 
-        // emoji add <name> <url> [aliases...]
-        // emoji add <name> (with a file)
-        private async Task<(string, string)> AddAsync(string[] args, Note note, User user, Shell shell)
+	// emoji add <name> <url> [aliases...]
+	// emoji add <name> (with a file)
+	private async Task<(string, string)> AddAsync(string[] args, Note note, User user, Shell shell)
 		{
 			if (args.Length < 2)
 				throw new CommandException();

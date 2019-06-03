@@ -4,7 +4,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class VersionCommand : CommandBase
+	public class VersionCommand : CommandBase
 	{
 		public override string Name => "version";
 

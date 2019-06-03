@@ -4,7 +4,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class EchoCommand : CommandBase
+	public class EchoCommand : CommandBase
 	{
 		public override string Name => "echo";
 

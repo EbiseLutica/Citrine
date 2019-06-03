@@ -4,7 +4,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class UserAgentCommand : CommandBase
+	public class UserAgentCommand : CommandBase
 	{
 		public override string Name => "useragent";
 

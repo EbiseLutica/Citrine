@@ -5,7 +5,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class DumpCommand : CommandBase
+	public class DumpCommand : CommandBase
 	{
 		public override string Name => "dump";
 

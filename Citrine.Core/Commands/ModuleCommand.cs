@@ -6,7 +6,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public class ModuleCommand : CommandBase
+	public class ModuleCommand : CommandBase
 	{
 		public override string Name => "modules";
 
