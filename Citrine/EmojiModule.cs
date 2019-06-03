@@ -28,13 +28,13 @@ namespace Citrine.Misskey
 			var text = n.Text.TrimMentions().ToLowerInvariant();
 			var cmd = text.Split(' ');
 
-			// リモートから追加できないようにする
-			if (!string.IsNullOrEmpty(n.User.Host))
-				return false;
 			if (!(shell is Shell s)) return false;
 			if (!(shell.Myself is MiUser u)) return false;
 			if (!(n is MiPost note)) return false;
 
+
+			// リモートから追加できないようにする
+			var senderIsRemote = !string.IsNullOrEmpty(n.User.Host);
 			var senderIsAdmin = ((n.User as MiUser).Native.IsAdmin ?? false) || ((n.User as MiUser).Native.IsModerator ?? false) || core.IsAdmin(n.User);
 
 			// /emoji add <name> <url> <alias...>
@@ -53,105 +53,112 @@ namespace Citrine.Misskey
 /emoji add <name> [url] [alias...]: 絵文字を追加. urlの代わりに添付ファイルも可
 /emoji list: ここにある絵文字をぜんぶ並べる
 ";
-				if (senderIsAdmin)
-				{
-					// 管理者であればヘルプ追加
-					output += "/emoji copyfrom <hostname>: 他のインスタンスから絵文字をコピーする";
-				}
-
 				string cw = default;
-				if ((u.Native.IsAdmin ?? false) || (u.Native.IsModerator ?? false))
+
+				if (senderIsRemote)
 				{
-					switch (cmd[1].ToLowerInvariant())
-					{
-						case "add":
-							try
-							{
-								if (IsRateLimitExceeded && !senderIsAdmin)
-								{
-									output = $"ちょっと追加しすぎ...もう少し待って欲しいな. あと{getRemainingTime()}くらいね.";
-								}
-								else if (cmd.Length > 2)
-								{
-									string url = default;
-									if (cmd.Length > 3)
-									{
-										url = cmd[3];
-									}
-									else if (note.Native.Files?.Count > 0)
-									{
-										url = note.Native.Files.First().Url;
-									}
-									await s.Misskey.Admin.Emoji.AddAsync(cmd[2], url, cmd.Skip(4).ToList());
-									output = $"追加したよ :{cmd[2]}:";
-									registeredCount++;
-								}
-							}
-							catch (Exception ex)
-							{
-								cw = "失敗しちゃいました... 報告書見ますか?";
-								output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
-								Console.WriteLine(ex.Message);
-								Console.WriteLine(ex.StackTrace);
-							}
-							break;
-						case "list":
-							try
-							{
-								var list = await s.Misskey.Admin.Emoji.ListAsync();
-								output = string.Concat(list.Select(e => $":{e.Name}:"));
-								cw = $"絵文字総数: {list.Count}個";
-							}
-							catch (Exception ex)
-							{
-								cw = "失敗しちゃいました... 報告書見ますか?";
-								output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
-								Console.WriteLine(ex.Message);
-								Console.WriteLine(ex.StackTrace);
-							}
-							break;
-						case "copyfrom":
-							if (senderIsAdmin)
-							{
-								if (cmd.Length > 2)
-								{
-									try
-									{
-										var emojisInMyHost = await s.Misskey.Admin.Emoji.ListAsync();
-
-										var emojis = (await s.Misskey.Admin.Emoji.ListAsync(cmd[2])).Where(e => emojisInMyHost.All(ee => ee.Name != e.Name));
-
-										foreach (var emoji in emojis)
-										{
-											await s.Misskey.Admin.Emoji.AddAsync(emoji.Name, emoji.Url, emoji.Aliases);
-										}
-
-
-										output = string.Concat(emojis.Select(e => $":{e.Name}:"));
-										if (output?.Length > 0)
-											cw = $"{cmd[2]} にある絵文字を {emojis.Count()} 種類追加しました.";
-										if (output?.Length < 1)
-											output = "何も追加できませんでした.";
-									}
-									catch (Exception ex)
-									{
-										cw = "失敗しちゃいました... 報告書見ますか?";
-										output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
-										Console.WriteLine(ex.Message);
-										Console.WriteLine(ex.StackTrace);
-									}
-								}
-							}
-							else
-							{
-								output = "それ, 危険すぎるので, 鯖管以外に言われてもやるなと言われてるの.";
-							}
-							break;
-					}
+					output = "リモートユーザーによる絵文字追加は許可されていないの. ごめんなさい.";
 				}
 				else
 				{
-					output = "僕はここの管理者じゃないから, それはできないんだ...ごめんね";
+					if (senderIsAdmin)
+					{
+						// 管理者であればヘルプ追加
+						output += "/emoji copyfrom <hostname>: 他のインスタンスから絵文字をコピーする";
+					}
+
+					if ((u.Native.IsAdmin ?? false) || (u.Native.IsModerator ?? false))
+					{
+						switch (cmd[1].ToLowerInvariant())
+						{
+							case "add":
+								try
+								{
+									if (IsRateLimitExceeded && !senderIsAdmin)
+									{
+										output = $"ちょっと追加しすぎ...もう少し待って欲しいな. あと{getRemainingTime()}くらいね.";
+									}
+									else if (cmd.Length > 2)
+									{
+										string url = default;
+										if (cmd.Length > 3)
+										{
+											url = cmd[3];
+										}
+										else if (note.Native.Files?.Count > 0)
+										{
+											url = note.Native.Files.First().Url;
+										}
+										await s.Misskey.Admin.Emoji.AddAsync(cmd[2], url, cmd.Skip(4).ToList());
+										output = $"追加したよ :{cmd[2]}:";
+										registeredCount++;
+									}
+								}
+								catch (Exception ex)
+								{
+									cw = "失敗しちゃいました... 報告書見ますか?";
+									output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+									Console.WriteLine(ex.Message);
+									Console.WriteLine(ex.StackTrace);
+								}
+								break;
+							case "list":
+								try
+								{
+									var list = await s.Misskey.Admin.Emoji.ListAsync();
+									output = string.Concat(list.Select(e => $":{e.Name}:"));
+									cw = $"絵文字総数: {list.Count}個";
+								}
+								catch (Exception ex)
+								{
+									cw = "失敗しちゃいました... 報告書見ますか?";
+									output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+									Console.WriteLine(ex.Message);
+									Console.WriteLine(ex.StackTrace);
+								}
+								break;
+							case "copyfrom":
+								if (senderIsAdmin)
+								{
+									if (cmd.Length > 2)
+									{
+										try
+										{
+											var emojisInMyHost = await s.Misskey.Admin.Emoji.ListAsync();
+
+											var emojis = (await s.Misskey.Admin.Emoji.ListAsync(cmd[2])).Where(e => emojisInMyHost.All(ee => ee.Name != e.Name));
+
+											foreach (var emoji in emojis)
+											{
+												await s.Misskey.Admin.Emoji.AddAsync(emoji.Name, emoji.Url, emoji.Aliases);
+											}
+
+											output = string.Concat(emojis.Select(e => $":{e.Name}:"));
+											if (output?.Length > 0)
+												cw = $"{cmd[2]} にある絵文字を {emojis.Count()} 種類追加しました.";
+											if (output?.Length < 1)
+												output = "何も追加できませんでした.";
+										}
+										catch (Exception ex)
+										{
+											cw = "失敗しちゃいました... 報告書見ますか?";
+											output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
+											Console.WriteLine(ex.Message);
+											Console.WriteLine(ex.StackTrace);
+										}
+									}
+								}
+								else
+								{
+									output = "それ, 危険すぎるので, 鯖管以外に言われてもやるなと言われてるの.";
+								}
+								break;
+						}
+					}
+					else
+					{
+						output = "僕はここの管理者じゃないから, それはできないんだ...ごめんね";
+					}
 				}
 				await shell.ReplyAsync(n, output, cw);
 				return true;
