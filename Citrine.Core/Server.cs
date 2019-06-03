@@ -18,6 +18,16 @@ namespace Citrine.Core
 	public class Server
 	{
 		/// <summary>
+		/// バージョンを取得します。
+		/// </summary>
+		public static string Version => "3.0.0";
+
+		/// <summary>
+		/// XelticaBot 換算でのバージョン表記を取得します。
+		/// </summary>
+		public static string VersionAsXelticaBot => "4.0.0";
+
+		/// <summary>
 		/// 読み込まれているモジュールを列挙します。
 		/// </summary>
 		/// <value>The modules.</value>
@@ -28,16 +38,6 @@ namespace Citrine.Core
 		public List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
 
 		public Dictionary<string, string> NicknameMap { get; }
-
-		/// <summary>
-		/// バージョンを取得します。
-		/// </summary>
-		public static string Version => "3.0.0";
-
-		/// <summary>
-		/// XelticaBot 換算でのバージョン表記を取得します。
-		/// </summary>
-		public static string VersionAsXelticaBot => "4.0.0";
 
 		static Server()
 		{
