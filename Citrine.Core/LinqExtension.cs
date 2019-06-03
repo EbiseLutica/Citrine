@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Citrine.Core
 {
@@ -17,6 +18,14 @@ namespace Citrine.Core
 			foreach (var value in enumerable)
 			{
 				action(value);
+			}
+		}
+
+		public static async Task ForEach<T>(this IEnumerable<T> enumerable, Func<T, Task> action)
+		{
+			foreach (var value in enumerable)
+			{
+				await action(value);
 			}
 		}
 
