@@ -15,7 +15,7 @@ namespace Citrine.Core.Modules
 				string response;
 				try
 				{
-					response = await core.ExecCommand(new PostCommandSender(n, core.IsAdmin(n.User)), n.Text);
+					response = await core.ExecCommand(new PostCommandSender(n, core.IsAdmin(n.User)), t);
 				}
 				catch (AdminOnlyException)
 				{
