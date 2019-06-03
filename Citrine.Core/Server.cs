@@ -12,30 +12,38 @@ using Citrine.Core.Modules;
 
 namespace Citrine.Core
 {
-	/// <summary>
-	/// Citrine's Core.
-	/// </summary>
-	public class Server
+    /// <summary>
+    /// Citrine's Core.
+    /// </summary>
+    public class Server
 	{
-		/// <summary>
-		/// 読み込まれているバージョンを列挙します。
-		/// </summary>
-		/// <value>The modules.</value>
-		public IEnumerable<ModuleBase> Modules { get; }
-
-		public List<ModuleBase> ModulesAsList => Modules as List<ModuleBase>;
-
-		public Dictionary<string, string> NicknameMap { get; }
-
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "2.8.0";
+		public static string Version => "3.0.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "3.8.0";
+		public static string VersionAsXelticaBot => "4.0.0";
+
+		/// <summary>
+		/// 読み込まれているモジュール一覧を取得します。
+		/// </summary>
+		public List<ModuleBase> Modules { get; }
+
+		/// <summary>
+		/// 読み込まれているコマンド一覧を取得します。
+		/// </summary>
+		public List<CommandBase> Commands { get; }
+
+		public IShell Shell { get; }
+
+		/// <summary>
+		/// ニックネームの辞書を取得します。
+		/// </summary>
+		/// <value></value>
+		public Dictionary<string, string> NicknameMap { get; }
 
 		static Server()
 		{
@@ -45,13 +53,18 @@ namespace Citrine.Core
 		/// <summary>
 		/// bot を初期化します。
 		/// </summary>
-		public Server(params ModuleBase[] additionalModules)
+		public Server(IShell shell)
 		{
-			AllLoadedModules = Assembly.GetExecutingAssembly().GetTypes()
+			Shell = shell;
+			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
 						.Select(a => Activator.CreateInstance(a) as ModuleBase)
-						.Concat(additionalModules)
 						.OrderBy(mod => mod.Priority)
+						.ToList();
+
+			Commands = Assembly.GetExecutingAssembly().GetTypes()
+						.Where(a => a.IsSubclassOf(typeof(CommandBase)))
+						.Select(a => Activator.CreateInstance(a) as CommandBase)
 						.ToList();
 
 			if (File.Exists("./admin"))
@@ -67,11 +80,6 @@ namespace Citrine.Core
 				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
 
-			unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
-
-			// unloaded でないかどうか
-			Modules = AllLoadedModules.Where(m => unloadedModules.All(um => um.ToLower() != m.GetType().Name.ToLower()));
-
 			NicknameMap = new Dictionary<string, string>();
 			if (File.Exists("./nicknames"))
 			{
@@ -83,24 +91,108 @@ namespace Citrine.Core
 				.ForEach(kv => NicknameMap[kv.Key] = kv.Value);
 				Console.WriteLine($"Load {lines.Length} user's nickname");
 			}
-
-			Console.WriteLine($"読み込まれたモジュール({Modules.Count()}): {string.Join(", ", Modules.Select(mod => mod.GetType().Name))})");
 		}
 
-		public void AddModule(ModuleBase mod) => ModulesAsList?.Add(mod);
+		/// <summary>
+		/// モジュールを追加します。
+		/// </summary>
+		public void AddModule(ModuleBase mod)
+		{
+			if (Modules.Contains(mod))
+				return;
+			Modules?.Add(mod);
+		}
+
+		/// <summary>
+		/// コマンドを追加します。
+		/// </summary>
+		public void AddCommand(CommandBase cmd)
+		{
+			if (Commands.Contains(cmd))
+				return;
+			Commands.Add(cmd);
+		}
+
+		public CommandBase TryGetCommand(string n) => Commands.FirstOrDefault(c =>
+		{
+			var cn = c.Name;
+			var cnl = c.Name.ToLowerInvariant();
+			var nl = n.ToLowerInvariant();
+			var nameIsMatch = c.IgnoreCase ? (cnl == nl) : cn == n;
+			var lowerAliases = c.Aliases?.Select(a => a.ToLowerInvariant());
+			return c.Aliases == default ? nameIsMatch : nameIsMatch || (c.IgnoreCase ? lowerAliases.Contains(nl) : c.Aliases.Contains(n));
+		});
+
+		public async Task<string> ExecCommand(ICommandSender sender, string command)
+		{
+
+			if (command == null)
+				throw new ArgumentNullException(nameof(command));
+			if (command.StartsWith("/"))
+				command = command.Substring(1);
+			var splitted = command.Split(' ');
+			var cmd = TryGetCommand(splitted.First());
+			if (cmd == default)
+				throw new NoSuchCommandException();
+
+			if (cmd.Permission.HasFlag(PermissionFlag.AdminOnly) && !sender.IsAdmin)
+				throw new AdminOnlyException();
+
+			if (sender is PostCommandSender p)
+			{
+				if (cmd.Permission.HasFlag(PermissionFlag.LocalOnly) && !string.IsNullOrEmpty(p.User.Host))
+					throw new LocalOnlyException();
+
+				if (cmd.Permission.HasFlag(PermissionFlag.RemoteOnly) && string.IsNullOrEmpty(p.User.Host))
+					throw new RemoteOnlyException();
+			}
+
+			try
+			{
+				return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), string.Join(" ", splitted));
+			}
+			catch (CommandException)
+			{
+				return cmd.Usage;
+			}
+		}
+
+		/// <summary>
+		/// コマンドを実行します。
+		/// </summary>
+		/// <param name="command"></param>
+		/// <returns></returns>
+		public Task<string> ExecCommand(string command)
+		{
+			return ExecCommand(InternalCommandSender.Instance, command);
+		}
+
+		/// <summary>
+		/// Admin 権限としてコマンドを実行します。
+		/// </summary>
+		public Task<string> SudoCommand(string command)
+		{
+			return ExecCommand(SuperInternalCommandSender.Instance, command);
+		}
+
+		/// <summary>
+		/// 指定したユーザーがローカルユーザーであるかどうかを取得します。
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
+		public bool IsLocal(IUser user) => user.Host == "";
 
 		/// <summary>
 		/// 指定したユーザーが管理者であるかどうかを取得します。
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(IUser user) => user.Id.ToLower() == adminId.ToLower() && string.IsNullOrEmpty(user.Host);
+		public bool IsAdmin(IUser user) => user.Name.ToLower() == adminId.ToLower() && string.IsNullOrEmpty(user.Host);
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
 		/// </summary>
 		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
-
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。
@@ -135,50 +227,8 @@ namespace Citrine.Core
 			SaveNicknames();
 		}
 
-		private void SaveNicknames()
+		public async Task HandleMentionAsync(IPost mention)
 		{
-			File.WriteAllLines("./nicknames", NicknameMap.Select(kv => $"{kv.Key},{kv.Value}"));
-		}
-
-		/// <summary>
-		/// モジュールをアンロードします。
-		/// </summary>
-		public void Unload(string name)
-		{
-			unloadedModules.Add(name);
-			ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
-			WriteUnloadedConfig();
-		}
-
-		/// <summary>
-		/// モジュールをロードします。
-		/// </summary>
-		public void Load(string name)
-		{
-			unloadedModules.Add(name);
-			ModulesAsList.RemoveAll(m => m.GetType().Name.ToLower() == name);
-			WriteUnloadedConfig();
-		}
-
-		private void WriteUnloadedConfig()
-		{
-			File.WriteAllLines("./unloaded", unloadedModules);
-		}
-
-		private void ReadUnloadedConfig()
-		{
-			unloadedModules = File.Exists("./unloaded") ? File.ReadAllLines("./unloaded").ToList() : new List<string>();
-		}
-
-		private static void WriteException(Exception ex)
-		{
-			Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
-		}
-
-		public async Task HandleMentionAsync(IPost mention, IShell shell)
-		{
-			// React
-			// hack 好感度システム実装したらそっちに移動して、好感度に応じて love pudding hmm と切り替えていく
 			await Task.Delay(1000);
 
 			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
@@ -187,7 +237,7 @@ namespace Citrine.Core
 				try
 				{
 					// module が true を返したら終わり
-					if (await mod.ActivateAsync(mention, shell, this))
+					if (await mod.ActivateAsync(mention, Shell, this))
 						break;
 				}
 				catch (Exception ex)
@@ -197,7 +247,7 @@ namespace Citrine.Core
 			}
 		}
 
-		public async Task HandleTimelineAsync(IPost post, IShell shell)
+		public async Task HandleTimelineAsync(IPost post)
 		{
 			await Task.Delay(1000);
 
@@ -207,7 +257,7 @@ namespace Citrine.Core
 				try
 				{
 					// module が true を返したら終わり
-					if (await mod.OnTimelineAsync(post, shell, this))
+					if (await mod.OnTimelineAsync(post, Shell, this))
 						break;
 				}
 				catch (Exception ex)
@@ -217,7 +267,7 @@ namespace Citrine.Core
 			}
 		}
 
-		public async Task HandleDmAsync(IPost post, IShell shell)
+		public async Task HandleDmAsync(IPost post)
 		{
 			await Task.Delay(1000);
 
@@ -227,7 +277,7 @@ namespace Citrine.Core
 				try
 				{
 					// module が true を返したら終わり
-					if (await mod.OnDmReceivedAsync(post, shell, this))
+					if (await mod.OnDmReceivedAsync(post, Shell, this))
 						break;
 				}
 				catch (Exception ex)
@@ -260,34 +310,17 @@ namespace Citrine.Core
 			}
 		}
 
+		private void SaveNicknames()
+		{
+			File.WriteAllLines("./nicknames", NicknameMap.Select(kv => $"{kv.Key},{kv.Value}"));
+		}
+
+		private static void WriteException(Exception ex)
+		{
+			Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+		}
+
 		public static readonly HttpClient Http = new HttpClient();
-		List<ModuleBase> AllLoadedModules;
-		List<string> unloadedModules;
 		readonly string adminId;
 	}
-
-	public enum Rating
-	{
-		/// <summary>
-		/// 嫌い
-		/// </summary>
-		Hate,
-		/// <summary>
-		/// 普通
-		/// </summary>
-		Normal,
-		/// <summary>
-		/// 友達
-		/// </summary>
-		Like,
-		/// <summary>
-		/// 親友
-		/// </summary>
-		BestFriend,
-		/// <summary>
-		/// ご主人様
-		/// </summary>
-		Partner,
-	}
-
 }

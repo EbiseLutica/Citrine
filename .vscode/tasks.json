@@ -1,0 +1,25 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build-misskey",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/Citrine.Misskey/Citrine.Misskey.csproj"
+			],
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "build-mastodon",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/Citrine.Mastodon/Citrine.Mastodon.csproj"
+			],
+			"problemMatcher": "$msCompile"
+		}
+	]
+}

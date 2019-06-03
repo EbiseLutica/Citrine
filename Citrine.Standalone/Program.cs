@@ -1,3 +1,4 @@
+#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
 using System;
 
 namespace Citrine.Standalone
@@ -13,7 +14,7 @@ namespace Citrine.Standalone
 		{
 			WriteLine($"Citrine.Standalone version {Version}");
 			var shell = new Shell();
-			var server = new Server();
+			var server = new Server(shell);
 			WriteLine($"Citrine version {Core.Server.Version}");
 			WriteLine($"XelticaBot version {Core.Server.VersionAsXelticaBot}");
 			WriteLine("(C)2019 Xeltica");
@@ -33,8 +34,8 @@ namespace Citrine.Standalone
 				WriteLine($"{post.User.ScreenName}: {post.Text}");
 				await Task.WhenAll
 				(
-					server.HandleMentionAsync(post, shell),
-					server.HandleTimelineAsync(post, shell)
+					server.HandleMentionAsync(post),
+					server.HandleTimelineAsync(post)
 				);
 			}
 		}

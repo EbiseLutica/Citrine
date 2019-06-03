@@ -19,9 +19,10 @@ using Newtonsoft.Json;
 
 namespace Citrine.Mastodon
 {
+	using static Console;
 	public class Shell : IShell
 	{
-		public static string Version => "1.0.0";
+		public static string Version => "2.0.0";
 
 		public IUser Myself { get; private set; }
 
@@ -29,124 +30,45 @@ namespace Citrine.Mastodon
 
 		public MastodonClient Mastodon { get; private set; }
 
-		IDisposable followed, reply, tl, dm;
+		public Server Core { get; private set; }
 
-		Server core;
-
-		private void InitializeBot()
+		public Shell(MastodonClient don, Account myself)
 		{
-			var main = Mastodon.Streaming.UserAsObservable();
-
-			// 再接続時にいらないストリームを切断
-			followed?.Dispose();
-			reply?.Dispose();
-			tl?.Dispose();
-			dm?.Dispose();
-
-			// フォロバ
-			followed = main.OfType<NotificationMessage>()
-				.Where(notif => notif.Type == NotificationType.Follow)
-				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((n) => Mastodon.Account.FollowAsync(n.Account.Id));
-			Console.WriteLine("フォロー監視開始");
-
-			// リプライ
-			reply = main.OfType<NotificationMessage>()
-				.Where(notif => notif.Type == NotificationType.Mention)
-				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleMentionAsync(new DonPost(mes.Status, this), this));
-			Console.WriteLine("リプライ監視開始");
-
-			// Timeline
-			tl = Mastodon.Streaming.LocalPublicAsObservable(false).Merge(Mastodon.Streaming.UserAsObservable())
-				.OfType<StatusMessage>()
-				.DistinctUntilChanged(n => n.Id)
-				.Delay(new TimeSpan(0, 0, 1))
-				.Subscribe((mes) => core.HandleTimelineAsync(new DonPost(mes, this), this));
-			Console.WriteLine("タイムライン監視開始");
-
-			// Direct Message
-			// unsupported
-		}
-
-		public void AddModule(ModuleBase mod) => core.AddModule(mod);
+			Core = new Server(this);
+            Mastodon = don;
+            Myself = new DonUser(myself);
+            SubscribeStreams();
+        }
 
 		/// <summary>
 		/// bot を初期化します。
 		/// </summary>
 		/// <returns>初期化された <see cref="Shell"/> のインスタンス。</returns>
-		public static async Task<Shell> InitializeAsync(params ModuleBase[] additionalModule)
+		public static async Task<Shell> InitializeAsync()
 		{
 			MastodonClient don;
 			try
 			{
 				var cred = File.ReadAllText("./token");
 				don = new MastodonClient(JsonConvert.DeserializeObject<Disboard.Models.Credential>(cred));
-				Console.WriteLine("Mastodon に接続しました。");
+				WriteLine("Mastodon に接続しました。");
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"認証中にエラーが発生しました {ex.GetType().Name} {ex.Message}\n{ex.StackTrace}");
-				Console.Write("Mastodon URL> ");
-				var domain = Console.ReadLine();
+				WriteLine($"認証中にエラーが発生しました {ex.GetType().Name} {ex.Message}\n{ex.StackTrace}");
+				Write("Mastodon URL> ");
+				var domain = ReadLine();
 				don = new MastodonClient(domain);
 				await AuthorizeAsync(don);
 			}
 
-
 			var myself = await don.Account.VerifyCredentialsAsync();
 
-			Console.WriteLine($"bot ユーザーを取得しました");
+			WriteLine($"bot ユーザーを取得しました");
 
-			var sh = new Shell
-			{
-				core = new Server(additionalModule),
-				Mastodon = don,
-				Myself = new DonUser(myself),
-			};
-
-			sh.InitializeBot();
+            var sh = new Shell(don, myself);
 			return sh;
 		}
-
-		private static async Task AuthorizeAsync(MastodonClient don)
-		{
-			var redirect = "urn:ietf:wg:oauth:2.0:oob";
-			var scope = AccessScope.Read | AccessScope.Write | AccessScope.Follow;
-			var app = await don.Apps.RegisterAsync("Citrine", redirect, scope);
-
-			string url = don.Auth.AuthorizeUrl(redirect, scope);
-
-			// from https://brockallen.com/2016/09/24/process-start-for-urls-on-net-core/
-			// hack because of this: https://github.com/dotnet/corefx/issues/10361
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				url = url.Replace("&", "^&");
-				Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			{
-				Process.Start("xdg-open", url);
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				Process.Start("open", url);
-			}
-			else
-			{
-				throw new NotSupportedException("このプラットフォームはサポートされていません。");
-			}
-
-			Console.WriteLine("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールにコードを入力してください。");
-
-			var code = Console.ReadLine();
-
-			await don.Auth.AccessTokenAsync(redirect, code);
-			var credential = JsonConvert.SerializeObject(don.Credential);
-
-			File.WriteAllText("./token", credential);
-		}
-
 
 		public async Task<IPost> GetPostAsync(string id)
 		{
@@ -228,5 +150,66 @@ namespace Citrine.Mastodon
 					return MapVisibility(vis2, Visiblity.Public);
 			}
 		}
+
+		private void SubscribeStreams()
+		{
+			var main = Mastodon.Streaming.UserAsObservable();
+
+			// 再接続時にいらないストリームを切断
+			followed?.Dispose();
+			reply?.Dispose();
+			tl?.Dispose();
+
+			// フォロバ
+			followed = main.OfType<NotificationMessage>()
+				.Where(notif => notif.Type == NotificationType.Follow)
+				.Delay(new TimeSpan(0, 0, 5))
+				.Subscribe((n) => Mastodon.Account.FollowAsync(n.Account.Id));
+			WriteLine("フォロー監視開始");
+
+			// リプライ
+			reply = main.OfType<NotificationMessage>()
+				.Where(notif => notif.Type == NotificationType.Mention)
+				.Delay(new TimeSpan(0, 0, 1))
+				.Subscribe((mes) => Core.HandleMentionAsync(new DonPost(mes.Status, this)));
+			WriteLine("リプライ監視開始");
+
+			// Timeline
+			tl = Mastodon.Streaming.LocalPublicAsObservable(false).Merge(Mastodon.Streaming.UserAsObservable())
+				.OfType<StatusMessage>()
+				.DistinctUntilChanged(n => n.Id)
+				.Delay(new TimeSpan(0, 0, 1))
+				.Subscribe((mes) => Core.HandleTimelineAsync(new DonPost(mes, this)));
+			WriteLine("タイムライン監視開始");
+		}
+
+		private static async Task AuthorizeAsync(MastodonClient don)
+		{
+			var redirect = "urn:ietf:wg:oauth:2.0:oob";
+			var scope = AccessScope.Read | AccessScope.Write | AccessScope.Follow;
+			var app = await don.Apps.RegisterAsync("Citrine for Mastodon", redirect, scope);
+
+			var url = don.Auth.AuthorizeUrl(redirect, scope);
+			try
+			{
+				Server.OpenUrl(url);
+			}
+			catch (Exception)
+			{
+				WriteLine("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
+				WriteLine("> " + url);
+			}
+
+			WriteLine("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールにコードを入力してください。");
+
+			var code = ReadLine();
+
+			await don.Auth.AccessTokenAsync(redirect, code);
+			var credential = JsonConvert.SerializeObject(don.Credential);
+
+			File.WriteAllText("./token", credential);
+		}
+
+		private IDisposable followed, reply, tl;
 	}
 }

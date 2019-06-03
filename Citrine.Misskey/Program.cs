@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Citrine.Core;
 using static System.Console;
 
-namespace Citrine.Mastodon
+namespace Citrine.Misskey
 {
 	class Program
 	{
@@ -10,15 +10,16 @@ namespace Citrine.Mastodon
 		{
 			WriteLine($"Citrine {Server.Version}");
 			WriteLine($"XelticaBot {Server.VersionAsXelticaBot}");
-			WriteLine($"Citrine.Mastodon {Shell.Version}");
+			WriteLine($"Citrine.Misskey {Shell.Version}");
 			WriteLine();
 			WriteLine("起動中...");
-			await Shell.InitializeAsync();
+			var sh = await Shell.InitializeAsync();
+			sh.Core.AddCommand(new EmojiCommand());
+
 			WriteLine("起動しました！");
 
 			while (true)
 				await Task.Delay(1000);
 		}
 	}
-
 }
