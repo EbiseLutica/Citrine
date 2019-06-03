@@ -52,6 +52,18 @@ namespace Citrine.Core.Modules
 				return true;
 			}
 
+			if (text.StartsWith("/dump", StringComparison.Ordinal) || text.StartsWith("/d", StringComparison.Ordinal))
+			{
+				Console.WriteLine($@"Dumped Post
+	id: {n.Id}
+	name: {n.User.Name ?? "NULL"}
+	screenName: {n.User.ScreenName ?? "NULL"}
+	text: {n.Text ?? "NULL"}
+	visibility: {n.Visiblity}");
+				await shell.ReplyAsync(n, "Dumped your post. See console.");
+				return true;
+			}
+
 			return false;
 		}
 
