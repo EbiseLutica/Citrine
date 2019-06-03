@@ -191,7 +191,7 @@ namespace Citrine.Core
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(IUser user) => user.Id.ToLower() == adminId.ToLower() && string.IsNullOrEmpty(user.Host);
+		public bool IsAdmin(IUser user) => user.Name.ToLower() == adminId.ToLower() && string.IsNullOrEmpty(user.Host);
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
