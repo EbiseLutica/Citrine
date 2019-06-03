@@ -20,12 +20,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "3.0.0";
+		public static string Version => "3.0.1";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "4.0.0";
+		public static string VersionAsXelticaBot => "4.0.1";
 
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
@@ -149,7 +149,7 @@ namespace Citrine.Core
 
 			try
 			{
-				return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), string.Join(" ", splitted));
+				return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), string.Join(" ", splitted.Skip(1)));
 			}
 			catch (CommandException)
 			{
