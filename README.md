@@ -10,12 +10,13 @@
 
 - [x] Misskey
 - [x] Mastodon
-- [ ] Discord
-- [ ] Slack
 - [x] Standalone
+  - ターミナル上でインタラクティブに動作するバージョン
+- [ ] Slack
+- [ ] Discord
 - [ ] LINE
-- [ ] Skype
 - [ ] Twitter
+- [ ] Skype
 
 ## 必要なもの
 
@@ -23,12 +24,24 @@
 
 ## ビルド
 
-```
-git clone https://github.com/Xeltica/Citrine.git
+```shell
+git clone --recursive https://github.com/Xeltica/Citrine.git
+
 cd Citrine
+
+# --recursive を忘れた場合
 git submodule update --init
+
 dotnet build
-dotnet run --project Citrine
+
+# Run Citrine for Misskey
+cd Citrine && dotnet run
+
+# Run Citrine for Mastodon
+cd Citrine.Mastodoon && dotnet run
+
+# Run Citrine Interactive
+cd Citrine.Standalone && dotnet run
 ```
 
 ## Contributing
