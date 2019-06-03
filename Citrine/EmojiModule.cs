@@ -27,6 +27,10 @@ namespace Citrine.Misskey
 		{
 			var text = n.Text.TrimMentions().ToLowerInvariant();
 			var cmd = text.Split(' ');
+
+			// リモートから追加できないようにする
+			if (!string.IsNullOrEmpty(n.User.Host))
+				return false;
 			if (!(shell is Shell s)) return false;
 			if (!(shell.Myself is MiUser u)) return false;
 			if (!(n is MiPost note)) return false;
