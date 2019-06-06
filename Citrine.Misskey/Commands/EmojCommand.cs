@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Citrine.Core;
 using Citrine.Core.Api;
@@ -17,13 +18,15 @@ namespace Citrine.Misskey
 	/// </summary>
 	public class EmojiCommand : CommandBase
 	{
-	public override string Name => "emoji";
+		public override string Name => "emoji";
 
-	public override string Usage => @"使い方:
+		public override string Usage => @"使い方:
 /emoji add <name> [url] [alias...]
 /emoji add <name> [url] [alias...]
 /emoji list
-/emoji copyfrom <hostname> (管理者限定)";
+/emoji copyfrom <hostname> (管理者限定)
+/emoji delete <name> (管理者限定)
+/emoji delete </regex/> (管理者限定)"";
 
 		public override string Description => "インスタンスへの絵文字の追加、リストアップ、他インスタンスからのコピーを行います。";
 
@@ -66,6 +69,11 @@ namespace Citrine.Misskey
 								throw new AdminOnlyException();
 							(output, cw) = await CopyFromAsync(args, s);
 							break;
+						case "delete":
+							if (sender.IsAdmin)
+								throw new AdminOnlyException();
+							(output, cw) = await DeleteAsync(args, s);
+							break;
 						default:
 							throw new CommandException();
 					}
@@ -86,9 +94,9 @@ namespace Citrine.Misskey
 			return null;
 		}
 
-	// emoji add <name> <url> [aliases...]
-	// emoji add <name> (with a file)
-	private async Task<(string, string)> AddAsync(string[] args, Note note, Shell shell)
+		// emoji add <name> <url> [aliases...]
+		// emoji add <name> (with a file)
+		private async Task<(string, string)> AddAsync(string[] args, Note note, Shell shell)
 		{
 			if (args.Length < 2)
 				throw new CommandException();
@@ -131,6 +139,32 @@ namespace Citrine.Misskey
 			{
 				return ("何も追加できませんでした.", null);
 			}
+		}
+
+
+		// /emoji delete <name>
+		// /emoji delete </regexp/>
+		private async Task<(string, string)> DeleteAsync(string[] args, Shell s)
+		{
+			if (args.Length < 2)
+				throw new CommandException();
+			var isRegexMode = args[1].StartsWith('/') && args[1].EndsWith('/');
+			Func<Emoji, bool> expr;
+
+			if (isRegexMode)
+			{
+				var r = new Regex(args[1].Remove(0, 1).Remove(args[1].Length - 2));
+				expr = (e) => r.IsMatch(e.Name);
+			}
+			else
+			{
+				expr = (e) => e.Name == args[1];
+			}
+
+			var list = await s.Misskey.Admin.Emoji.ListAsync();
+			var matches = await list.Where(expr);
+			matches.ForEach(e => Task.WhenAll(Task.Delay(250), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
+
 		}
 	}
 }
