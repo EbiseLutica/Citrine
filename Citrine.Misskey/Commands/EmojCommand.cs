@@ -26,7 +26,7 @@ namespace Citrine.Misskey
 /emoji list
 /emoji copyfrom <hostname> (管理者限定)
 /emoji delete <name> (管理者限定)
-/emoji delete </regex/> (管理者限定)"";
+/emoji delete </regex/> (管理者限定)";
 
 		public override string Description => "インスタンスへの絵文字の追加、リストアップ、他インスタンスからのコピーを行います。";
 
