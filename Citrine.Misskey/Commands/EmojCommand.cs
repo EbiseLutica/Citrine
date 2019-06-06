@@ -162,9 +162,9 @@ namespace Citrine.Misskey
 			}
 
 			var list = await s.Misskey.Admin.Emoji.ListAsync();
-			var matches = await list.Where(expr);
-			matches.ForEach(e => Task.WhenAll(Task.Delay(250), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
-
+			var matches = list.Where(expr);
+			await matches.ForEach(e => Task.WhenAll(Task.Delay(250), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
+			return ($"{matches.Count()} 件の絵文字を削除しました.", "");
 		}
 	}
 }
