@@ -65,12 +65,12 @@ namespace Citrine.Misskey
 							cw = $"絵文字総数: {list.Count}個";
 							break;
 						case "copyfrom":
-							if (sender.IsAdmin)
+							if (!sender.IsAdmin)
 								throw new AdminOnlyException();
 							(output, cw) = await CopyFromAsync(args, s);
 							break;
 						case "delete":
-							if (sender.IsAdmin)
+							if (!sender.IsAdmin)
 								throw new AdminOnlyException();
 							(output, cw) = await DeleteAsync(args, s, p.Post);
 							break;
