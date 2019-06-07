@@ -72,7 +72,7 @@ namespace Citrine.Misskey
 						case "delete":
 							if (sender.IsAdmin)
 								throw new AdminOnlyException();
-							(output, cw) = await DeleteAsync(args, s);
+							(output, cw) = await DeleteAsync(args, s, p.Post);
 							break;
 						default:
 							throw new CommandException();
@@ -144,8 +144,31 @@ namespace Citrine.Misskey
 
 		// /emoji delete <name>
 		// /emoji delete </regexp/>
-		private async Task<(string, string)> DeleteAsync(string[] args, Shell s)
+		private async Task<(string, string)> DeleteAsync(string[] args, Shell s, IPost p)
 		{
+			int interval = 60;
+			string GetTime(int cnt)
+			{
+				double time = cnt * interval / 1000f;
+				string suffix = "秒";
+				if (time > 59)
+				{
+					time /= 60;
+					suffix = "分";
+				}
+				if (time > 59)
+				{
+					time /= 60;
+					suffix = "時間";
+				}
+				if (time > 23)
+				{
+					time /= 24;
+					suffix = "日";
+				}
+				return time < 1 ? "一瞬" : time + suffix;
+
+			}
 			if (args.Length < 2)
 				throw new CommandException();
 			var isRegexMode = args[1].StartsWith('/') && args[1].EndsWith('/');
@@ -163,8 +186,13 @@ namespace Citrine.Misskey
 
 			var list = await s.Misskey.Admin.Emoji.ListAsync();
 			var matches = list.Where(expr);
-			await matches.ForEach(e => Task.WhenAll(Task.Delay(250), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
-			return ($"{matches.Count()} 件の絵文字を削除しました.", "");
+			var count = matches.Count();
+
+			var note = await s.ReplyAsync(p, $"{count} 件の絵文字を削除します. この作業は{GetTime(count)}で終わると推測されます. ");
+
+			await matches.ForEach(e => Task.WhenAll(Task.Delay(interval), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
+			await s.Misskey.Notes.DeleteAsync((note as Disboard.Misskey.Models.Note).Id);
+			return ("指定された絵文字を削除しました。", "");
 		}
 	}
 }
