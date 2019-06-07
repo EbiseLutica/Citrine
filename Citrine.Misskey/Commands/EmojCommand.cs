@@ -191,7 +191,7 @@ namespace Citrine.Misskey
 			var note = await s.ReplyAsync(p, $"{count} 件の絵文字を削除します. この作業は{GetTime(count)}で終わると推測されます. ");
 
 			await matches.ForEach(e => Task.WhenAll(Task.Delay(interval), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
-			await s.Misskey.Notes.DeleteAsync((note as Disboard.Misskey.Models.Note).Id);
+			await s.Misskey.Notes.DeleteAsync(note.Id);
 			return ("指定された絵文字を削除しました。", "");
 		}
 	}
