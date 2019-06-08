@@ -63,7 +63,7 @@ namespace Citrine.Misskey
 			}
 
 			var myself = await mi.IAsync();
-			WriteLine($"bot ユーザーを取得しました");
+			WriteLine($"bot ユーザーを取得しました (@{myself.Username})");
 
 			// 呼ばないとストリームの初期化ができないらしい
 			await mi.Streaming.ConnectAsync();

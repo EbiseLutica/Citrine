@@ -64,7 +64,7 @@ namespace Citrine.Mastodon
 
 			var myself = await don.Account.VerifyCredentialsAsync();
 
-			WriteLine($"bot ユーザーを取得しました");
+			WriteLine($"bot ユーザーを取得しました (@{myself.Username}");
 
             var sh = new Shell(don, myself);
 			return sh;
