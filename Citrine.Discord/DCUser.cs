@@ -28,12 +28,15 @@ namespace Citrine.Discord
 
 		public long PostsCount => 0;
 
+		public IDCUser Native { get; }
+
 		public DCUser(IDCUser user)
 		{
+			Native = user;
 			Name = user.Username;
 			IconUrl = user.GetAvatarUrl();
 			ScreenName = (user as IGuildUser)?.Nickname ?? Name;
-			Id = user.Mention;
+			Id = user.Username + "#" + user.DiscriminatorValue;
 			IsBot = user.IsBot || user.IsWebhook;
 		}
 	}
