@@ -12,8 +12,8 @@
 - [x] Mastodon
 - [x] Standalone
 	- ターミナル上でインタラクティブに動作するバージョン
+- [x] Discord
 - [ ] Slack
-- [ ] Discord
 - [ ] LINE
 - [ ] Twitter
 - [ ] Skype
