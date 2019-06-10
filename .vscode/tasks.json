@@ -20,6 +20,16 @@
 				"${workspaceFolder}/Citrine.Mastodon/Citrine.Mastodon.csproj"
 			],
 			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "build-discord",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/Citrine.Discord/Citrine.Discord.csproj"
+			],
+			"problemMatcher": "$msCompile"
 		}
 	]
 }
