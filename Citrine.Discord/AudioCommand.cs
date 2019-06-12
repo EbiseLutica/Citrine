@@ -60,7 +60,7 @@ namespace Citrine.Discord
 							? vcs.FirstOrDefault(c => c.Name == args[0])
 							: vcs.FirstOrDefault();
 						srv.SummonAsync(vc);
-						break;
+						return "DJ.Citrine 参上!";
 					case "play":
 						{
 							Assert(args.Length >= 1);
@@ -73,6 +73,7 @@ namespace Citrine.Discord
 									.WithTitle(info.Title)
 									.WithThumbnailUrl(info.ThumbnailUrl)
 									.WithUrl(info.WebpageUrl)
+									.WithFooter("DJ.Citrine")
 									.WithFields(
 										Field("作者", info.Uploader),
 										Field("時間", ToTimeString(info.Duration)),
@@ -95,7 +96,7 @@ namespace Citrine.Discord
 							const int itemsPerPage = 10;
 							var embed = new EmbedBuilder()
 								.WithTitle("キュー")
-								.WithFooter("DJ Citrine");
+								.WithFooter("DJ.Citrine");
 							var sb = new StringBuilder();
 							if (srv.CurrentAudio is MusicInfo mi)
 							{
@@ -132,16 +133,18 @@ namespace Citrine.Discord
 						return "キューをカラッポにしました.";
 					case "np":
 						return "工事中";
+					default:
+						throw new CommandException();
 				}
 			}
 			else
 			{
 				return "ここはサーバーではないから, それはできないよ.";
 			}
-			throw new CommandException();
+			return "";
 		}
 
-		private string ToTimeString(int duration)
+		private string ToTimeString(double duration)
 		{
 			var ts = TimeSpan.FromSeconds(duration);
 			var sb = new StringBuilder();

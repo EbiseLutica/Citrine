@@ -77,11 +77,11 @@ namespace Citrine.Discord
 				var ffmpeg = await ProcessStartAsync(new ProcessStartInfo
 				{
 					FileName = "ffmpeg",
-					Arguments = "-hide_banner -loglevel quiet -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1",
+					Arguments = "-hide_banner -loglevel panic -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1",
 					UseShellExecute = false,
 					CreateNoWindow = true,
 					RedirectStandardInput = true,
-					RedirectStandardOutput = true
+					RedirectStandardOutput = true,
 				}, proc.StandardOutput.BaseStream);
 				return ffmpeg;
 			};
@@ -95,7 +95,7 @@ namespace Citrine.Discord
 				Arguments = $"-q \"{url}\" -o -",
 				UseShellExecute = false,
 				CreateNoWindow = true,
-				RedirectStandardOutput = true
+				RedirectStandardOutput = true,
 			});
 		}
 
@@ -104,21 +104,19 @@ namespace Citrine.Discord
 			var str = await ProcessStartAndReadStandardOutputAsStringAsync(new ProcessStartInfo
 			{
 				FileName = "youtube-dl",
-				Arguments = $"--dump-json \"{url}\" -q -o -",
-				UseShellExecute = false,
+				Arguments = $"--skip-download --print-json \"{url}\"",
+				RedirectStandardError = true,
 				RedirectStandardOutput = true,
+				UseShellExecute = false,
 			});
-			Console.WriteLine(str);
 			return JsonConvert.DeserializeObject<MusicInfo>(str);
 		}
 
 		public async Task<string> ProcessStartAndReadStandardOutputAsStringAsync(ProcessStartInfo psi)
 		{
 			using (var proc = await ProcessStartAsync(psi))
-			using (var stream = proc.StandardOutput)
-			{
-				return await stream.ReadToEndAsync();
-			}
+				using (var stream = proc.StandardOutput)
+					return await stream.ReadToEndAsync();
 		}
 
 		public Task<Process> ProcessStartAsync(ProcessStartInfo psi, Stream stream = null)
@@ -152,18 +150,24 @@ namespace Citrine.Discord
 			if (AudioQueue.TryDequeue(out var aud))
 			{
 				CurrentAudio = aud;
+				Console.WriteLine("Downloading Audio");
 				using (var ytdl = await YoutubeDlAsync(CurrentAudio.WebpageUrl))
-				using (var ffmpeg = await FFMpegAsync(ytdl))
-				using (var stream = cli?.CreatePCMStream(AudioApplication.Music))
 				{
-					await LogChannel?.SendMessageAsync($"🎶**「{CurrentAudio.Title}」を再生開始するよ〜.**");
-					try
+					Console.WriteLine("Converting Audio");
+					using (var ffmpeg = await FFMpegAsync(ytdl))
 					{
-						await ffmpeg.StandardOutput.BaseStream.CopyToAsync(stream, ctsToSkip.Token);
-					}
-					finally
-					{
-						await stream.FlushAsync();
+						using (var stream = cli?.CreatePCMStream(AudioApplication.Music))
+						{
+							await LogChannel?.SendMessageAsync($"🎶**「{CurrentAudio.Title}」を再生開始するよ〜.**");
+							try
+							{
+								await ffmpeg.StandardOutput.BaseStream.CopyToAsync(stream, ctsToSkip.Token);
+							}
+							finally
+							{
+								await stream.FlushAsync();
+							}
+						}
 					}
 				}
 			}
@@ -190,7 +194,7 @@ namespace Citrine.Discord
 	public class MusicInfo
 	{
 		[JsonProperty("duration")]
-		public int Duration { get; set; }
+		public double Duration { get; set; }
 		[JsonProperty("fulltitle")]
 		public string Title { get; set; }
 		[JsonProperty("description")]
