@@ -31,6 +31,11 @@ namespace Citrine.Discord
 			Core = new Server(this);
 		}
 
+		~Shell()
+		{
+			Client?.StopAsync();
+		}
+
 		public static async Task<Shell> InitializeAsync()
 		{
 			var sh = new Shell();
