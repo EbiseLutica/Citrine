@@ -101,13 +101,15 @@ namespace Citrine.Discord
 
 		public async Task<MusicInfo> GetMusicInfoAsync(string url)
 		{
-			return JsonConvert.DeserializeObject<MusicInfo>(await ProcessStartAndReadStandardOutputAsStringAsync(new ProcessStartInfo
+			var str = await ProcessStartAndReadStandardOutputAsStringAsync(new ProcessStartInfo
 			{
 				FileName = "youtube-dl",
 				Arguments = $"--dump-json \"{url}\" -q -o -",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
-			}));
+			});
+			Console.WriteLine(str);
+			return JsonConvert.DeserializeObject<MusicInfo>(str);
 		}
 
 		public async Task<string> ProcessStartAndReadStandardOutputAsStringAsync(ProcessStartInfo psi)
