@@ -104,7 +104,7 @@ namespace Citrine.Discord
 			return JsonConvert.DeserializeObject<MusicInfo>(await ProcessStartAndReadStandardOutputAsStringAsync(new ProcessStartInfo
 			{
 				FileName = "youtube-dl",
-				Arguments = $"\"{url}\" -q -o -",
+				Arguments = $"--dump-json \"{url}\" -q -o -",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			}));
