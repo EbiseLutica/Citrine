@@ -59,7 +59,7 @@ namespace Citrine.Discord
 						var vc = args.Length >= 1
 							? vcs.FirstOrDefault(c => c.Name == args[0])
 							: vcs.FirstOrDefault();
-						await srv.SummonAsync(vc);
+						srv.SummonAsync(vc);
 						break;
 					case "play":
 						{
