@@ -21,6 +21,7 @@ namespace Citrine.Discord
 /audio queue [page] - キューを見る
 /audio clear - キューを全消し
 /audio np - 再生中の曲表示
+/audio bye - さようなら
 /audio summon [channel name] - MusicBot 参上";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
@@ -61,6 +62,10 @@ namespace Citrine.Discord
 							: vcs.FirstOrDefault();
 						srv.SummonAsync(vc);
 						return "DJ.Citrine 参上!";
+					case "bye":
+						srv.Dispose();
+						servers.Remove(id);
+						return "さらば.";
 					case "play":
 						{
 							Assert(args.Length >= 1);
