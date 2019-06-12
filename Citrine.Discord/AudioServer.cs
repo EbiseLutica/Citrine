@@ -92,7 +92,7 @@ namespace Citrine.Discord
 			return ProcessStartAsync(new ProcessStartInfo
 			{
 				FileName = "youtube-dl",
-				Arguments = $"-q '{url}' -o -",
+				Arguments = $"-q \"{url}\" -o -",
 				UseShellExecute = false,
 				CreateNoWindow = true,
 				RedirectStandardOutput = true
@@ -104,7 +104,7 @@ namespace Citrine.Discord
 			return JsonConvert.DeserializeObject<MusicInfo>(await ProcessStartAndReadStandardOutputAsStringAsync(new ProcessStartInfo
 			{
 				FileName = "youtube-dl",
-				Arguments = $"'{url}' -q -o -",
+				Arguments = $"\"{url}\" -q -o -",
 				UseShellExecute = false,
 				RedirectStandardOutput = true,
 			}));
