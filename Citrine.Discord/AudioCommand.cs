@@ -83,7 +83,7 @@ namespace Citrine.Discord
 							}
 							catch (System.Exception ex)
 							{
-								return $"エラーが起きちゃった. {ex.GetType().Name}: {ex.Message}";
+								return $"エラーが起きちゃった. ```{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}```";
 							}
 							break;
 						}
