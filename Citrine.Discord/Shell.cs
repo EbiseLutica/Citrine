@@ -109,7 +109,7 @@ namespace Citrine.Discord
 			if (string.IsNullOrEmpty(text))
 				return null;
 			var mention = (post.User as DCUser).Native.Mention;
-			return new DCPost(await PostAsync($"{mention} {text}", cw), post);
+			return new DCPost(await PostAsync($"{text}", cw), post);
 		}
 
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
