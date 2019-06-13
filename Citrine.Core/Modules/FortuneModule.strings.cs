@@ -15,7 +15,6 @@ namespace Citrine.Core.Modules
 			"ギガ吉",
 		};
 		public static readonly string[] ItemPrefixes = {
-			"",
 			"プラチナ製の",
 			"新鮮な",
 			"最新式の",
