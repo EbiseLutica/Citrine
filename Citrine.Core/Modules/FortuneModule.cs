@@ -28,7 +28,7 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"金運💰: {GetStar(money, 5)}");
 				builder.AppendLine($"仕事💻: {GetStar(work, 5)}");
 				builder.AppendLine($"勉強📒: {GetStar(study, 5)}");
-				builder.AppendLine($"ラッキーアイテム💎: {ItemPrefixes.Random(r)}{Items.Random(r)}");
+				builder.AppendLine($"ラッキーアイテム💎: {GenerateWord()}");
 
 				await shell.ReplyAsync(n, builder.ToString(), $"僕が今日の{core.GetNicknameOf(n.User)}の運勢を占ったよ:");
 
@@ -40,7 +40,21 @@ namespace Citrine.Core.Modules
 
 		public override Task<bool> OnDmReceivedAsync(IPost n, IShell shell, Server core) => ActivateAsync(n, shell, core);
 
+		public static string GenerateWord()
+		{
+			var sb = new StringBuilder();
+			if (rnd.Next(10) > 3)
+				sb.Append(ItemPrefixes.Random());
+			sb.Append(Items.Random());
+			if (rnd.Next(10) > 3)
+				sb.Append(ItemSuffixes.Random());
+			return sb.ToString();
+		}
+
+		static Random rnd = new Random();
+
 		static string GetStar(int value, int maxValue) => new string('★', value) + new string('☆', maxValue - value);
+
 	}
 
 }
