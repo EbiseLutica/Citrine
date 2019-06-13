@@ -43,10 +43,10 @@ namespace Citrine.Core.Modules
 		public static string GenerateWord()
 		{
 			var sb = new StringBuilder();
-			if (rnd.Next(10) > 3)
+			if (rnd.Next(100) > 50)
 				sb.Append(ItemPrefixes.Random());
 			sb.Append(Items.Random());
-			if (rnd.Next(10) > 3)
+			if (rnd.Next(100) > 70)
 				sb.Append(ItemSuffixes.Random());
 			return sb.ToString();
 		}
