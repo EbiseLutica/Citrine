@@ -14,15 +14,15 @@ namespace Citrine.Core.Api
 		AttachmentType AttachmentType { get; }
 		int AttachmentMaxCount { get; }
 
-		Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<IAttachment> attachments = null);
-		Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> filePaths = null);
-		Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<IAttachment> attachments = null);
-		Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> filePaths = null);
+		Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null);
+		Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null);
+		Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null);
+		Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null);
 		Task ReactAsync(IPost post, string reactionChar);
 		Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default);
 		Task<IPost> SendDirectMessageAsync(IUser user, string text);
 		Task<IAttachment> UploadAsync(string path, string name);
-		Task RemoveFileAsync(IAttachment attachment);
+		Task DeleteFileAsync(IAttachment attachment);
 		Task FollowAsync(IUser user);
 		Task UnfollowAsync(IUser user);
 		Task BlockAsync(IUser user);
@@ -36,7 +36,7 @@ namespace Citrine.Core.Api
 		Task<IPost> GetPostAsync(string id);
 		Task<IUser> GetUserAsync(string id);
 		Task<IUser> GetUserByNameAsync(string name);
-		Task<IAttachment> GetAttachmentAsync(string name);
+		Task<IAttachment> GetAttachmentAsync(string fileId);
 	}
 
 	public enum AttachmentType
