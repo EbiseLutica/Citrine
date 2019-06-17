@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Citrine.Core.Api
 {
 	public interface IPost
@@ -14,5 +16,6 @@ namespace Citrine.Core.Api
 		string NativeVisiblity { get; }
 		string Via { get; }
 		IPoll Poll { get; }
+		List<IAttachment> Attachments { get; }
 	}
 }
