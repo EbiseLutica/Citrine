@@ -17,7 +17,6 @@ namespace Citrine.Discord
 			WriteLine("起動中...");
 			var sh = await Shell.InitializeAsync();
 			sh.Core.AddCommand(new YuusakuCommand());
-			sh.Core.AddCommand(new AudioCommand());
 			WriteLine("起動しました！");
 
 			await Task.Delay(-1);
