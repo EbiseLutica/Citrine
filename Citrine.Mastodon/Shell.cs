@@ -104,22 +104,24 @@ namespace Citrine.Mastodon
 
 		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
-			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, null, cw != null, cw, MapVisibility(visiblity, Visiblity.Public)), this);
+			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, attachments?.Select(a => a.Id.ToLong()).ToList(), cw != null, cw, MapVisibility(visiblity, Visiblity.Public)), this);
 		}
 
-		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
 		{
-			throw new NotImplementedException();
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await PostAsync(text, cw, visiblity, choices, attachments);
 		}
 
 		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
-			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), attachments.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
+			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), attachments?.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
 		}
 
-		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
 		{
-			throw new NotImplementedException();
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await ReplyAsync(post, text, cw, visiblity, choices, attachments);
 		}
 
 		public Task ReactAsync(IPost post, string reactionChar)
@@ -154,7 +156,7 @@ namespace Citrine.Mastodon
 			return Task.Delay(1);
 		}
 
-		public async Task<IAttachment> UploadAsync(string path, string name)
+		public async Task<IAttachment> UploadAsync(string path, string name = null)
 		{
 			return new DonAttachment(await Mastodon.Media.CreateAsync(path));
 		}

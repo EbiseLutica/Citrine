@@ -87,11 +87,11 @@ namespace Citrine.Misskey
 		{
 			if (post is MiDmPost dm)
 			{
-				return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}"));
+				return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}", attachments?.FirstOrDefault()?.Id));
 			}
 			else
 			{
-				return new MiPost(await CreateNoteAsync(text, visiblity, cw, reply: post));
+				return new MiPost(await CreateNoteAsync(text, visiblity, cw, reply: post, choices: choices, attachments: attachments));
 			}
 		}
 
@@ -143,15 +143,17 @@ namespace Citrine.Misskey
 
 		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
 		{
-			throw new NotImplementedException();
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await ReplyAsync(post, text, cw, visiblity, choices, attachments);
 		}
 
 		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
 		{
-			throw new NotImplementedException();
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await PostAsync(text, cw, visiblity, choices, attachments);
 		}
 
-		public async Task<IAttachment> UploadAsync(string path, string name)
+		public async Task<IAttachment> UploadAsync(string path, string name = null)
 		{
 			var file = await Misskey.Drive.Files.CreateAsync(path);
 			if (name != null)
