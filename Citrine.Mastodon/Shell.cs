@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 
 namespace Citrine.Mastodon
 {
+	using System.Collections.Generic;
 	using static Console;
 	public class Shell : IShell
 	{
@@ -31,6 +32,16 @@ namespace Citrine.Mastodon
 		public MastodonClient Mastodon { get; private set; }
 
 		public Server Core { get; private set; }
+
+		public bool CanBlock => throw new NotImplementedException();
+
+		public bool CanMute => throw new NotImplementedException();
+
+		public bool CanFollow => throw new NotImplementedException();
+
+		public Core.Api.AttachmentType AttachmentType => throw new NotImplementedException();
+
+		public int AttachmentMaxCount => throw new NotImplementedException();
 
 		public Shell(MastodonClient don, Account myself)
 		{
@@ -91,19 +102,29 @@ namespace Citrine.Mastodon
 			Mastodon.Statuses.FavouriteAsync(long.Parse(post.Id));
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, null, cw != null, cw, MapVisibility(visiblity, Visiblity.Public)), this);
+		}
+
+		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		{
+			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), attachments.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
+		}
+
+		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			throw new NotImplementedException();
 		}
 
 		public Task ReactAsync(IPost post, string reactionChar)
 		{
 			return LikeAsync(post);
-		}
-
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
-		{
-			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), null, cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
 		}
 
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
@@ -131,6 +152,52 @@ namespace Citrine.Mastodon
 		{
 			// Unsupported
 			return Task.Delay(1);
+		}
+
+		public async Task<IAttachment> UploadAsync(string path, string name)
+		{
+			return new DonAttachment(await Mastodon.Media.CreateAsync(path));
+		}
+
+		public Task DeleteFileAsync(IAttachment attachment)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task FollowAsync(IUser user)
+		{
+			await Mastodon.Account.FollowAsync(user.Id.ToLong());
+		}
+
+		public async Task UnfollowAsync(IUser user)
+		{
+			await Mastodon.Account.UnfollowAsync(user.Id.ToLong());
+		}
+
+		public async Task BlockAsync(IUser user)
+		{
+			await Mastodon.Account.BlockAsync(user.Id.ToLong());
+		}
+
+		public async Task UnBlockAsync(IUser user)
+		{
+			await Mastodon.Account.UnblockAsync(user.Id.ToLong());
+		}
+
+		public async Task MuteAsync(IUser user)
+		{
+			await Mastodon.Account.MuteAsync(user.Id.ToLong());
+		}
+
+		public async Task UnMuteAsync(IUser user)
+		{
+			await Mastodon.Account.UnmuteAsync(user.Id.ToLong());
+		}
+
+		public async Task<IAttachment> GetAttachmentAsync(string fileId)
+		{
+			// Mastodon has no Media Showing API
+			throw new NotSupportedException();
 		}
 
 		private VisibilityType MapVisibility(Visiblity vis, Visiblity vis2)
@@ -211,5 +278,10 @@ namespace Citrine.Mastodon
 		}
 
 		private IDisposable followed, reply, tl;
+	}
+
+	public static class ConvertHelper
+	{
+		public static long ToLong(this string s) => long.Parse(s);
 	}
 }
