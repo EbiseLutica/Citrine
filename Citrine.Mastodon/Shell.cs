@@ -33,15 +33,15 @@ namespace Citrine.Mastodon
 
 		public Server Core { get; private set; }
 
-		public bool CanBlock => throw new NotImplementedException();
+		public bool CanBlock => true;
 
-		public bool CanMute => throw new NotImplementedException();
+		public bool CanMute => true;
 
-		public bool CanFollow => throw new NotImplementedException();
+		public bool CanFollow => true;
 
-		public Core.Api.AttachmentType AttachmentType => throw new NotImplementedException();
+		public Core.Api.AttachmentType AttachmentType => Citrine.Core.Api.AttachmentType.BindToThePost;
 
-		public int AttachmentMaxCount => throw new NotImplementedException();
+		public int AttachmentMaxCount => 4;
 
 		public Shell(MastodonClient don, Account myself)
 		{
@@ -235,8 +235,8 @@ namespace Citrine.Mastodon
 			// フォロバ
 			followed = main.OfType<NotificationMessage>()
 				.Where(notif => notif.Type == NotificationType.Follow)
-				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((n) => Mastodon.Account.FollowAsync(n.Account.Id));
+				.Delay(new TimeSpan(0, 0, 1))
+				.Subscribe((n) => Core.HandleFollowedAsync(new DonUser(n.Account)));
 			WriteLine("フォロー監視開始");
 
 			// リプライ

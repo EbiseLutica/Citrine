@@ -287,6 +287,26 @@ namespace Citrine.Core
 			}
 		}
 
+		public async Task HandleFollowedAsync(IUser user)
+		{
+			await Task.Delay(1000);
+
+			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+			foreach (var mod in Modules.ToList())
+			{
+				try
+				{
+					// module が true を返したら終わり
+					if (await mod.OnFollowedAsync(user, Shell, this))
+						break;
+				}
+				catch (Exception ex)
+				{
+					WriteException(ex);
+				}
+			}
+		}
+
 		public static void OpenUrl(string url)
 		{
 			// from https://brockallen.com/2016/09/24/process-start-for-urls-on-net-core/

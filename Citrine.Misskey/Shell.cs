@@ -33,15 +33,15 @@ namespace Citrine.Misskey
 
 		public Server Core { get; private set; }
 
-		public bool CanBlock => throw new NotImplementedException();
+		public bool CanBlock => true;
 
-		public bool CanMute => throw new NotImplementedException();
+		public bool CanMute => true;
 
-		public bool CanFollow => throw new NotImplementedException();
+		public bool CanFollow => true;
 
-		public AttachmentType AttachmentType => throw new NotImplementedException();
+		public Core.Api.AttachmentType AttachmentType => Citrine.Core.Api.AttachmentType.UploadAndAttach;
 
-		public int AttachmentMaxCount => throw new NotImplementedException();
+		public int AttachmentMaxCount => 4;
 
 		public Shell(MisskeyClient mi, User myself)
 		{
@@ -297,7 +297,7 @@ namespace Citrine.Misskey
 			// フォロバ
 			followed = main.OfType<FollowedMessage>()
 				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((mes) => Misskey.Following.CreateAsync(mes.Id), (e) => SubscribeStreams());
+				.Subscribe((mes) => Core.HandleFollowedAsync(new MiUser(mes)), (e) => SubscribeStreams());
 			WriteLine("フォロー監視開始");
 
 			// リプライ
