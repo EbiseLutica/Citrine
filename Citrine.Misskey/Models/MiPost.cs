@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Citrine.Core.Api;
 using Disboard.Misskey.Models;
 
@@ -22,6 +24,7 @@ namespace Citrine.Misskey
 			Via = Native.App?.Name;
 			Visiblity = Native.Visibility.ToVisiblity();
 			NativeVisiblity = Native.Visibility;
+			Attachments = n.Files?.Select(file => new MiAttachment(file) as IAttachment).ToList();
 		}
 
 		public string Id  { get; }
@@ -47,5 +50,7 @@ namespace Citrine.Misskey
 		public IPoll Poll  { get; }
 
 		public string Via { get; }
+
+		public List<IAttachment> Attachments { get; }
 	}
 }

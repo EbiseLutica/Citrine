@@ -16,6 +16,4 @@ namespace Citrine.Misskey
 		}
 		public IEnumerable<IChoice> Choices { get; }
 	}
-
-
 }

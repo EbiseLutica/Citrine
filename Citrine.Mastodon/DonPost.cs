@@ -56,7 +56,7 @@ namespace Citrine.Mastodon
 			NativeVisiblity = toot.Visibility?.ToString().ToLowerInvariant();
 			Via = toot.Application?.Name;
 			Poll = default;
-			Attachments = toot.MediaAttachments.Select(m => new DonAttachment(m) as IAttachment).ToList();
+			Attachments = toot.MediaAttachments?.Select(m => new DonAttachment(m) as IAttachment).ToList();
 		}
 
 	}

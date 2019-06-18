@@ -18,6 +18,7 @@ using Citrine.Core.Modules;
 
 namespace Citrine.Misskey
 {
+	using System.Collections.Generic;
 	using static Console;
 
 	public class Shell : IShell
@@ -31,6 +32,16 @@ namespace Citrine.Misskey
 		public IUser Myself { get; private set; }
 
 		public Server Core { get; private set; }
+
+		public bool CanBlock => throw new NotImplementedException();
+
+		public bool CanMute => throw new NotImplementedException();
+
+		public bool CanFollow => throw new NotImplementedException();
+
+		public AttachmentType AttachmentType => throw new NotImplementedException();
+
+		public int AttachmentMaxCount => throw new NotImplementedException();
 
 		public Shell(MisskeyClient mi, User myself)
 		{
@@ -72,7 +83,7 @@ namespace Citrine.Misskey
 			return sh;
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			if (post is MiDmPost dm)
 			{
@@ -80,13 +91,13 @@ namespace Citrine.Misskey
 			}
 			else
 			{
-				return new MiPost(await CreateNoteAsync(text, visiblity, cw: cw, reply: post));
+				return new MiPost(await CreateNoteAsync(text, visiblity, cw, reply: post));
 			}
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
-			return new MiPost(await CreateNoteAsync(text, visiblity, cw: cw));
+			return new MiPost(await CreateNoteAsync(text, visiblity, cw, choices: choices, attachments: attachments));
 		}
 
 		public async Task ReactAsync(IPost post, string reactionChar)
@@ -98,14 +109,26 @@ namespace Citrine.Misskey
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
 			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
-			return new MiPost(await CreateNoteAsync(text, visiblity, cw: cw, repost: post));
+			return new MiPost(await CreateNoteAsync(text, visiblity, cw, repost: post));
 		}
 
-		public Task<Note> CreateNoteAsync(string text, Visiblity vis, string cw = null, IPost repost = null, IPost reply = null)
+		public Task<Note> CreateNoteAsync(string text, Visiblity vis, string cw = null, IPost repost = null, IPost reply = null, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			if (cw == null && (text.Length > 140 || text.Split("\n").Length > 5))
 				cw = "ながい";
-			return Misskey.Notes.CreateAsync(text, (reply ?? repost) != null ? MapVisiblity(reply ?? repost, vis) : vis.ToStr(), null, cw, false, null, null, reply?.Id, repost?.Id, null);
+			Poll poll = null;
+			List<string> files = attachments?.Select(a => a.Id).ToList();
+			if (choices != null)
+			{
+				poll = new Poll
+				{
+					Choices = choices.Select(c => new Choice
+					{
+						Text = c
+					}).ToList()
+				};
+			}
+			return Misskey.Notes.CreateAsync(text, (reply ?? repost) != null ? MapVisiblity(reply ?? repost, vis) : vis.ToStr(), null, cw, false, null, files, reply?.Id, repost?.Id, poll);
 		}
 
 		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
@@ -239,6 +262,66 @@ namespace Citrine.Misskey
 					await Core.HandleDmAsync(new MiDmPost(mes));
 				});
 			WriteLine("トーク監視開始");
+		}
+
+		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IAttachment> UploadAsync(string path, string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task DeleteFileAsync(IAttachment attachment)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task FollowAsync(IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task UnfollowAsync(IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task BlockAsync(IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task UnblockAsync(IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task MuteAsync(IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task UnmuteAsync(IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task DeletePostAsync(IPost post)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IAttachment> GetAttachmentAsync(string fileId)
+		{
+			throw new NotImplementedException();
 		}
 
 		private IDisposable followed, reply, tl, dm;

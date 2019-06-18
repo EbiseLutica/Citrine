@@ -45,7 +45,7 @@ namespace Citrine.Discord
 			Text = TrimMentions(mes.Content);
 			Reply = reply;
 			Via = mes.Application?.Name ?? "";
-			Attachments = mes.Attachments.Select(a => new DCAttachment(a) as C.IAttachment).ToList();
+			Attachments = mes.Attachments?.Select(a => new DCAttachment(a) as C.IAttachment).ToList();
 		}
 
 		public static string TrimMentions(string s) => Regex.Replace(s, @"<@[0-9\!]+>", "").Trim();
