@@ -30,8 +30,6 @@ namespace Citrine.Core
 
 		public override string Usage => "/debug";
 
-		public override string Description => "デバッグ用コマンド。開発者以外は使っちゃダメよ";
-
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			// 1: block & unblock
@@ -40,6 +38,8 @@ namespace Citrine.Core
 			// 4: create vote
 			// 5: unfollow
 			// 6: create file
+
+			return "This command is no longer available.";
 
 			if (!(sender is PostCommandSender p)) return "call from post";
 
