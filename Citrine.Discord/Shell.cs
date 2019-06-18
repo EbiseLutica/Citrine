@@ -29,15 +29,15 @@ namespace Citrine.Discord
 
 		public bool CanCreatePoll => false;
 
-		public bool CanBlock => throw new NotImplementedException();
+		public bool CanBlock => false;
 
-		public bool CanMute => throw new NotImplementedException();
+		public bool CanMute => false;
 
-		public bool CanFollow => throw new NotImplementedException();
+		public bool CanFollow => false;
 
-		public AttachmentType AttachmentType => throw new NotImplementedException();
+		public AttachmentType AttachmentType => Citrine.Core.Api.AttachmentType.BindToThePost;
 
-		public int AttachmentMaxCount => throw new NotImplementedException();
+		public int AttachmentMaxCount => 1;
 
 		private Shell()
 		{
@@ -151,18 +151,26 @@ namespace Citrine.Discord
 
 		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
 		{
-			throw new NotImplementedException();
+			foreach (var f in filePaths)
+			{
+				await UploadAsync(f);
+			}
+			return await ReplyAsync(post, text, cw, visiblity, choices);
 		}
 
 		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
 		{
-			throw new NotImplementedException();
+			foreach (var f in filePaths)
+			{
+				await UploadAsync(f);
+			}
+			return await PostAsync(text, cw, visiblity, choices);
 		}
 
-		public async Task<Core.Api.IAttachment> UploadAsync(string path, string name)
+		public async Task<Core.Api.IAttachment> UploadAsync(string path, string name = null)
 		{
-			// Discord has no api to only upload files
-			throw new NotSupportedException();
+			var file = (await CurrentChannel?.SendFileAsync(path, name)).Attachments?.FirstOrDefault();
+			return file == null ? null : new DCAttachment(file);
 		}
 
 		public async Task DeleteFileAsync(Core.Api.IAttachment attachment)
