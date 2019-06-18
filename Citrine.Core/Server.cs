@@ -20,12 +20,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "3.0.1";
+		public static string Version => "4.0.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "4.0.1";
+		public static string VersionAsXelticaBot => "4.1.0";
 
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。

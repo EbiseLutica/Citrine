@@ -1,7 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Citrine.Core.Api;
+using C = Citrine.Core.Api;
 using Discord;
-using ICUser = Citrine.Core.Api.IUser;
 
 namespace Citrine.Discord
 {
@@ -9,7 +11,7 @@ namespace Citrine.Discord
 	{
 		public string Id { get; }
 
-		public ICUser User { get; }
+		public C.IUser User { get; }
 
 		public string Text { get; }
 
@@ -33,6 +35,8 @@ namespace Citrine.Discord
 
 		public IMessage Native { get; }
 
+		public List<C.IAttachment> Attachments { get; }
+
 		public DCPost(IMessage mes, IPost reply = null)
 		{
 			Native = mes;
@@ -41,6 +45,7 @@ namespace Citrine.Discord
 			Text = TrimMentions(mes.Content);
 			Reply = reply;
 			Via = mes.Application?.Name ?? "";
+			Attachments = mes.Attachments.Select(a => new DCAttachment(a) as C.IAttachment).ToList();
 		}
 
 		public static string TrimMentions(string s) => Regex.Replace(s, @"<@[0-9\!]+>", "").Trim();

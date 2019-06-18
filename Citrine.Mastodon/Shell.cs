@@ -179,7 +179,7 @@ namespace Citrine.Mastodon
 			await Mastodon.Account.BlockAsync(user.Id.ToLong());
 		}
 
-		public async Task UnBlockAsync(IUser user)
+		public async Task UnblockAsync(IUser user)
 		{
 			await Mastodon.Account.UnblockAsync(user.Id.ToLong());
 		}
@@ -189,9 +189,14 @@ namespace Citrine.Mastodon
 			await Mastodon.Account.MuteAsync(user.Id.ToLong());
 		}
 
-		public async Task UnMuteAsync(IUser user)
+		public async Task UnmuteAsync(IUser user)
 		{
 			await Mastodon.Account.UnmuteAsync(user.Id.ToLong());
+		}
+
+		public async Task DeletePostAsync(IPost post)
+		{
+			await Mastodon.Statuses.DestroyAsync(post.Id.ToLong());
 		}
 
 		public async Task<IAttachment> GetAttachmentAsync(string fileId)

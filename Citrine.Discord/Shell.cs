@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Citrine.Core;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Citrine.Discord
 {
@@ -27,6 +28,16 @@ namespace Citrine.Discord
 		public IMessageChannel CurrentChannel { get; private set; }
 
 		public bool CanCreatePoll => false;
+
+		public bool CanBlock => throw new NotImplementedException();
+
+		public bool CanMute => throw new NotImplementedException();
+
+		public bool CanFollow => throw new NotImplementedException();
+
+		public AttachmentType AttachmentType => throw new NotImplementedException();
+
+		public int AttachmentMaxCount => throw new NotImplementedException();
 
 		private Shell()
 		{
@@ -86,9 +97,17 @@ namespace Citrine.Discord
 			return ReactAsync(post, "⭐️");
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
 		{
-			return new DCPost(await PostAsync(text, cw));
+			return new DCPost(await PostAsync(text, cw, attachments));
+		}
+
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+			var mention = (post.User as DCUser).Native.Mention;
+			return new DCPost(await PostAsync($"{text}", cw, attachments), post);
 		}
 
 		public async Task ReactAsync(IPost post, string reactionChar)
@@ -107,18 +126,10 @@ namespace Citrine.Discord
 			}
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
-		{
-			if (string.IsNullOrEmpty(text))
-				return null;
-			var mention = (post.User as DCUser).Native.Mention;
-			return new DCPost(await PostAsync($"{text}", cw), post);
-		}
-
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
 			var t = $"{text ?? ""} RP: {(post.User as DCUser).Native.Mention}\n```{post.Text ?? ""}```\n{(post as DCPost).Native.GetJumpUrl()}";
-			return new DCPost(await PostAsync(t, cw));
+			return new DCPost(await PostAsync(t, cw, null));
 		}
 
 		public async Task<IPost> SendDirectMessageAsync(ICUser user, string text)
@@ -132,10 +143,72 @@ namespace Citrine.Discord
 			await (post as IUserMessage)?.RemoveAllReactionsAsync();
 		}
 
-		public Task VoteAsync(IPost post, int choice)
+		public async Task VoteAsync(IPost post, int choice)
 		{
 			// Discord has no vote feature :3
 			throw new NotSupportedException();
+		}
+
+		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<Core.Api.IAttachment> UploadAsync(string path, string name)
+		{
+			// Discord has no api to only upload files
+			throw new NotSupportedException();
+		}
+
+		public async Task DeleteFileAsync(Core.Api.IAttachment attachment)
+		{
+			// Discord has no api to delete files
+			throw new NotSupportedException();
+		}
+
+		public async Task FollowAsync(ICUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task UnfollowAsync(ICUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task BlockAsync(ICUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task UnblockAsync(ICUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task MuteAsync(ICUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task UnmuteAsync(ICUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task<Core.Api.IAttachment> GetAttachmentAsync(string fileId)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task DeletePostAsync(IPost post)
+		{
+			await (post as DCPost).Native.DeleteAsync();
 		}
 
 		// || で挟むと隠し文字列として機能する
@@ -175,8 +248,9 @@ namespace Citrine.Discord
 			Console.WriteLine($": {arg.Content}");
 		}
 
-		private async Task<IMessage> PostAsync(string text, string cw)
+		private async Task<IMessage> PostAsync(string text, string cw, List<Core.Api.IAttachment> attachments)
 		{
+			// Discord has no api to send file from ID
 			return await CurrentChannel?.SendMessageAsync(Cw(cw, text));
 		}
 	}

@@ -26,9 +26,10 @@ namespace Citrine.Core.Api
 		Task FollowAsync(IUser user);
 		Task UnfollowAsync(IUser user);
 		Task BlockAsync(IUser user);
-		Task UnBlockAsync(IUser user);
+		Task UnblockAsync(IUser user);
 		Task MuteAsync(IUser user);
-		Task UnMuteAsync(IUser user);
+		Task UnmuteAsync(IUser user);
+		Task DeletePostAsync(IPost post);
 		Task VoteAsync(IPost post, int choice);
 		Task LikeAsync(IPost post);
 		Task UnlikeAsync(IPost post);
