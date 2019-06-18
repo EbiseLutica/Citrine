@@ -116,17 +116,11 @@ namespace Citrine.Misskey
 		{
 			if (cw == null && (text.Length > 140 || text.Split("\n").Length > 5))
 				cw = "ながい";
-			Poll poll = null;
+			PollParameter poll = null;
 			List<string> files = attachments?.Select(a => a.Id).ToList();
 			if (choices != null)
 			{
-				poll = new Poll
-				{
-					Choices = choices.Select(c => new Choice
-					{
-						Text = c
-					}).ToList()
-				};
+				poll = new PollParameter { Choices = choices };
 			}
 			return Misskey.Notes.CreateAsync(text, (reply ?? repost) != null ? MapVisiblity(reply ?? repost, vis) : vis.ToStr(), null, cw, false, null, files, reply?.Id, repost?.Id, poll);
 		}
