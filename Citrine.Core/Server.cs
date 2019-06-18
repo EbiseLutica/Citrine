@@ -37,7 +37,20 @@ namespace Citrine.Core
 		/// </summary>
 		public List<CommandBase> Commands { get; }
 
+		/// <summary>
+		/// シェルを取得します。
+		/// </summary>
 		public IShell Shell { get; }
+
+		/// <summary>
+		/// 文脈の一覧を取得します。
+		/// </summary>
+		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextPostDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
+
+		/// <summary>
+		/// ユーザーの一覧を取得します。
+		/// </summary>
+		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextUserDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
 
 		/// <summary>
 		/// ニックネームの辞書を取得します。
@@ -231,6 +244,14 @@ namespace Citrine.Core
 		{
 			await Task.Delay(1000);
 
+			if (mention.IsReply && ContextPostDictionary.ContainsKey(mention.Reply.Id))
+			{
+				var (mod, arg) = ContextPostDictionary[mention.Reply.Id];
+				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
+				ContextPostDictionary.Remove(mention.Reply.Id);
+				return;
+			}
+
 			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
 			foreach (var mod in Modules.ToList())
 			{
@@ -270,6 +291,14 @@ namespace Citrine.Core
 		public async Task HandleDmAsync(IPost post)
 		{
 			await Task.Delay(1000);
+
+			if (ContextUserDictionary.ContainsKey(post.User.Id))
+			{
+				var (mod, arg) = ContextPostDictionary[post.User.Id];
+				await mod.OnRepliedContextually(post, null, arg, Shell, this);
+				ContextPostDictionary.Remove(post.User.Id);
+				return;
+			}
 
 			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
 			foreach (var mod in Modules.ToList())
@@ -327,6 +356,18 @@ namespace Citrine.Core
 			else
 			{
 				throw new NotSupportedException("このプラットフォームはサポートされていません。");
+			}
+		}
+
+		public void RegisterContext(IPost post, ModuleBase mod, Dictionary<string, object> args = null)
+		{
+			if (post is IDirectMessage dm)
+			{
+				ContextUserDictionary[dm.Recipient.Id] = (mod, args);
+			}
+			else
+			{
+				ContextPostDictionary[post.Id] = (mod, args);
 			}
 		}
 
