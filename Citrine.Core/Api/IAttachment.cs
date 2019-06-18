@@ -2,6 +2,9 @@ using System;
 
 namespace Citrine.Core.Api
 {
+	/// <summary>
+	/// 投稿に付属する添付を定義します。
+	/// </summary>
 	public interface IAttachment
 	{
 		string Id { get; }
