@@ -141,6 +141,69 @@ namespace Citrine.Misskey
 			await Misskey.Notes.Polls.VoteAsync(post.Id, choice);
 		}
 
+		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<IAttachment> UploadAsync(string path, string name)
+		{
+			var file = await Misskey.Drive.Files.CreateAsync(path);
+			if (name != null)
+				file = await Misskey.Drive.Files.UpdateAsync(file.Id, name: name);
+			return new MiAttachment(file);
+		}
+
+		public async Task DeleteFileAsync(IAttachment attachment)
+		{
+			await Misskey.Drive.Files.DeleteAsync(attachment.Id);
+		}
+
+		public async Task FollowAsync(IUser user)
+		{
+			await Misskey.Following.CreateAsync(user.Id);
+		}
+
+		public async Task UnfollowAsync(IUser user)
+		{
+			await Misskey.Following.DeleteAsync(user.Id);
+		}
+
+		public async Task BlockAsync(IUser user)
+		{
+			await Misskey.Blocking.CreateAsync(user.Id);
+		}
+
+		public async Task UnblockAsync(IUser user)
+		{
+			await Misskey.Blocking.DeleteAsync(user.Id);
+		}
+
+		public async Task MuteAsync(IUser user)
+		{
+			await Misskey.Mute.CreateAsync(user.Id);
+		}
+
+		public async Task UnmuteAsync(IUser user)
+		{
+			await Misskey.Mute.DeleteAsync(user.Id);
+		}
+
+		public async Task DeletePostAsync(IPost post)
+		{
+			await Misskey.Notes.DeleteAsync(post.Id);
+		}
+
+		public async Task<IAttachment> GetAttachmentAsync(string fileId)
+		{
+			return new MiAttachment(await Misskey.Drive.Files.ShowAsync(fileId));
+		}
+
 		public string MapVisiblity(IPost post, Visiblity v)
 		{
 			return (v == Visiblity.Default ? post.Visiblity : v).ToStr();
@@ -262,66 +325,6 @@ namespace Citrine.Misskey
 					await Core.HandleDmAsync(new MiDmPost(mes));
 				});
 			WriteLine("トーク監視開始");
-		}
-
-		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<IAttachment> UploadAsync(string path, string name)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task DeleteFileAsync(IAttachment attachment)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task FollowAsync(IUser user)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task UnfollowAsync(IUser user)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task BlockAsync(IUser user)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task UnblockAsync(IUser user)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task MuteAsync(IUser user)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task UnmuteAsync(IUser user)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task DeletePostAsync(IPost post)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<IAttachment> GetAttachmentAsync(string fileId)
-		{
-			throw new NotImplementedException();
 		}
 
 		private IDisposable followed, reply, tl, dm;
