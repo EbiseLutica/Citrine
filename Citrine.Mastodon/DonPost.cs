@@ -5,6 +5,8 @@ using Disboard.Mastodon.Models;
 
 namespace Citrine.Mastodon
 {
+	using System.Collections.Generic;
+	using System.Linq;
 	using V = Core.Api.Visiblity;
 
 	public class DonPost : IPost
@@ -35,6 +37,8 @@ namespace Citrine.Mastodon
 
 		public Status Native { get; private set; }
 
+		public List<IAttachment> Attachments { get; private set; }
+
 		public DonPost(Status toot, Shell shell)
 		{
 			Native = toot;
@@ -52,6 +56,7 @@ namespace Citrine.Mastodon
 			NativeVisiblity = toot.Visibility?.ToString().ToLowerInvariant();
 			Via = toot.Application?.Name;
 			Poll = default;
+			Attachments = toot.MediaAttachments?.Select(m => new DonAttachment(m) as IAttachment).ToList();
 		}
 
 	}

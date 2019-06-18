@@ -18,6 +18,7 @@ using Citrine.Core.Modules;
 
 namespace Citrine.Misskey
 {
+	using System.Collections.Generic;
 	using static Console;
 
 	public class Shell : IShell
@@ -31,6 +32,16 @@ namespace Citrine.Misskey
 		public IUser Myself { get; private set; }
 
 		public Server Core { get; private set; }
+
+		public bool CanBlock => true;
+
+		public bool CanMute => true;
+
+		public bool CanFollow => true;
+
+		public Core.Api.AttachmentType AttachmentType => Citrine.Core.Api.AttachmentType.UploadAndAttach;
+
+		public int AttachmentMaxCount => 4;
 
 		public Shell(MisskeyClient mi, User myself)
 		{
@@ -72,21 +83,21 @@ namespace Citrine.Misskey
 			return sh;
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			if (post is MiDmPost dm)
 			{
-				return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}"));
+				return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(post.User.Id, $"{(cw != default ? "**" + cw + "**\n\n" : "")}{text}", attachments?.FirstOrDefault()?.Id));
 			}
 			else
 			{
-				return new MiPost(await CreateNoteAsync(text, visiblity, cw: cw, reply: post));
+				return new MiPost(await CreateNoteAsync(text, visiblity, cw, reply: post, choices: choices, attachments: attachments));
 			}
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
-			return new MiPost(await CreateNoteAsync(text, visiblity, cw: cw));
+			return new MiPost(await CreateNoteAsync(text, visiblity, cw, choices: choices, attachments: attachments));
 		}
 
 		public async Task ReactAsync(IPost post, string reactionChar)
@@ -98,14 +109,20 @@ namespace Citrine.Misskey
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
 			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
-			return new MiPost(await CreateNoteAsync(text, visiblity, cw: cw, repost: post));
+			return new MiPost(await CreateNoteAsync(text, visiblity, cw, repost: post));
 		}
 
-		public Task<Note> CreateNoteAsync(string text, Visiblity vis, string cw = null, IPost repost = null, IPost reply = null)
+		public Task<Note> CreateNoteAsync(string text, Visiblity vis, string cw = null, IPost repost = null, IPost reply = null, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			if (cw == null && (text.Length > 140 || text.Split("\n").Length > 5))
 				cw = "ながい";
-			return Misskey.Notes.CreateAsync(text, (reply ?? repost) != null ? MapVisiblity(reply ?? repost, vis) : vis.ToStr(), null, cw, false, null, null, reply?.Id, repost?.Id, null);
+			PollParameter poll = null;
+			List<string> files = attachments?.Select(a => a.Id).ToList();
+			if (choices != null)
+			{
+				poll = new PollParameter { Choices = choices };
+			}
+			return Misskey.Notes.CreateAsync(text, (reply ?? repost) != null ? MapVisiblity(reply ?? repost, vis) : vis.ToStr(), null, cw, false, null, files, reply?.Id, repost?.Id, poll);
 		}
 
 		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
@@ -116,6 +133,71 @@ namespace Citrine.Misskey
 		public async Task VoteAsync(IPost post, int choice)
 		{
 			await Misskey.Notes.Polls.VoteAsync(post.Id, choice);
+		}
+
+		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await ReplyAsync(post, text, cw, visiblity, choices, attachments);
+		}
+
+		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		{
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await PostAsync(text, cw, visiblity, choices, attachments);
+		}
+
+		public async Task<IAttachment> UploadAsync(string path, string name = null)
+		{
+			var file = await Misskey.Drive.Files.CreateAsync(path);
+			if (name != null)
+				file = await Misskey.Drive.Files.UpdateAsync(file.Id, name: name);
+			return new MiAttachment(file);
+		}
+
+		public async Task DeleteFileAsync(IAttachment attachment)
+		{
+			await Misskey.Drive.Files.DeleteAsync(attachment.Id);
+		}
+
+		public async Task FollowAsync(IUser user)
+		{
+			await Misskey.Following.CreateAsync(user.Id);
+		}
+
+		public async Task UnfollowAsync(IUser user)
+		{
+			await Misskey.Following.DeleteAsync(user.Id);
+		}
+
+		public async Task BlockAsync(IUser user)
+		{
+			await Misskey.Blocking.CreateAsync(user.Id);
+		}
+
+		public async Task UnblockAsync(IUser user)
+		{
+			await Misskey.Blocking.DeleteAsync(user.Id);
+		}
+
+		public async Task MuteAsync(IUser user)
+		{
+			await Misskey.Mute.CreateAsync(user.Id);
+		}
+
+		public async Task UnmuteAsync(IUser user)
+		{
+			await Misskey.Mute.DeleteAsync(user.Id);
+		}
+
+		public async Task DeletePostAsync(IPost post)
+		{
+			await Misskey.Notes.DeleteAsync(post.Id);
+		}
+
+		public async Task<IAttachment> GetAttachmentAsync(string fileId)
+		{
+			return new MiAttachment(await Misskey.Drive.Files.ShowAsync(fileId));
 		}
 
 		public string MapVisiblity(IPost post, Visiblity v)
@@ -211,7 +293,7 @@ namespace Citrine.Misskey
 			// フォロバ
 			followed = main.OfType<FollowedMessage>()
 				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((mes) => Misskey.Following.CreateAsync(mes.Id), (e) => SubscribeStreams());
+				.Subscribe((mes) => Core.HandleFollowedAsync(new MiUser(mes)), (e) => SubscribeStreams());
 			WriteLine("フォロー監視開始");
 
 			// リプライ

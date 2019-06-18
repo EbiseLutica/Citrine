@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 
 namespace Citrine.Mastodon
 {
+	using System.Collections.Generic;
 	using static Console;
 	public class Shell : IShell
 	{
@@ -31,6 +32,16 @@ namespace Citrine.Mastodon
 		public MastodonClient Mastodon { get; private set; }
 
 		public Server Core { get; private set; }
+
+		public bool CanBlock => true;
+
+		public bool CanMute => true;
+
+		public bool CanFollow => true;
+
+		public Core.Api.AttachmentType AttachmentType => Citrine.Core.Api.AttachmentType.BindToThePost;
+
+		public int AttachmentMaxCount => 4;
 
 		public Shell(MastodonClient don, Account myself)
 		{
@@ -91,19 +102,31 @@ namespace Citrine.Mastodon
 			Mastodon.Statuses.FavouriteAsync(long.Parse(post.Id));
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
-			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, null, cw != null, cw, MapVisibility(visiblity, Visiblity.Public)), this);
+			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, attachments?.Select(a => a.Id.ToLong()).ToList(), cw != null, cw, MapVisibility(visiblity, Visiblity.Public)), this);
+		}
+
+		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		{
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await PostAsync(text, cw, visiblity, choices, attachments);
+		}
+
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		{
+			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), attachments?.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
+		}
+
+		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			return await ReplyAsync(post, text, cw, visiblity, choices, attachments);
 		}
 
 		public Task ReactAsync(IPost post, string reactionChar)
 		{
 			return LikeAsync(post);
-		}
-
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
-		{
-			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), null, cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
 		}
 
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
@@ -131,6 +154,57 @@ namespace Citrine.Mastodon
 		{
 			// Unsupported
 			return Task.Delay(1);
+		}
+
+		public async Task<IAttachment> UploadAsync(string path, string name = null)
+		{
+			return new DonAttachment(await Mastodon.Media.CreateAsync(path));
+		}
+
+		public Task DeleteFileAsync(IAttachment attachment)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task FollowAsync(IUser user)
+		{
+			await Mastodon.Account.FollowAsync(user.Id.ToLong());
+		}
+
+		public async Task UnfollowAsync(IUser user)
+		{
+			await Mastodon.Account.UnfollowAsync(user.Id.ToLong());
+		}
+
+		public async Task BlockAsync(IUser user)
+		{
+			await Mastodon.Account.BlockAsync(user.Id.ToLong());
+		}
+
+		public async Task UnblockAsync(IUser user)
+		{
+			await Mastodon.Account.UnblockAsync(user.Id.ToLong());
+		}
+
+		public async Task MuteAsync(IUser user)
+		{
+			await Mastodon.Account.MuteAsync(user.Id.ToLong());
+		}
+
+		public async Task UnmuteAsync(IUser user)
+		{
+			await Mastodon.Account.UnmuteAsync(user.Id.ToLong());
+		}
+
+		public async Task DeletePostAsync(IPost post)
+		{
+			await Mastodon.Statuses.DestroyAsync(post.Id.ToLong());
+		}
+
+		public async Task<IAttachment> GetAttachmentAsync(string fileId)
+		{
+			// Mastodon has no Media Showing API
+			throw new NotSupportedException();
 		}
 
 		private VisibilityType MapVisibility(Visiblity vis, Visiblity vis2)
@@ -163,8 +237,8 @@ namespace Citrine.Mastodon
 			// フォロバ
 			followed = main.OfType<NotificationMessage>()
 				.Where(notif => notif.Type == NotificationType.Follow)
-				.Delay(new TimeSpan(0, 0, 5))
-				.Subscribe((n) => Mastodon.Account.FollowAsync(n.Account.Id));
+				.Delay(new TimeSpan(0, 0, 1))
+				.Subscribe((n) => Core.HandleFollowedAsync(new DonUser(n.Account)));
 			WriteLine("フォロー監視開始");
 
 			// リプライ
@@ -211,5 +285,10 @@ namespace Citrine.Mastodon
 		}
 
 		private IDisposable followed, reply, tl;
+	}
+
+	public static class ConvertHelper
+	{
+		public static long ToLong(this string s) => long.Parse(s);
 	}
 }

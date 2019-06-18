@@ -152,8 +152,6 @@ namespace Citrine.Misskey
 		// /emoji delete </regexp/>
 		private async Task<(string, string)> DeleteAsync(string[] args, Shell s, IPost p)
 		{
-			int interval = 60;
-
 			if (args.Length < 2)
 				throw new CommandException();
 			var isRegexMode = args[1].StartsWith('/') && args[1].EndsWith('/');
@@ -191,10 +189,11 @@ namespace Citrine.Misskey
 			if (target.Length == 0)
 				return ("削除する絵文字は見つかりませんでした.", "");
 
-			var note = await s.ReplyAsync(p, $"{target.Length} 件の絵文字を削除します. この作業は{GetTime(target.Length, interval)}で終わると推測されます. ");
+			var note = target.Length * interval >= 1000 ? await s.ReplyAsync(p, $"{target.Length} 件の絵文字を削除します. この作業は{GetTime(target.Length, interval)}で終わると推測されます. ") : null;
 			await target.ForEach(e => Task.WhenAll(Task.Delay(interval), s.Misskey.Admin.Emoji.RemoveAsync(e.Id)));
-			await s.Misskey.Notes.DeleteAsync(note.Id);
-			return ("指定された絵文字を削除しました。", "");
+			if (note != null)
+				await s.Misskey.Notes.DeleteAsync(note.Id);
+			return ($"{target.Length}件の絵文字を削除しました。", "");
 		}
 
 		private string GetTime(int cnt, int interval)

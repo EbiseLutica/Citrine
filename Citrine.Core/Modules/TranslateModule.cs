@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -26,15 +27,47 @@ namespace Citrine.Core.Modules
 				{
 					var url = $"https://script.google.com/macros/s/AKfycbweJFfBqKUs5gGNnkV2xwTZtZPptI6ebEhcCU2_JvOmHwM2TCk/exec?text={HttpUtility.UrlEncode(m.Groups[1].Value)}&source=&target={lang.code}";
 					var result = await (await Server.Http.GetAsync(url)).Content.ReadAsStringAsync();
-					await shell.ReplyAsync(n, result);
+					var reply = await shell.ReplyAsync(n, result);
+					core.RegisterContext(reply, this, new Dictionary<string, object>()
+					{
+						{ "result", result},
+						{ "code", lang.code},
+					});
 					return true;
 				}
 			}
 
-
-			// 多分競合しないから常にfalse
 			return false;
 		}
+
+		public override async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core)
+		{
+			if (n.User.Id == shell.Myself.Id)
+				return false;
+
+			if (n.Text == null)
+				return false;
+
+			foreach (var lang in langs)
+			{
+				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再?翻訳");
+				if (m.Success)
+				{
+					var url = $"https://script.google.com/macros/s/AKfycbweJFfBqKUs5gGNnkV2xwTZtZPptI6ebEhcCU2_JvOmHwM2TCk/exec?text={store["result"]}&source={store["code"]}&target={lang.code}";
+					var result = await (await Server.Http.GetAsync(url)).Content.ReadAsStringAsync();
+					var reply = await shell.ReplyAsync(n, result);
+					core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
+					{
+						{ "result", result},
+						{ "code", lang.code},
+					});
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		private (string pattern, string code)[] langs = {
 			("アイスランド語", "is"),
 			("アイルランド語", "ga"),
