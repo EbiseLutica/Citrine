@@ -3,6 +3,7 @@ using System;
 
 namespace Citrine.Standalone
 {
+	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using Core;
 	using Core.Api;
@@ -91,6 +92,8 @@ namespace Citrine.Standalone
 		public string Via { get; set; }
 
 		public IPoll Poll => null;
+
+		public List<IAttachment> Attachments { get; set; }
 	}
 
 	public class Shell : IShell
@@ -98,6 +101,41 @@ namespace Citrine.Standalone
 		public IUser Myself => UserStore.Citrine;
 
 		public bool CanCreatePoll => false;
+
+		public bool CanBlock => false;
+
+		public bool CanMute => false;
+
+		public bool CanFollow => false;
+
+		public AttachmentType AttachmentType => AttachmentType.Unsupported;
+
+		public int AttachmentMaxCount => 0;
+
+		public Task BlockAsync(IUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public Task DeleteFileAsync(IAttachment attachment)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task DeletePostAsync(IPost post)
+		{
+			await Task.Yield();
+		}
+
+		public Task FollowAsync(IUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public Task<IAttachment> GetAttachmentAsync(string fileId)
+		{
+			throw new NotSupportedException();
+		}
 
 		public Task<IPost> GetPostAsync(string id)
 		{
@@ -120,21 +158,36 @@ namespace Citrine.Standalone
 			WriteLine($"{Myself.ScreenName} がいいねしました");
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public Task MuteAsync(IUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName}: {text}");
 			return null;
 		}
 
-		public async Task ReactAsync(IPost post, string reactionChar)
+		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
 		{
-			WriteLine($"{Myself.ScreenName} がリアクション: {reactionChar}");
+			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName} » {post.User.ScreenName}: {text}");
 			return new Post();
+		}
+
+		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		{
+			throw new NotSupportedException();
+		}
+
+		public async Task ReactAsync(IPost post, string reactionChar)
+		{
+			WriteLine($"{Myself.ScreenName} がリアクション: {reactionChar}");
 		}
 
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
@@ -149,9 +202,29 @@ namespace Citrine.Standalone
 			return null;
 		}
 
+		public Task UnblockAsync(IUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public Task UnfollowAsync(IUser user)
+		{
+			throw new NotSupportedException();
+		}
+
 		public async Task UnlikeAsync(IPost post)
 		{
 			// do nothing
+		}
+
+		public Task UnmuteAsync(IUser user)
+		{
+			throw new NotSupportedException();
+		}
+
+		public Task<IAttachment> UploadAsync(string path, string name)
+		{
+			throw new NotSupportedException();
 		}
 
 		public async Task VoteAsync(IPost post, int choice)
