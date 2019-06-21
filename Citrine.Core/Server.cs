@@ -294,9 +294,9 @@ namespace Citrine.Core
 
 			if (ContextUserDictionary.ContainsKey(post.User.Id))
 			{
-				var (mod, arg) = ContextPostDictionary[post.User.Id];
+				var (mod, arg) = ContextUserDictionary[post.User.Id];
 				await mod.OnRepliedContextually(post, null, arg, Shell, this);
-				ContextPostDictionary.Remove(post.User.Id);
+				ContextUserDictionary.Remove(post.User.Id);
 				return;
 			}
 
