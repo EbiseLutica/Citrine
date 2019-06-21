@@ -21,21 +21,34 @@ namespace Citrine.Standalone
 			WriteLine("(C)2019 Xeltica");
 			WriteLine();
 			WriteLine("終了時は exit と入力してください");
+			var isDm = false;
 			while (true)
 			{
 				Write("> ");
 				var text = ReadLine();
 				if (string.IsNullOrWhiteSpace(text))
 					continue;
+				switch (text.ToLowerInvariant().Trim())
+				{
+					case ".exit":
+						return;
+					case ".modetoggle":
+						isDm = !isDm;
+						Console.WriteLine("Changed the mode to " + (isDm ? "DM" : "Reply"));
+						continue;
+				}
 				var post = new Post
 				{
 					User = UserStore.You,
 					Text = text,
+					Recipient = UserStore.Citrine,
 				};
 				WriteLine($"{post.User.ScreenName}: {post.Text}");
 				await Task.WhenAll
 				(
-					server.HandleMentionAsync(post),
+					isDm ?
+						server.HandleMentionAsync(post) :
+						server.HandleDmAsync(post),
 					server.HandleTimelineAsync(post)
 				);
 			}
@@ -67,25 +80,25 @@ namespace Citrine.Standalone
 		public long PostsCount => 0;
 	}
 
-	public class Post : IPost
+	public class Post : IDirectMessage
 	{
-		public string Id { get; set; }
+		public string Id { get; set; } = new Guid().ToString();
 
 		public IUser User { get; set; }
 
 		public string Text { get; set; }
 
-		public bool IsRepost { get; set; }
+		public bool IsRepost => Repost != null;
 
 		public IPost Repost { get; set; }
 
-		public bool IsReply { get; set; }
+		public bool IsReply => Reply != null;
 
 		public IPost Reply { get; set; }
 
-		public long RepostCount { get; set; }
+		public long RepostCount => 0;
 
-		public Visiblity Visiblity { get; set; }
+		public Visiblity Visiblity => Visiblity.Public;
 
 		public string NativeVisiblity { get; set; }
 
@@ -93,7 +106,11 @@ namespace Citrine.Standalone
 
 		public IPoll Poll => null;
 
-		public List<IAttachment> Attachments { get; set; }
+		public List<IAttachment> Attachments => null;
+
+		public IUser Recipient { get; set; }
+
+		public bool IsRead => false;
 	}
 
 	public class Shell : IShell
@@ -166,7 +183,12 @@ namespace Citrine.Standalone
 		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName}: {text}");
-			return null;
+			return new Post
+			{
+				Recipient = UserStore.You,
+				User = Myself,
+				Text = text,
+			};
 		}
 
 		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
@@ -177,7 +199,13 @@ namespace Citrine.Standalone
 		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName} » {post.User.ScreenName}: {text}");
-			return new Post();
+			return new Post
+			{
+				Recipient = UserStore.You,
+				User = Myself,
+				Text = text,
+				Reply = post
+			};
 		}
 
 		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
@@ -193,13 +221,24 @@ namespace Citrine.Standalone
 		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
 		{
 			WriteLine($"{Myself.ScreenName} RP: {post.User.ScreenName}: {post.Text}");
-			return new Post();
+
+			return new Post
+			{
+				Recipient = UserStore.You,
+				User = Myself,
+				Repost = post,
+			};
 		}
 
 		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
 		{
 			WriteLine($"Message @{Myself.Name}: {text}");
-			return null;
+			return new Post
+			{
+				Recipient = UserStore.You,
+				User = Myself,
+				Text = text,
+			};
 		}
 
 		public Task UnblockAsync(IUser user)
