@@ -371,6 +371,17 @@ namespace Citrine.Core
 			}
 		}
 
+		/// <summary>
+		/// Resources フォルダ内に配置された組込みリソースを取得します。
+		/// </summary>
+		/// <param name="path">Resources フォルダからの相対パスを . で繋いだもの。</param>
+		/// <returns>取得したリソースのストリーム。</returns>
+		public Stream GetEmbeddedResource(string path)
+		{
+			asm = typeof(Server).GetTypeInfo().Assembly;
+			return asm.GetManifestResourceStream($"{asm.GetName().Name}.Resources.{path}");
+		}
+
 		private void SaveNicknames()
 		{
 			File.WriteAllLines("./nicknames", NicknameMap.Select(kv => $"{kv.Key},{kv.Value}"));
@@ -383,5 +394,6 @@ namespace Citrine.Core
 
 		public static readonly HttpClient Http = new HttpClient();
 		readonly string adminId;
+		Assembly asm;
 	}
 }

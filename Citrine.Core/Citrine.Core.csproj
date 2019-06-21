@@ -5,21 +5,20 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<LangVersion>7.3</LangVersion>
+		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<LangVersion>7.3</LangVersion>
+		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<Folder Include="Modules\" />
 		<Folder Include="Api\" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Remove="Class1.cs" />
-		<Compile Remove="String.cs" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.109.2" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources/*" />
 	</ItemGroup>
 </Project>
