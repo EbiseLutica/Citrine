@@ -1,21 +1,23 @@
 #pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
+using System;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
-using Citrine.Core.Modules;
 
 namespace Citrine.Core
 {
-	public class EchoCommand : CommandBase
+	public class DateTimeCommand : CommandBase
 	{
-		public override string Name => "echo";
+		public override string Name => "datetime";
 
-		public override string Usage => "/echo <text>";
+		public override string Usage => "/datetime";
 
-		public override string Description => "引数をそのままオウム返しします。";
+		public override string Description => "現在時刻を返します。";
+
+		public override string[] Aliases => new[] { "date", "time", "dt" };
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			return body;
+			return DateTime.Now.ToString();
 		}
 	}
 }

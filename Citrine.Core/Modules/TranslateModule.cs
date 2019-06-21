@@ -25,8 +25,7 @@ namespace Citrine.Core.Modules
 				var m = Regex.Match(n.Text.TrimMentions(), $"(.+)を{lang.pattern}[にへ]翻訳");
 				if (m.Success)
 				{
-					var url = $"https://script.google.com/macros/s/AKfycbweJFfBqKUs5gGNnkV2xwTZtZPptI6ebEhcCU2_JvOmHwM2TCk/exec?text={HttpUtility.UrlEncode(m.Groups[1].Value)}&source=&target={lang.code}";
-					var result = await (await Server.Http.GetAsync(url)).Content.ReadAsStringAsync();
+					var result = await core.ExecCommand("/translate auto " + lang.code + " " + HttpUtility.UrlEncode(m.Groups[1].Value));
 					var reply = await shell.ReplyAsync(n, result);
 					core.RegisterContext(reply, this, new Dictionary<string, object>()
 					{
@@ -53,8 +52,7 @@ namespace Citrine.Core.Modules
 				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再?翻訳");
 				if (m.Success)
 				{
-					var url = $"https://script.google.com/macros/s/AKfycbweJFfBqKUs5gGNnkV2xwTZtZPptI6ebEhcCU2_JvOmHwM2TCk/exec?text={store["result"]}&source={store["code"]}&target={lang.code}";
-					var result = await (await Server.Http.GetAsync(url)).Content.ReadAsStringAsync();
+					var result = await core.ExecCommand($"/translate {store["code"]} {lang.code} {store["result"]}");
 					var reply = await shell.ReplyAsync(n, result);
 					core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
 					{
