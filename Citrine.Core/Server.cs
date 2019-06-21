@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Citrine.Core.Api;
 using Citrine.Core.Modules;
@@ -20,12 +21,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "4.0.0";
+		public static string Version => "4.1.0";
 
 		/// <summary>
 		/// XelticaBot 換算でのバージョン表記を取得します。
 		/// </summary>
-		public static string VersionAsXelticaBot => "4.1.0";
+		public static string VersionAsXelticaBot => "4.2.0";
 
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
@@ -142,9 +143,10 @@ namespace Citrine.Core
 			if (command == null)
 				throw new ArgumentNullException(nameof(command));
 			if (command.StartsWith("/"))
-				command = command.Substring(1);
-			var splitted = command.Split(' ');
-			var cmd = TryGetCommand(splitted.First());
+				command = command.Substring(1).Trim();
+			var splitted = Regex.Split(command, @"\s");
+			var name = splitted.First();
+			var cmd = TryGetCommand(name);
 			if (cmd == default)
 				throw new NoSuchCommandException();
 
@@ -162,7 +164,7 @@ namespace Citrine.Core
 
 			try
 			{
-				return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), string.Join(" ", splitted.Skip(1)));
+				return await cmd.OnActivatedAsync(sender, this, Shell, splitted.Skip(1).ToArray(), command.Substring(name.Length).Trim());
 			}
 			catch (CommandException)
 			{
