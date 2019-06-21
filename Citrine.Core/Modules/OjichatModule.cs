@@ -13,20 +13,10 @@ namespace Citrine.Core.Modules
 		{
 			if (n.Text is string text && text.Contains("おじさん"))
 			{
-				var req = new FormUrlEncodedContent(new[]{
-					new KeyValuePair<string, string>("name", core.GetNicknameOf(n.User))
-				});
-				var res = await (await Server.Http.PostAsync("https://ojichat.appspot.com/post", req)).Content.ReadAsStringAsync();
-				await shell.ReplyAsync(n, JsonConvert.DeserializeObject<OjichatResponse>(res).Message);
+				await shell.ReplyAsync(n, await core.ExecCommand("/ojisan " + core.GetNicknameOf(n.User)));
 				return true;
 			}
 			return false;
-		}
-
-		class OjichatResponse
-		{
-			[JsonProperty("message")]
-			public string Message { get; set; }
 		}
 	}
 }
