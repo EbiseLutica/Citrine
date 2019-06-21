@@ -19,7 +19,7 @@ namespace Citrine.Core
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			return body.Replace("な", "にゃ");
+			return body.Replace("な", "にゃ").Replace("ナ", "ニャ").Replace("ﾅ", "ﾆｬ");
 		}
 	}
 }
