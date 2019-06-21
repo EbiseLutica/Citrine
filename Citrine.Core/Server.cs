@@ -144,7 +144,7 @@ namespace Citrine.Core
 				throw new ArgumentNullException(nameof(command));
 			if (command.StartsWith("/"))
 				command = command.Substring(1).Trim();
-			var splitted = Regex.Split(command, @"\s");
+			var splitted = Regex.Split(command, @"\s").Where(s => !string.IsNullOrWhiteSpace(s));
 			var name = splitted.First();
 			var cmd = TryGetCommand(name);
 			if (cmd == default)
