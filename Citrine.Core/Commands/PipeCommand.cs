@@ -10,18 +10,22 @@ namespace Citrine.Core
 	{
 		public override string Name => "pipe";
 
-		public override string Usage => "/pipe (and write more commands after the new line)";
+		public override string Usage => "/pipe (これ以降にコマンドを | で区切って並べます。)";
 
 		public override string Description => "各種コマンドを連結して実行します。前のコマンドの出力は、次のコマンドの末尾に追記されます。";
 
-		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
+		public override Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			var lines = body.Replace("\r", "\n").Replace("\r\n", "\n").Split('\n').Where(l => !string.IsNullOrWhiteSpace(l));
+			return RunPipeAsync(sender, core, body, '|');
+		}
+
+		public static async Task<string> RunPipeAsync(ICommandSender sender, Server core, string body, params char[] split)
+		{
+			var lines = body.Replace("\r", "\n").Replace("\r\n", "\n").Split(split).Where(l => !string.IsNullOrWhiteSpace(l)).Select(l => l.Trim());
 			var output = "";
 			foreach (var line in lines)
 			{
-				Console.WriteLine(line + " : " + output);
-				output = await core.ExecCommand(sender, line.Trim() + " " + output);
+				output = await core.ExecCommand(sender, line + " " + output);
 				output = output.Trim();
 			}
 			return output;
