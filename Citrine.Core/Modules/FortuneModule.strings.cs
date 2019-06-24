@@ -175,6 +175,8 @@ namespace Citrine.Core.Modules
 			"国立",
 			"市立",
 			"次世代型",
+			"都合の良い",
+			"頭洗い"
 		};
 
 		public static readonly string[] Items = {
@@ -372,7 +374,14 @@ namespace Citrine.Core.Modules
 			"遊園地",
 			"視神経",
 			"聴神経",
-			"腫瘍"
+			"腫瘍",
+			"ゼスプリキウイ",
+			"海パン野郎",
+			"ServiceWorker",
+			"ヤドクガエル",
+			"アブラゼミ",
+			"ヒキガエル",
+			"オタク",
 		};
 
 		public static readonly string[] ItemSuffixes = {
