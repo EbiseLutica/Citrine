@@ -30,5 +30,43 @@ namespace Citrine.Core.Modules
 			// 多分競合しないから常にfalse
 			return false;
 		}
+
+		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
+		{
+			if (string.IsNullOrEmpty(n.Text))
+				return false;
+
+			// しかと
+			if (core.GetRatingOf(n.User) == Rating.Hate)
+				return false;
+
+			var arkStyleReturnMethod = Regex.Match(n.Text, "帰宅しよ[うっ]?かな?");
+			var returned = Regex.Match(n.Text, "帰宅|帰っ(てき)?た|[お終]わっ?た|(しご|がこ|ば)おわ|(疲|つか)れた");
+			if (arkStyleReturnMethod.Success)
+			{
+				await shell.ReactAsync(n, "😮");
+				return true;
+			}
+			else if (returned.Success)
+			{
+				await shell.ReactAsync(n, "🎉");
+				if (rnd.Next(100) < 20)
+				{
+                    await shell.ReplyAsync(n, otsukarePattern.Random());
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		private static readonly Random rnd = new Random();
+		private static readonly string[] otsukarePattern = 
+		{
+			"おつかれ〜!",
+			"おつかれ.",
+			"お疲れ様です",
+			"おつです",
+			"今日も一日お疲れ様でした.",
+		};
 	}
 }
