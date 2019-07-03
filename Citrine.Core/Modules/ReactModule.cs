@@ -40,19 +40,53 @@ namespace Citrine.Core.Modules
 			if (core.GetRatingOf(n.User) == Rating.Hate)
 				return false;
 
-			var arkStyleReturnMethod = Regex.Match(n.Text, "帰宅しよ[うっ]?かな?");
-			var returned = Regex.Match(n.Text, "帰宅|帰っ(てき)?た|[お終]わっ?た|(しご|がこ|ば)おわ|(疲|つか)れた");
-			if (arkStyleReturnMethod.Success)
+			var murakamiStyleReturnMethod = Regex.Match(n.Text, "帰宅しよ[うっ]?かな?");
+			if (murakamiStyleReturnMethod.Success)
 			{
 				await shell.ReactAsync(n, "😮");
 				return true;
 			}
-			else if (returned.Success)
+			
+			var tukareta = Regex.Match(n.Text, "帰宅|帰っ(てき)?た|[お終]わっ?た|(しご|がこ|ば)おわ|(疲|つか)れた");
+			if (tukareta.Success)
 			{
 				await shell.ReactAsync(n, "🎉");
 				if (rnd.Next(100) < 20)
 				{
                     await shell.ReplyAsync(n, otsukarePattern.Random());
+					return true;
+				}
+			}
+
+			var morning = Regex.Match(n.Text, "起床|[起おぽ]きた|起きました|おはよう");
+			if (morning.Success)
+			{
+				await shell.ReactAsync(n, "🎉");
+				if (rnd.Next(100) < 20)
+				{
+                    await shell.ReplyAsync(n, ohayouPattern.Random());
+					return true;
+				}
+			}
+
+			var sleep = Regex.Match(n.Text, "寝ます|寝る|ねる|[ぽお]や[しす]み");
+			if (morning.Success)
+			{
+				await shell.ReactAsync(n, "👍");
+				if (rnd.Next(100) < 20)
+				{
+                    await shell.ReplyAsync(n, oyasumiPattern.Random());
+					return true;
+				}
+			}
+
+			var ittera = Regex.Match(n.Text, "行って(き|まいり|参り)ます|行ってくる");
+			if (ittera.Success)
+			{
+				await shell.ReactAsync(n, "👍");
+				if (rnd.Next(100) < 20)
+				{
+                    await shell.ReplyAsync(n, itteraPattern.Random());
 					return true;
 				}
 			}
@@ -67,6 +101,30 @@ namespace Citrine.Core.Modules
 			"お疲れ様です",
 			"おつです",
 			"今日も一日お疲れ様でした.",
+		};
+
+		private static readonly string[] ohayouPattern = 
+		{
+			"おはよ〜!",
+			"おはよ!",
+			"おはようございます!",
+			"おはよう",
+		};
+
+		private static readonly string[] oyasumiPattern = 
+		{
+			"おやすみ!",
+			"おやすみ〜!",
+			"良い夢を!",
+			"おやすみなさい!",
+		};
+
+		private static readonly string[] itteraPattern = 
+		{
+			"いってらっしゃいませ!",
+			"いってら!",
+			"いってらっしゃい!",
+			"いってら〜!",
 		};
 	}
 }
