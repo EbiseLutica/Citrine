@@ -5,6 +5,7 @@ namespace Citrine.Core.Modules
 {
 	public class CommandModule : ModuleBase
 	{
+		public override int Priority => -10000;
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			var t = n.Text?.TrimMentions();
