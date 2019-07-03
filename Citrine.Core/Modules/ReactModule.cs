@@ -80,7 +80,7 @@ namespace Citrine.Core.Modules
 				}
 			}
 
-			var ittera = Regex.Match(n.Text, "行って(き|まいり|参り)ます|行ってくる");
+			var ittera = Regex.Match(n.Text, "[行い]って(き|まいり|参り)ます|行ってくる");
 			if (ittera.Success)
 			{
 				await shell.ReactAsync(n, "👍");
