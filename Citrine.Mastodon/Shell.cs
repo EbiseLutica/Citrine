@@ -115,7 +115,7 @@ namespace Citrine.Mastodon
 
 		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
-			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name} {text}", long.Parse(post.Id), attachments?.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
+			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name}{(!string.IsNullOrEmpty(post.User.Host) ? "@" + post.User.Host : "")} {text}", long.Parse(post.Id), attachments?.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
 		}
 
 		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
