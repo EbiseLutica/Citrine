@@ -1,43 +1,54 @@
 # Citrine
 
-[Citrine](https://citringo.net/char.html?citrine) は、オープンソースの娘型chatbotです。
+English ・ [日本語](README-ja.md)
 
-コア部分は特定のソーシャルメディアと切り離された独自のAPIで構成され、多くのソーシャルメディア上で動作させることができるよう設計されています。
+Citrine is a open-source framework to create chat-bot.
 
-## モジュール
+It has an API that independent of a specific social-media platform, so Citrine can run on a lots of social media services.
 
-Citrine は、 Citrine API と呼ばれる、抽象化された bot 開発の為の便利な API を介することで、様々な環境向けに bot を作り直すことなく動作させることができます。
+## Modules
 
-モジュールは、実際に bot としての振る舞いを実装するものです。各機能をモジュールとして実装し、読み込むことでチャットボットとして機能します。
+Modules are Citrine's actual brain. To reply, react, repost etc, create modules as bot's features, and let Citrine load them.
 
-## 対応プラットフォーム
+## How to write your own module
 
-Citrine は、ソーシャルメディア向けの Citrine API 実装を用意するだけで、既存のモジュールを改良すること無く、多くの環境に対応させることが出来ます。この、各種ソーシャルメディアに対応した Citrine API の実装を、プラットフォームと呼びます。hubotのアダプターにあたるものです。
+To write your module for Citrine, [read this document(TBD)](/docs/module)
 
-チェックがついていないものは対応予定のもの。
+## Platform Adapters
+
+Citrine API is an abstractive API of each social media. 
+
+Platform adapters are implemented Citrine API to run Citrine on the specified platform. It's same as hubot's adapter.
+
+[✔] is implemented, and [ ] is in plan.
 
 - [x] Misskey
 - [x] Mastodon
 - [x] Standalone
-	- ターミナル上でインタラクティブに動作するバージョン
+	- A REPL
 - [x] Discord
 - [ ] Slack
 - [ ] LINE
 - [ ] Twitter
 - [ ] Skype
 
-## 必要なもの
+
+### How to write your own platform adapter
+
+To write your own platform adapter for Citrine, [read this doc(TBD)](/docs/adapter)
+
+## Requirement
 
 - .NET Core 2.1
 
-## ビルド
+## To build
 
 ```shell
 git clone --recursive https://github.com/Xeltica/Citrine.git
 
 cd Citrine
 
-# --recursive を忘れた場合
+# If you forget cloning with --recursive
 git submodule update --init
 
 dotnet build
@@ -52,17 +63,18 @@ cd Citrine.Mastodoon && dotnet run
 cd Citrine.Standalone && dotnet run
 ```
 
+
 ## Contributing
 
--[不具合 / 要望](//github.com/xeltica/citrine/issues/new)
--[プルリクエスト](//github.com/xeltica/citrine/compare)
+- [Issues ](//github.com/xeltica/citrine/issues/new)
+- [Pull Requests](//github.com/xeltica/citrine/compare)
 
-### これまでの貢献者
+### Contributors
 
 - @u1-liquid
 
-[その他...](//github.com/Xeltica/Citrine/graphs/contributors)
+[More...](//github.com/Xeltica/Citrine/graphs/contributors)
 
-## ライセンス
+## License
 
 [MIT License](LICENSE)
