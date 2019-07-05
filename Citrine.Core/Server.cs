@@ -214,17 +214,39 @@ namespace Citrine.Core
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
 		/// </summary>
-		public Rating GetRatingOf(IUser user) => IsAdmin(user) ? Rating.Partner : Rating.Normal;
+		public Rating GetRatingOf(IUser user) => GetRatingOf(user.Id);
+
+		public Rating GetRatingOf(string user)
+		{
+			var r = GetRatingValueOf(user);
+			return r < 0  ? Rating.Hate :
+			       r < 8  ? Rating.Normal :
+				   r < 14 ? Rating.Like : 
+				   r < 25 ? Rating.BestFriend : Rating.Partner; 
+		}
+
+		/// <summary>
+		/// 指定したユーザーの好感度を取得します。
+		/// </summary>
+		public int GetRatingValueOf(IUser user) => Storage[user].Get(StorageKey.Rating, 0);
+
+		/// <summary>
+		/// 指定したユーザーの好感度を取得します。
+		/// </summary>
+		public int GetRatingValueOf(string id) => Storage[id].Get(StorageKey.Rating, 0);
 
 		/// <summary>
 		/// ユーザーに対する好感度を上げます。
 		/// </summary>
-		public void Like(string userId, int amount = 1) { }
+		public void Like(string userId, int amount = 1)
+		{
+			Storage[userId].Set(StorageKey.Nickname, GetRatingValueOf(userId) + amount);
+		}
 
 		/// <summary>
 		/// ユーザーに対する好感度を下げます。
 		/// </summary>
-		public void Dislike(string userId, int amount = 1) { Like(userId, -amount); }
+		public void Dislike(string userId, int amount = 1) => Like(userId, -amount);
 
 		/// <summary>
 		/// ユーザーのニックネームを取得します。
@@ -237,7 +259,6 @@ namespace Citrine.Core
 		public void SetNicknameOf(IUser user, string name)
 		{
 			Storage[user].Set(StorageKey.Nickname, name);
-			SaveNicknames();
 		}
 
 		/// <summary>
@@ -246,7 +267,6 @@ namespace Citrine.Core
 		public void ResetNicknameOf(IUser user)
 		{
 			Storage[user].Clear(StorageKey.Nickname);
-			SaveNicknames();
 		}
 
 		public async Task HandleMentionAsync(IPost mention)
@@ -389,11 +409,6 @@ namespace Citrine.Core
 		{
 			asm = typeof(Server).GetTypeInfo().Assembly;
 			return asm.GetManifestResourceStream($"{asm.GetName().Name}.Resources.{path}");
-		}
-
-		private void SaveNicknames()
-		{
-			
 		}
 
 		private static void WriteException(Exception ex)
