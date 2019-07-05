@@ -39,7 +39,7 @@ namespace Citrine.Core.Modules
                 return false;
 
 
-            var pattern = patterns.FirstOrDefault(record => record.Regex.IsMatch(n.Text.Trim().Replace("にゃ", "な")));
+            var pattern = patterns.FirstOrDefault(record => Regex.IsMatch(n.Text.Trim().Replace("にゃ", "な"), record.Regex));
 
             if (pattern == null)
                 return false;

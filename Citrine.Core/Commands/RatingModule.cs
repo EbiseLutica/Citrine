@@ -8,7 +8,7 @@ namespace Citrine.Core
 	{
 		public override string Name => "rating";
 
-		public override string Usage => "/rating <set/add/query>";
+		public override string Usage => "/rating <set/add/get>";
 
 		public override PermissionFlag Permission => PermissionFlag.AdminOnly;
 

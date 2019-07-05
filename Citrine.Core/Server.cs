@@ -248,7 +248,7 @@ namespace Citrine.Core
 		/// </summary>
 		public void SetRatingValueOf(string userId, int value)
 		{
-			Storage[userId].Set(StorageKey.Nickname, value);
+			Storage[userId].Set(StorageKey.Rating, value);
 		}
 
 		/// <summary>
@@ -256,7 +256,7 @@ namespace Citrine.Core
 		/// </summary>
 		public void SetRatingValueOf(IUser user, int value)
 		{
-			Storage[user.Id].Set(StorageKey.Nickname, value);
+			Storage[user.Id].Set(StorageKey.Rating, value);
 		}
 
 		/// <summary>
