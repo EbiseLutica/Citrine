@@ -99,16 +99,18 @@ namespace Citrine.Core
 				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
 			}
 
-			NicknameMap = new Dictionary<string, string>();
 			if (File.Exists("./nicknames"))
 			{
+				// マイグレ
+				Console.WriteLine("古いニックネーム保存形式を使用しています。新しい UserStorage へのマイグレーションを開始します。");
 				var lines = File.ReadAllLines("./nicknames");
 				lines.Select(l => {
 					var kv = l.Split(',');
 					return new KeyValuePair<string, string>(kv[0], string.Concat(kv.Skip(1)));
 				})
-				.ForEach(kv => NicknameMap[kv.Key] = kv.Value);
-				Console.WriteLine($"Load {lines.Length} user's nickname");
+				.ForEach(kv => Storage[kv.Key].Set(StorageKey.Nickname, kv.Value));
+				File.Delete("./nicknames");
+				Console.WriteLine($"{lines.Length} 人のニックネームを、新しい UserStorage に移行しました!");
 			}
 		}
 
@@ -402,5 +404,17 @@ namespace Citrine.Core
 		public static readonly HttpClient Http = new HttpClient();
 		readonly string adminId;
 		Assembly asm;
+	}
+
+	/// <summary>
+	/// システムが使用するストレージのキーを定義します。
+	/// </summary>
+	public static class StorageKey
+	{
+		public static string Nickname => "nickname";
+		public static string Rating => "rating";
+		public static string LastBirthdayCelebratedYear => "lastBirthdayCelebratedYear";
+		public static string Birthday => "birthday";
+		public static string LastPlayingDate => "lastPlayingDate";
 	}
 }
