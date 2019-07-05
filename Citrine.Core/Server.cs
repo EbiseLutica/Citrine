@@ -240,7 +240,23 @@ namespace Citrine.Core
 		/// </summary>
 		public void Like(string userId, int amount = 1)
 		{
-			Storage[userId].Set(StorageKey.Nickname, GetRatingValueOf(userId) + amount);
+			SetRatingValueOf(userId, GetRatingValueOf(userId) + amount);
+		}
+		
+		/// <summary>
+		/// 指定したユーザーの好感度を設定します。
+		/// </summary>
+		public void SetRatingValueOf(string userId, int value)
+		{
+			Storage[userId].Set(StorageKey.Nickname, value);
+		}
+
+		/// <summary>
+		/// 指定したユーザーの好感度を設定します。
+		/// </summary>
+		public void SetRatingValueOf(IUser user, int value)
+		{
+			Storage[user.Id].Set(StorageKey.Nickname, value);
 		}
 
 		/// <summary>
@@ -405,9 +421,9 @@ namespace Citrine.Core
 		/// </summary>
 		/// <param name="path">Resources フォルダからの相対パスを . で繋いだもの。</param>
 		/// <returns>取得したリソースのストリーム。</returns>
-		public Stream GetEmbeddedResource(string path)
+		public static Stream GetEmbeddedResource(string path)
 		{
-			asm = typeof(Server).GetTypeInfo().Assembly;
+			var asm = typeof(Server).GetTypeInfo().Assembly;
 			return asm.GetManifestResourceStream($"{asm.GetName().Name}.Resources.{path}");
 		}
 
@@ -418,7 +434,6 @@ namespace Citrine.Core
 
 		public static readonly HttpClient Http = new HttpClient();
 		readonly string adminId;
-		Assembly asm;
 	}
 
 	/// <summary>

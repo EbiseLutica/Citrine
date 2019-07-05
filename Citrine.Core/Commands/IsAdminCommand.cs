@@ -4,7 +4,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-	public class IsAdminCommand : CommandBase
+    public class IsAdminCommand : CommandBase
 	{
 		public override string Name => "isadmin";
 
