@@ -70,8 +70,8 @@ namespace Citrine.Core.Api
                 {
                     storage[kv.Key] = CreateRecord(kv.Value);
                 }
-                }
             }
+        }
 
         private UserRecord CreateRecord(Dictionary<string, object> r = null)
         {
@@ -113,6 +113,18 @@ namespace Citrine.Core.Api
                 Updated?.Invoke();
             }
 
+            public void Clear(string key)
+            {
+                if (!Has(key)) return;
+                record.Remove(key);
+                Updated?.Invoke();
+            }
+
+            public void ClearAll()
+            {
+                record.Clear();
+                Updated?.Invoke();
+            }
 
             public event Action Updated;
 
