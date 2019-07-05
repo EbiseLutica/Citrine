@@ -19,13 +19,15 @@ namespace Citrine.Core.Api
         /// 指定したユーザーのレコードを取得します。
         /// </summary>
         /// <value>指定したユーザーのレコード。存在しなければ新規作成したものを返します。</value>
-		public UserRecord this[IUser user] 
+		public UserRecord this[IUser user] => this[user.Id];
+
+        public UserRecord this[string userId] 
         {
             get
             {
                 lock (storage)
                 {
-                    return storage.ContainsKey(user.Id) ? storage[user.Id] : (storage[user.Id] = CreateRecord());
+                    return storage.ContainsKey(userId) ? storage[userId] : (storage[userId] = CreateRecord());
                 }
             }
         }
