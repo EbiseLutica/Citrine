@@ -229,14 +229,14 @@ namespace Citrine.Core
 		/// <summary>
 		/// ユーザーのニックネームを取得します。
 		/// </summary>
-		public string GetNicknameOf(IUser user) => NicknameMap.ContainsKey(user.Id) ? NicknameMap[user.Id] : $"{user.Name}さん";
+		public string GetNicknameOf(IUser user) => Storage[user].Get(StorageKey.Nickname,  $"{user.Name}さん");
 
 		/// <summary>
 		/// ユーザーのニックネームを設定します。
 		/// </summary>
 		public void SetNicknameOf(IUser user, string name)
 		{
-			NicknameMap[user.Id] = name;
+			Storage[user].Set(StorageKey.Nickname, name);
 			SaveNicknames();
 		}
 
@@ -245,7 +245,7 @@ namespace Citrine.Core
 		/// </summary>
 		public void ResetNicknameOf(IUser user)
 		{
-			NicknameMap.Remove(user.Id);
+			Storage[user].Clear(StorageKey.Nickname);
 			SaveNicknames();
 		}
 
@@ -393,7 +393,7 @@ namespace Citrine.Core
 
 		private void SaveNicknames()
 		{
-			File.WriteAllLines("./nicknames", NicknameMap.Select(kv => $"{kv.Key},{kv.Value}"));
+			
 		}
 
 		private static void WriteException(Exception ex)
