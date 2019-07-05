@@ -110,14 +110,6 @@ namespace Citrine.Core
 				.ForEach(kv => NicknameMap[kv.Key] = kv.Value);
 				Console.WriteLine($"Load {lines.Length} user's nickname");
 			}
-
-			// ストレージ保存タスク(2分おきに実行)
-			var timer = new Timer();
-			timer.AutoReset = true;
-			// 2分に一度
-			timer.Interval = 1000 * 60 * 2;
-			timer.Elapsed += (s, e) => Storage.Save();
-			timer.Start();
 		}
 
 		/// <summary>

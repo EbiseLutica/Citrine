@@ -25,7 +25,7 @@ namespace Citrine.Core.Api
             {
                 lock (storage)
                 {
-                    return storage.ContainsKey(user.Id) ? storage[user.Id] : (storage[user.Id] = new UserRecord());
+                    return storage.ContainsKey(user.Id) ? storage[user.Id] : (storage[user.Id] = CreateRecord());
                 }
             }
         }
@@ -68,9 +68,16 @@ namespace Citrine.Core.Api
             {
                 foreach (var kv in obj)
                 {
-                    storage[kv.Key] = new UserRecord(kv.Value);
+                    storage[kv.Key] = CreateRecord(kv.Value);
+                }
                 }
             }
+
+        private UserRecord CreateRecord(Dictionary<string, object> r = null)
+        {
+            var rec = r == null ? new UserRecord() : new UserRecord(r);
+            rec.Updated += () => Save();
+            return rec;
         }
 
         private ConcurrentDictionary<string, UserRecord> storage = new ConcurrentDictionary<string, UserRecord>();
@@ -99,8 +106,15 @@ namespace Citrine.Core.Api
 
             public void Set<T>(string key, T value)
             {
+                // 同値が登録してあればreturn
+                if (Has(key) && record[key] == (object)value)
+                    return;
                 record[key] = value;
+                Updated?.Invoke();
             }
+
+
+            public event Action Updated;
 
             private Dictionary<string, object> record = new Dictionary<string, object>();
         }
