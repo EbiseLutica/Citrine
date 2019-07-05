@@ -16,7 +16,7 @@ namespace Citrine.Core
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			return $"Citrine v{Server.Version} / XelticaBot v{Server.VersionAsXelticaBot}";
+			return $"Citrine v{Server.Version}";
 		}
 	}
 }

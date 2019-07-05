@@ -22,12 +22,10 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "4.1.0";
+		public static string Version => "5.0.0-dev";
 
-		/// <summary>
-		/// XelticaBot 換算でのバージョン表記を取得します。
-		/// </summary>
-		public static string VersionAsXelticaBot => "4.2.0";
+		[Obsolete("6.0.0で廃止されます。 " + nameof(Version) + " を使用してください。")]
+		public static string VersionAsXelticaBot => Version;
 
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
@@ -68,7 +66,7 @@ namespace Citrine.Core
 
 		static Server()
 		{
-			Http.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} XelticaBot/{Server.VersionAsXelticaBot} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
+			Http.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
 		}
 
 		/// <summary>
