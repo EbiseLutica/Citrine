@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using Citrine.Core.Api;
 using Citrine.Core.Modules;
 
@@ -59,6 +60,12 @@ namespace Citrine.Core
 		/// <value></value>
 		public Dictionary<string, string> NicknameMap { get; }
 
+		/// <summary>
+		/// ユーザーストレージを取得します。
+		/// </summary>
+		/// <returns></returns>
+		public UserStorage Storage { get; } = new UserStorage();
+
 		static Server()
 		{
 			Http.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} XelticaBot/{Server.VersionAsXelticaBot} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
@@ -105,6 +112,14 @@ namespace Citrine.Core
 				.ForEach(kv => NicknameMap[kv.Key] = kv.Value);
 				Console.WriteLine($"Load {lines.Length} user's nickname");
 			}
+
+			// ストレージ保存タスク(2分おきに実行)
+			var timer = new Timer();
+			timer.AutoReset = true;
+			// 2分に一度
+			timer.Interval = 1000 * 60 * 2;
+			timer.Elapsed += (s, e) => Storage.Save();
+			timer.Start();
 		}
 
 		/// <summary>
