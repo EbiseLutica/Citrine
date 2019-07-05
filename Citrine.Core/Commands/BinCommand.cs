@@ -5,13 +5,15 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-	public class BinCommand : CommandBase
+    public class BinCommand : CommandBase
 	{
-		public override string Name => "bin";
+		public override string Name => "tobyte";
 
-		public override string Usage => "/bin <data>";
+		public override string Usage => "/tobyte <data>";
 
 		public override string Description => "テキストをバイナリダンプします。";
+
+		public override string[] Aliases => new[] { "bin" };
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
