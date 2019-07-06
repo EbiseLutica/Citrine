@@ -99,7 +99,7 @@ namespace Citrine.Core.Api
                 if (!Has(key))
                     return defaultValue;
                 // 正しい型の値があれば返す　なければデフォルト
-                return Is<T>(key) ? (T)record[key] : default;
+                return Is<T>(key) ? (T)record[key] : defaultValue;
             }
 
             public bool Has(string key) => record.ContainsKey(key);
