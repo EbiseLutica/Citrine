@@ -13,10 +13,20 @@ namespace Citrine.Core.Modules
 			var m = Regex.Match(n.Text.TrimMentions(), @"(.+)(って|と)呼[べびん]");
 			if (m.Success)
 			{
-				var nick = m.Groups[1].Value;
-				core.SetNicknameOf(n.User, nick);
-				await shell.ReplyAsync(n, $"わかった. これからは君のことを{core.GetNicknameOf(n.User)}と呼ぶね.");
-				return true;
+				switch (core.GetRatingOf(n.User))
+				{
+					case Rating.Hate:
+						await shell.ReplyAsync(n, "嫌だ.");
+						break;
+					case Rating.Normal:
+						await shell.ReplyAsync(n, "もう少し仲良くなってからね.");
+						break;
+					default:
+						var nick = m.Groups[1].Value;
+						core.SetNicknameOf(n.User, nick);
+						await shell.ReplyAsync(n, $"わかった. これからは君のことを{core.GetNicknameOf(n.User)}と呼ぶね.");
+						break;
+				}
 			}
 			return false;
 		}
