@@ -435,16 +435,4 @@ namespace Citrine.Core
 		public static readonly HttpClient Http = new HttpClient();
 		readonly string adminId;
 	}
-
-	/// <summary>
-	/// システムが使用するストレージのキーを定義します。
-	/// </summary>
-	public static class StorageKey
-	{
-		public static string Nickname => "nickname";
-		public static string Rating => "rating";
-		public static string LastBirthdayCelebratedYear => "lastBirthdayCelebratedYear";
-		public static string Birthday => "birthday";
-		public static string LastPlayingDate => "lastPlayingDate";
-	}
 }
