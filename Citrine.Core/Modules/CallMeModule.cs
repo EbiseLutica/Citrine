@@ -27,6 +27,7 @@ namespace Citrine.Core.Modules
 						await shell.ReplyAsync(n, $"わかった. これからは君のことを{core.GetNicknameOf(n.User)}と呼ぶね.");
 						break;
 				}
+				return true;
 			}
 			return false;
 		}
