@@ -1,3 +1,4 @@
+using System.Linq;
 using Citrine.Core.Api;
 using Disboard.Mastodon.Models;
 
@@ -37,8 +38,7 @@ namespace Citrine.Mastodon
 			IconUrl = user.Avatar;
 			Id = user.Id.ToString();
 			Description = user.Note;
-			// 取れない？
-			Host = default;
+			Host = user.Acct?.Split('@').Skip(1).FirstOrDefault();
 			IsVerified = false;
 			IsBot = user.IsBot ?? false;
 			FollowingsCount = user.FollowingCount;
