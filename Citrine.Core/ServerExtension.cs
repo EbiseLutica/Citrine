@@ -8,7 +8,7 @@ namespace Citrine.Core
 		public static void LikeWithLimited(this Server core, IUser user, int incrementation = 1)
 		{
 			var span = DateTimeOffset.Now - core.Storage[user].Get(StorageKey.LastPlayingDate, DateTimeOffset.Now);
-			if (span < new TimeSpan(0, 30, 0))
+			if (span < new TimeSpan(0, 5, 0))
 				return;
 			core.Like(user.Id, incrementation);
 			core.Storage[user].Set(StorageKey.LastPlayingDate, DateTimeOffset.Now);
