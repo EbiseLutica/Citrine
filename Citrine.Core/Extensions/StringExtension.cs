@@ -6,7 +6,9 @@ namespace Citrine.Core
 	{
 		public static bool IsMatch(this string input, string pattern) => Regex.IsMatch(input, pattern);
 
-		public static string TrimMentions(this string str) => Regex.Replace(str, @"@[a-zA-Z0-9_]+(@[a-zA-Z0-9\-\.]+)?", "").Trim();
+		public static string TrimMentions(this string str) => RegexMentions.Replace(str, "").Trim();
+		
+		public static bool ContainsMentions(this string str) => RegexMentions.IsMatch(str);
 
 		public static string ToHiragana(this string str) => 
 			 str.Replace("ア", "あ")
@@ -174,5 +176,7 @@ namespace Citrine.Core
 				.Replace("ｮ", "ょ")
 				.Replace("ｯ", "っ")
 				.Replace("ｳﾞ", "ゔ");
+
+		public static readonly Regex RegexMentions = new Regex(@"@[a-zA-Z0-9_]+(@[a-zA-Z0-9\-\.]+)?");
 	}
 }

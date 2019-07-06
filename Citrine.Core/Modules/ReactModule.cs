@@ -41,11 +41,15 @@ namespace Citrine.Core.Modules
 			if (string.IsNullOrEmpty(n.Text))
 				return false;
 
-			// しかと
 			if (core.GetRatingOf(n.User) == Rating.Hate)
 				return false;
+			if (core.GetRatingOf(n.User) == Rating.Normal)
+				return false;
+			
+			if (n.IsReply || n.Text.ContainsMentions())
+				return false;
 
-			var murakamiStyleReturnMethod = Regex.Match(n.Text, "帰宅しよ[うっ]?かな?");
+			var murakamiStyleReturnMethod = Regex.Match(n.Text, "帰宅(しよ[うっ]?かな?|するか)");
 			if (murakamiStyleReturnMethod.Success)
 			{
 				await shell.ReactAsync(n, "😮");

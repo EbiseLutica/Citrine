@@ -80,7 +80,6 @@ namespace Citrine.Core.Modules
                 return random.Next(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value)).ToString();
             });
 
-            // hack 好感度システムを実装したら連携して分岐する
             // からっぽは既読無視
             if (message != "")
                 await shell.ReplyAsync(n, message);
