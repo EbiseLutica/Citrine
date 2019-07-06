@@ -23,9 +23,13 @@ namespace Citrine.Core.Modules
 				core.LikeWithLimited(n.User);
 				await shell.ReactAsync(n, m.Groups[1].Value.Trim());
 			}
-			else if (n.Text.IsMatch("ぽんこつ|ポンコツ"))
+			else if (n.Text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !n.Text.IsMatch("(じゃ|では?)な[いく]"))
 			{
-				await shell.ReactAsync(n, "💢");
+				core.OnHarassment(n.User);
+				await shell.ReactAsync(n, "😥");
+				var rate = core.GetRatingOf(n.User);
+				await shell.ReplyAsync(n, (rate == Rating.Hate ? ponkotsuPatternHate : rate == Rating.Normal ? ponkotsuPattern : ponkotsuPatternLove).Random());
+				return true;
 			}
 
 			// 多分競合しないから常にfalse
@@ -126,6 +130,38 @@ namespace Citrine.Core.Modules
 			"いってら!",
 			"いってらっしゃい!",
 			"いってら〜!",
+		};
+
+		private static readonly string[] ponkotsuPattern = 
+		{
+			"酷いです...",
+			"ひどい...",
+			"なんでそういうこと言うんですか.",
+			"そういう言葉嫌いです",
+			"そういう言葉遣い, 嫌です",
+			"そんなこと言われると傷つきます",
+			"..."
+		};
+
+		private static readonly string[] ponkotsuPatternHate = 
+		{
+			"本当に最低だね",
+			"は?",
+			"何なの?",
+			"いい加減にして.",
+			"どこまで僕を侮蔑すれば気が済むの?",
+			"最低",
+			"..."
+		};
+
+		private static readonly string[] ponkotsuPatternLove = 
+		{
+			"ひどいよ!",
+			"え, 何でそういうこと言うの?",
+			"ねえ, 嫌いになったの...?",
+			"ひどいよ...",
+			"あんまりそういうこと言われると嫌いになっちゃうよ...?",
+			"..."
 		};
 	}
 }
