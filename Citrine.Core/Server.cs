@@ -219,10 +219,10 @@ namespace Citrine.Core
 		public Rating GetRatingOf(string user)
 		{
 			var r = GetRatingValueOf(user);
-			return r < 0  ? Rating.Hate :
-			       r < 8  ? Rating.Normal :
-				   r < 14 ? Rating.Like : 
-				   r < 25 ? Rating.BestFriend : Rating.Partner; 
+			return r < -3  ? Rating.Hate :
+			       r < 4  ? Rating.Normal :
+				   r < 8 ? Rating.Like : 
+				   r < 20 ? Rating.BestFriend : Rating.Partner;
 		}
 
 		/// <summary>
