@@ -9,7 +9,6 @@ namespace Citrine.Mastodon
 		static async Task Main(string[] args)
 		{
 			WriteLine($"Citrine {Server.Version}");
-			WriteLine($"XelticaBot {Server.VersionAsXelticaBot}");
 			WriteLine($"Citrine.Mastodon {Shell.Version}");
 			WriteLine();
 			WriteLine("起動中...");

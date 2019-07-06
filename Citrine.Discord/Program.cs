@@ -11,7 +11,6 @@ namespace Citrine.Discord
         static async Task Main(string[] args)
         {
 			WriteLine($"Citrine {Server.Version}");
-			WriteLine($"XelticaBot {Server.VersionAsXelticaBot}");
 			WriteLine($"Citrine.Discord {Shell.Version}");
 			WriteLine();
 			WriteLine("起動中...");

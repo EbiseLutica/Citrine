@@ -17,7 +17,6 @@ namespace Citrine.Standalone
 			var shell = new Shell();
 			var server = new Server(shell);
 			WriteLine($"Citrine version {Core.Server.Version}");
-			WriteLine($"XelticaBot version {Core.Server.VersionAsXelticaBot}");
 			WriteLine("(C)2019 Xeltica");
 			WriteLine();
 			WriteLine("終了時は exit と入力してください");
