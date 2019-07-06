@@ -18,10 +18,13 @@ namespace Citrine.Core.Modules
 				core.LikeWithLimited(n.User);
 				var r = new Random(n.User.Id.GetHashCode() + DateTime.Now.Day + DateTime.Now.Month - DateTime.Now.Year);
 
-				int love = r.Next(1, 6),
-					money = r.Next(1, 6),
-					work = r.Next(1, 6),
-					study = r.Next(1, 6);
+				int min = 1;
+				int max = core.GetRatingOf(n.User) == Rating.Hate ? 3 : 6;
+
+				int love = r.Next(min, max),
+					money = r.Next(min, max),
+					work = r.Next(min, max),
+					study = r.Next(min, max);
 
 				var result = Math.Min((love + money + work + study) / 2 - 1, results.Length - 1);
 
