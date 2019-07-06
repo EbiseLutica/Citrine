@@ -26,11 +26,6 @@ namespace Citrine.Core.Modules
 			("生命、?宇宙、?そして万物についての究極の疑問の(答|こた)え|answer to the ultimate question of life,? the universe,? and everything|人類、?宇宙、?(全|すべ)ての(答|こた)え", "42"),
 		};
 
-		public SearchModule()
-		{
-			// UA を指定する
-		}
-
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.User.Id == shell.Myself.Id)
@@ -60,6 +55,8 @@ namespace Citrine.Core.Modules
 
 				response = response ?? $"{query} について調べてみたけどわからなかった. ごめん...";
 				await shell.ReplyAsync(n, response);
+				
+				core.LikeWithLimited(n.User);
 				return true;
 			}
 			return false;

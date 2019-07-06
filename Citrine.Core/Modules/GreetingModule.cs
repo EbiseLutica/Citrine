@@ -38,6 +38,7 @@ namespace Citrine.Core.Modules
             if (n.Text == null)
                 return false;
 
+            core.LikeWithLimited(n.User);
 
             var pattern = patterns.FirstOrDefault(record => Regex.IsMatch(n.Text.Trim().Replace("にゃ", "な"), record.Regex));
 
@@ -92,14 +93,19 @@ namespace Citrine.Core.Modules
         {
             [JsonProperty("regex")]
             public string Regex { get; set; }
+
             [JsonProperty("replyNormal")]
             public string[] ReplyNormal { get; set; }
+
             [JsonProperty("replyPartner")]
             public string[] ReplyPartner { get; set; }
+
             [JsonProperty("replyHate")]
             public string[] ReplyHate { get; set; }
+
             [JsonProperty("replyBestFriend")]
             public string[] ReplyBestFriend { get; set; }
+
             [JsonProperty("replyLike")]
             public string[] ReplyLike { get; set; }
         }

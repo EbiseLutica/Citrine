@@ -52,6 +52,7 @@ namespace Citrine.Core.Modules
 				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再?翻訳");
 				if (m.Success)
 				{
+					core.LikeWithLimited(n.User);
 					var result = await core.ExecCommand($"/translate {store["code"]} {lang.code} {store["result"]}");
 					var reply = await shell.ReplyAsync(n, result);
 					core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()

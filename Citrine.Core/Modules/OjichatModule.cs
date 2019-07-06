@@ -13,6 +13,7 @@ namespace Citrine.Core.Modules
 		{
 			if (n.Text is string text && text.Contains("おじさん"))
 			{
+				core.LikeWithLimited(n.User);
 				await shell.ReplyAsync(n, await core.ExecCommand("/ojisan " + core.GetNicknameOf(n.User)));
 				return true;
 			}

@@ -15,6 +15,7 @@ namespace Citrine.Core.Modules
 		{
 			if (n.Text != null && Regex.IsMatch(n.Text.ToLowerInvariant(), "占|運勢|みくじ|fortune"))
 			{
+				core.LikeWithLimited(n.User);
 				var r = new Random(n.User.Id.GetHashCode() + DateTime.Now.Day + DateTime.Now.Month - DateTime.Now.Year);
 
 				int love = r.Next(1, 6),

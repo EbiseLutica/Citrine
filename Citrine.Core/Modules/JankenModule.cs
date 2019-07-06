@@ -68,6 +68,7 @@ namespace Citrine.Core.Modules
 
 			if (n.Text != null && n.Text.Contains("じゃんけん"))
 			{
+				core.LikeWithLimited(n.User);
 				var note = await shell.ReplyAsync(n, "いいね〜, じゃあやろう. 最初は✊, じゃんけん――");
 				cache[note.Id] = n.User.Id;
 				return true;

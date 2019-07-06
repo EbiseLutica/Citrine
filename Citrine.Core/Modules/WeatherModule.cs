@@ -23,6 +23,7 @@ namespace Citrine.Core.Modules
 			var m = Regex.Match(req, "(.+)の天気");
 			if (m.Success)
 			{
+				core.LikeWithLimited(n.User);
 				var place = m.Groups[1].Value;
 				var pair = areaDefinitions.FirstOrDefault(k => place.Contains(k.name));
 				if (pair.id == default)

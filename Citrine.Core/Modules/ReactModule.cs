@@ -20,6 +20,7 @@ namespace Citrine.Core.Modules
 			var m = Regex.Match(n.Text, "((?:\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|[\\:a-z0-9A-Z_]+))を?[投な]げ[てろよ]");
 			if (m.Success)
 			{
+				core.LikeWithLimited(n.User);
 				await shell.ReactAsync(n, m.Groups[1].Value.Trim());
 			}
 			else if (n.Text.IsMatch("ぽんこつ|ポンコツ"))
