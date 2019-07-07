@@ -8,9 +8,7 @@ namespace Citrine.Core
 	{
 		public override string Name => "rating";
 
-		public override string Usage => "/rating <set/add/get>";
-
-		public override PermissionFlag Permission => PermissionFlag.AdminOnly;
+		public override string Usage => "/rating <set/add/get/status>";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
@@ -22,9 +20,13 @@ namespace Citrine.Core
 			switch (args[0].ToLowerInvariant().Trim())
 			{
 				case "set": 
+					if (!sender.IsAdmin)
+						throw new AdminOnlyException();
 					core.SetRatingValueOf(p.User.Id, int.Parse(args[1]));
 					break;
 				case "add": 
+					if (!sender.IsAdmin)
+						throw new AdminOnlyException();
 					core.Like(p.User.Id, int.Parse(args[1]));
 					break;
 				case "get":
