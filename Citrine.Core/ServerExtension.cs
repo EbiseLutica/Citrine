@@ -7,11 +7,11 @@ namespace Citrine.Core
 	{
 		public static void LikeWithLimited(this Server core, IUser user, int incrementation = 1)
 		{
-			var span = DateTimeOffset.Now - core.Storage[user].Get(StorageKey.LastPlayingDate, DateTimeOffset.Now);
+			var span = DateTime.Now - new DateTime(core.Storage[user].Get(StorageKey.LastPlayingDate, 0));
 			if (span < new TimeSpan(0, 0, 30))
 				return;
 			core.Like(user.Id, incrementation);
-			core.Storage[user].Set(StorageKey.LastPlayingDate, DateTimeOffset.Now);
+			core.Storage[user].Set(StorageKey.LastPlayingDate, DateTime.Now.Ticks);
 		}
 
 		public static void OnHarassment(this Server core, IUser user, int decrementation = 1)

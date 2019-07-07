@@ -98,6 +98,7 @@ namespace Citrine.Core.Api
                 // キーに値がなければデフォルト値
                 if (!Has(key))
                     return defaultValue;
+                
                 // 正しい型の値があれば返す　なければデフォルト
                 return Is<T>(key) ? (T)record[key] : defaultValue;
             }
