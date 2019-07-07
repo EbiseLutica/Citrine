@@ -22,7 +22,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.2.0";
+		public static string Version => "5.2.1";
 
 		[Obsolete("6.0.0で廃止されます。 " + nameof(Version) + " を使用してください。")]
 		public static string VersionAsXelticaBot => Version;
