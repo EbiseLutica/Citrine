@@ -235,25 +235,21 @@ namespace Citrine.Discord
 			}
 			else if (Client.CurrentUser == null)
 			{
-				Console.WriteLine("CurrentUser is null");
+				logger.Error("CurrentUser is null");
 			}
 
 			if (arg is IDMChannel dm)
 			{
-				Console.Write("DM");
 				await Core.HandleDmAsync(new DCPost(arg));
 			}
 			else if (arg.MentionedUsers?.Any(m => m.Id == (Myself as DCUser).Native.Id) ?? false)
 			{
-				Console.Write("MENTION");
 				await Core.HandleMentionAsync(new DCPost(arg));
 			}
 			else
 			{
-				Console.Write("GROUP");
 				await Core.HandleTimelineAsync(new DCPost(arg));
 			}
-			Console.WriteLine($": {arg.Content}");
 		}
 
 		private async Task<IMessage> PostAsync(string text, string cw, List<Core.Api.IAttachment> attachments)
@@ -261,5 +257,7 @@ namespace Citrine.Discord
 			// Discord has no api to send file from ID
 			return await CurrentChannel?.SendMessageAsync(Cw(cw, text));
 		}
+
+		private Logger logger = new Logger(nameof(Shell));
 	}
 }

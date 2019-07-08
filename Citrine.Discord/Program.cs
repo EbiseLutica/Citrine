@@ -4,19 +4,16 @@ using Citrine.Core;
 
 namespace Citrine.Discord
 {
-	using Citrine.Core.Api;
-	using static Console;
 	class Program
     {
         static async Task Main(string[] args)
         {
-			WriteLine($"Citrine {Server.Version}");
-			WriteLine($"Citrine.Discord {Shell.Version}");
-			WriteLine();
-			WriteLine("起動中...");
+			Console.WriteLine(Server.CitrineAA + " version " + Server.Version);
+			var logger = new Logger("Bootstrap");
+			logger.Info("Citrine.Discord " + Shell.Version);
 			var sh = await Shell.InitializeAsync();
-			sh.Core.AddCommand(new YuusakuCommand());
-			WriteLine("起動しました！");
+			logger.Info("Initialized Shell!");
+			logger.Info("Launched!");
 
 			await Task.Delay(-1);
         }

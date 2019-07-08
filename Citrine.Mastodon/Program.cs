@@ -1,6 +1,6 @@
+using System;
 using System.Threading.Tasks;
 using Citrine.Core;
-using static System.Console;
 
 namespace Citrine.Mastodon
 {
@@ -8,15 +8,14 @@ namespace Citrine.Mastodon
 	{
 		static async Task Main(string[] args)
 		{
-			WriteLine($"Citrine {Server.Version}");
-			WriteLine($"Citrine.Mastodon {Shell.Version}");
-			WriteLine();
-			WriteLine("起動中...");
-			await Shell.InitializeAsync();
-			WriteLine("起動しました！");
+			Console.WriteLine(Server.CitrineAA + " version " + Server.Version);
+			var logger = new Logger("Bootstrap");
+			logger.Info("Citrine.Mastodon " + Shell.Version);
+			var sh = await Shell.InitializeAsync();
+			logger.Info("Initialized Shell!");
+			logger.Info("Launched!");
 
-			while (true)
-				await Task.Delay(1000);
+			await Task.Delay(-1);
 		}
 	}
 

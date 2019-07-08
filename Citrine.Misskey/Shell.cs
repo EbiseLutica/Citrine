@@ -43,8 +43,11 @@ namespace Citrine.Misskey
 
 		public int AttachmentMaxCount => 4;
 
-		public Shell(MisskeyClient mi, User myself)
+		public Logger Logger { get; }
+
+		public Shell(MisskeyClient mi, User myself, Logger logger)
 		{
+			Logger = logger;
 			Core = new Server(this);
 			Misskey = mi;
 			Myself = new MiUser(myself);
@@ -58,28 +61,29 @@ namespace Citrine.Misskey
 		public static async Task<Shell> InitializeAsync()
 		{
 			MisskeyClient mi;
+			var logger = new Logger(nameof(Shell));
 			try
 			{
 				var credential = File.ReadAllText("./token");
 				mi = new MisskeyClient(JsonConvert.DeserializeObject<Disboard.Models.Credential>(credential));
-				WriteLine("Misskey に接続しました。");
+				logger.Info("Misskey に接続しました。");
 			}
 			catch (Exception)
 			{
-				WriteLine($"認証に失敗しました。セットアップを開始します。");
+				logger.Error($"認証に失敗しました。セットアップを開始します。");
 				Write("Misskey URLを入力してください。> ");
 				var host = ReadLine();
 				mi = new MisskeyClient(host);
-				await AuthorizeAsync(mi);
+				await AuthorizeAsync(mi, logger);
 			}
 
 			var myself = await mi.IAsync();
-			WriteLine($"bot ユーザーを取得しました (@{myself.Username})");
+			logger.Info($"bot ユーザーを取得しました (@{myself.Username})");
 
 			// 呼ばないとストリームの初期化ができないらしい
 			await mi.Streaming.ConnectAsync();
 
-			var sh = new Shell(mi, myself);
+			var sh = new Shell(mi, myself, logger);
 			return sh;
 		}
 
@@ -253,7 +257,7 @@ namespace Citrine.Misskey
 			await Misskey.Notes.Reactions.DeleteAsync(post.Id);
 		}
 
-		private static async Task AuthorizeAsync(MisskeyClient mi)
+		private static async Task AuthorizeAsync(MisskeyClient mi, Logger logger)
 		{
 			var app = await mi.App.CreateAsync("Citrine for Misskey", "バーチャル嫁bot", ((Permission[])Enum.GetValues(typeof(Permission))).Select(p => p.ToStr()).ToArray(), "http://xeltica.work");
 
@@ -263,14 +267,14 @@ namespace Citrine.Misskey
 			{
 				Server.OpenUrl(session.Url);
 			}
-			catch (Exception)
+			catch (NotSupportedException)
 			{
-				WriteLine("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
-				WriteLine("> " + session.Url);
+				logger.Error("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
+				logger.Error("> " + session.Url);
 			}
 
-			WriteLine("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールで何かキーを押してください。");
-
+			logger.Info("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールで何かキーを押してください。");
+			Console.Write("> ");
 			ReadLine();
 
 			await mi.Auth.Session.UserKeyAsync(session.Token);
@@ -294,13 +298,13 @@ namespace Citrine.Misskey
 			followed = main.OfType<FollowedMessage>()
 				.Delay(new TimeSpan(0, 0, 5))
 				.Subscribe((mes) => Core.HandleFollowedAsync(new MiUser(mes)), (e) => SubscribeStreams());
-			WriteLine("フォロー監視開始");
+			Logger.Info("フォロー監視開始");
 
 			// リプライ
 			reply = main.OfType<MentionMessage>()
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => Core.HandleMentionAsync(new MiPost(mes)));
-			WriteLine("リプライ監視開始");
+			Logger.Info("リプライ監視開始");
 
 			// Timeline
 			tl = Misskey.Streaming.HomeTimelineAsObservable().Merge(Misskey.Streaming.LocalTimelineAsObservable())
@@ -308,7 +312,7 @@ namespace Citrine.Misskey
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => Core.HandleTimelineAsync(new MiPost(mes)));
-			WriteLine("タイムライン監視開始");
+			Logger.Info("タイムライン監視開始");
 
 			// Direct Message
 			dm = main.OfType<MessagingMessage>()
@@ -320,7 +324,7 @@ namespace Citrine.Misskey
 					await Misskey.Messaging.Messages.ReadAsync(mes.Id);
 					await Core.HandleDmAsync(new MiDmPost(mes));
 				});
-			WriteLine("トーク監視開始");
+			Logger.Info("トーク監視開始");
 		}
 
 		private IDisposable followed, reply, tl, dm;

@@ -43,11 +43,12 @@ namespace Citrine.Mastodon
 
 		public int AttachmentMaxCount => 4;
 
-		public Shell(MastodonClient don, Account myself)
+		public Shell(MastodonClient don, Account myself, Logger logger)
 		{
 			Core = new Server(this);
             Mastodon = don;
             Myself = new DonUser(myself);
+			this.logger = logger;
             SubscribeStreams();
         }
 
@@ -58,26 +59,27 @@ namespace Citrine.Mastodon
 		public static async Task<Shell> InitializeAsync()
 		{
 			MastodonClient don;
+			var logger = new Logger();
 			try
 			{
 				var cred = File.ReadAllText("./token");
 				don = new MastodonClient(JsonConvert.DeserializeObject<Disboard.Models.Credential>(cred));
-				WriteLine("Mastodon に接続しました。");
+				logger.Info("Mastodon に接続しました。");
 			}
 			catch (Exception ex)
 			{
-				WriteLine($"認証中にエラーが発生しました {ex.GetType().Name} {ex.Message}\n{ex.StackTrace}");
+				logger.Error($"認証中にエラーが発生しました {ex.GetType().Name} {ex.Message}\n{ex.StackTrace}");
 				Write("Mastodon URL> ");
 				var domain = ReadLine();
 				don = new MastodonClient(domain);
-				await AuthorizeAsync(don);
+				await AuthorizeAsync(don, logger);
 			}
 
 			var myself = await don.Account.VerifyCredentialsAsync();
 
-			WriteLine($"bot ユーザーを取得しました (@{myself.Username}");
+			logger.Info($"bot ユーザーを取得しました (@{myself.Username}");
 
-            var sh = new Shell(don, myself);
+            var sh = new Shell(don, myself, logger);
 			return sh;
 		}
 
@@ -239,14 +241,14 @@ namespace Citrine.Mastodon
 				.Where(notif => notif.Type == NotificationType.Follow)
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((n) => Core.HandleFollowedAsync(new DonUser(n.Account)));
-			WriteLine("フォロー監視開始");
+			logger.Info("フォロー監視開始");
 
 			// リプライ
 			reply = main.OfType<NotificationMessage>()
 				.Where(notif => notif.Type == NotificationType.Mention)
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => Core.HandleMentionAsync(new DonPost(mes.Status, this)));
-			WriteLine("リプライ監視開始");
+			logger.Info("リプライ監視開始");
 
 			// Timeline
 			tl = Mastodon.Streaming.LocalPublicAsObservable(false).Merge(Mastodon.Streaming.UserAsObservable())
@@ -254,10 +256,10 @@ namespace Citrine.Mastodon
 				.DistinctUntilChanged(n => n.Id)
 				.Delay(new TimeSpan(0, 0, 1))
 				.Subscribe((mes) => Core.HandleTimelineAsync(new DonPost(mes, this)));
-			WriteLine("タイムライン監視開始");
+			logger.Info("タイムライン監視開始");
 		}
 
-		private static async Task AuthorizeAsync(MastodonClient don)
+		private static async Task AuthorizeAsync(MastodonClient don, Logger logger)
 		{
 			var redirect = "urn:ietf:wg:oauth:2.0:oob";
 			var scope = AccessScope.Read | AccessScope.Write | AccessScope.Follow;
@@ -270,12 +272,12 @@ namespace Citrine.Mastodon
 			}
 			catch (Exception)
 			{
-				WriteLine("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
-				WriteLine("> " + url);
+				logger.Error("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
+				logger.Error("> " + url);
 			}
 
-			WriteLine("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールにコードを入力してください。");
-
+			logger.Info("ユーザー認証を行います。ウェブブラウザ上で認証が終わったら、コンソールにコードを入力してください。");
+			Console.Write("> ");
 			var code = ReadLine();
 
 			await don.Auth.AccessTokenAsync(redirect, code);
@@ -285,6 +287,7 @@ namespace Citrine.Mastodon
 		}
 
 		private IDisposable followed, reply, tl;
+		private Logger logger;
 	}
 
 	public static class ConvertHelper

@@ -97,13 +97,11 @@ namespace Citrine.Core.Modules
 			var res = JObject.Parse(await (await Server.Http.GetAsync(CreateUrl(url, query))).Content.ReadAsStringAsync());
 			if (!res.ContainsKey("query"))
 			{
-				Console.WriteLine("res has no query");
 				return default;
 			}
 			var q = res["query"] as JObject;
 			if (!q?.ContainsKey("pages") ?? false)
 			{
-				Console.WriteLine("query has no pages");
 				return default;
 			}
 			var pages = q["pages"].First.First;

@@ -7,7 +7,7 @@ namespace Citrine.Core
     public class Logger
     {
         public string Name { get; }
-        public Logger(string name)
+        public Logger(string name = null)
         {
             Name = name;
         }
@@ -19,10 +19,10 @@ namespace Citrine.Core
 
         protected void Output(object data, string prefix = "")
         {
-            LoggerServer.Instance.Output(data, $"[{Name}]{prefix ?? ""}");
+            LoggerServer.Instance.Output(data, $"{NamePrefix}{prefix ?? ""}");
         }
 
-
+        protected string NamePrefix => string.IsNullOrEmpty(Name) ? "" : $"[{Name}]";
 
         protected class LoggerServer : IDisposable
         {
@@ -31,6 +31,7 @@ namespace Citrine.Core
                 // ファイルロギング
                 if (!Directory.Exists("log"))
                     Directory.CreateDirectory("log");
+                
                 loggingStreams = new []
                 {
                     new StreamWriter(File.OpenWrite($"log/{DateTime.Now.ToString(@"yyMMdd-HHmmss-fff.lo\g")}")),
@@ -45,7 +46,11 @@ namespace Citrine.Core
 
             public void Output(object obj, string prefix = "")
             {
-                loggingStreams?.ForEach(l => l.WriteLine($"{DateTime.Now.ToString("[HH:mm:ss]")}{prefix}: {obj ?? "null"}"));
+                loggingStreams?.ForEach(l => 
+                {
+                    l.WriteLine($"{DateTime.Now.ToString("[HH:mm:ss]")}{prefix}: {obj ?? "null"}");
+                    l.Flush();
+                });
             }
 
             public async Task OutputAsync(object obj, string prefix = "")
@@ -53,7 +58,7 @@ namespace Citrine.Core
                 await loggingStreams?.ForEach(l => l.WriteLineAsync($"{DateTime.Now.ToString("[HH:mm:ss]")}{prefix}: {obj ?? "null"}"));
             }
 
-            internal static LoggerServer Instance { get; }
+            internal static LoggerServer Instance { get; } = new LoggerServer();
 
             private StreamWriter[] loggingStreams;
         }

@@ -19,10 +19,18 @@ namespace Citrine.Core
     /// </summary>
     public class Server
 	{
+		public static string CitrineAA => 
+@" _____  _  _          _              
+/  __ \(_)| |        (_)             
+| /  \/ _ | |_  _ __  _  _ __    ___ 
+| |    | || __|| '__|| || '_ \  / _ \
+| \__/\| || |_ | |   | || | | ||  __/
+ \____/|_| \__||_|   |_||_| |_| \___|";
+
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.3.0";
+		public static string Version => "5.4.0-indev";
 
 		[Obsolete("6.0.0で廃止されます。 " + nameof(Version) + " を使用してください。")]
 		public static string VersionAsXelticaBot => Version;
@@ -41,6 +49,8 @@ namespace Citrine.Core
 		/// シェルを取得します。
 		/// </summary>
 		public IShell Shell { get; }
+
+		public Logger Logger => new Logger("Core");
 
 		/// <summary>
 		/// 文脈の一覧を取得します。
@@ -89,20 +99,20 @@ namespace Citrine.Core
 			if (File.Exists("./admin"))
 			{
 				adminId = File.ReadAllText("./admin").Trim().ToLower();
-				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
+				Logger.Info($"管理者はID {adminId ?? "null"}。");
 			}
 			else
 			{
 				Console.Write("Admin's ID > ");
 				adminId = Console.ReadLine().Trim().ToLower();
 				File.WriteAllText("./admin", adminId);
-				Console.WriteLine($"管理者はID {adminId ?? "null"}。");
+				Logger.Info($"管理者はID {adminId ?? "null"}。");
 			}
 
 			if (File.Exists("./nicknames"))
 			{
 				// マイグレ
-				Console.WriteLine("古いニックネーム保存形式を使用しています。新しい UserStorage へのマイグレーションを開始します。");
+				Logger.Warn("古いニックネーム保存形式を使用しています。新しい UserStorage へのマイグレーションを開始します。");
 				var lines = File.ReadAllLines("./nicknames");
 				lines.Select(l => {
 					var kv = l.Split(',');
@@ -110,7 +120,7 @@ namespace Citrine.Core
 				})
 				.ForEach(kv => Storage[kv.Key].Set(StorageKey.Nickname, kv.Value));
 				File.Delete("./nicknames");
-				Console.WriteLine($"{lines.Length} 人のニックネームを、新しい UserStorage に移行しました!");
+				Logger.Info($"{lines.Length} 人のニックネームを、新しい UserStorage に移行しました!");
 			}
 		}
 
@@ -430,9 +440,9 @@ namespace Citrine.Core
 			return asm.GetManifestResourceStream($"{asm.GetName().Name}.Resources.{path}");
 		}
 
-		private static void WriteException(Exception ex)
+		private void WriteException(Exception ex)
 		{
-			Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+			Logger.Error($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
 		}
 
 		public static readonly HttpClient Http = new HttpClient();

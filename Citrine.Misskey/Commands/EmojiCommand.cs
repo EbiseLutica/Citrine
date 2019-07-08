@@ -88,8 +88,8 @@ namespace Citrine.Misskey
 				{
 					cw = "失敗しちゃいました... 報告書見ますか?";
 					output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
-					Console.WriteLine(ex.Message);
-					Console.WriteLine(ex.StackTrace);
+					logger.Error($"{ex.GetType().Name}: {ex.Message}");
+					logger.Error(ex.StackTrace);
 				}
 			}
 			else
@@ -197,25 +197,27 @@ namespace Citrine.Misskey
 		}
 
 		private string GetTime(int cnt, int interval)
+		{
+			double time = cnt * interval / 1000f;
+			string suffix = "秒";
+			if (time > 59)
 			{
-				double time = cnt * interval / 1000f;
-				string suffix = "秒";
-				if (time > 59)
-				{
-					time /= 60;
-					suffix = "分";
-				}
-				if (time > 59)
-				{
-					time /= 60;
-					suffix = "時間";
-				}
-				if (time > 23)
-				{
-					time /= 24;
-					suffix = "日";
-				}
-				return time < 1 ? "一瞬" : Math.Round(time) + suffix;
+				time /= 60;
+				suffix = "分";
 			}
+			if (time > 59)
+			{
+				time /= 60;
+				suffix = "時間";
+			}
+			if (time > 23)
+			{
+				time /= 24;
+				suffix = "日";
+			}
+			return time < 1 ? "一瞬" : Math.Round(time) + suffix;
+		}
+
+		Logger logger = new Logger(nameof(EmojiCommand));
 	}
 }

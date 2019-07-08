@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Citrine.Core;
 using static System.Console;
@@ -8,17 +9,16 @@ namespace Citrine.Misskey
 	{
 		static async Task Main(string[] args)
 		{
-			WriteLine($"Citrine {Server.Version}");
-			WriteLine($"Citrine.Misskey {Shell.Version}");
-			WriteLine();
-			WriteLine("起動中...");
+			Console.WriteLine(Server.CitrineAA + " version " + Server.Version);
+			var logger = new Logger("Bootstrap");
+			logger.Info("Citrine.Misskey " + Shell.Version);
 			var sh = await Shell.InitializeAsync();
+			logger.Info("Initialized Shell!");
 			sh.Core.AddCommand(new EmojiCommand());
+			logger.Info("Added command /emoji");
+			logger.Info("Launched!");
 
-			WriteLine("起動しました！");
-
-			while (true)
-				await Task.Delay(1000);
+			await Task.Delay(-1);
 		}
 	}
 }

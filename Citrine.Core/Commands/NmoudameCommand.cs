@@ -25,10 +25,11 @@ namespace Citrine.Core
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
+				logger.Error($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
 				return "エラー";
 			}
 		}
+		private Logger logger = new Logger(nameof(NmoudameCommand));
 
 		private static string GetEndpoint(string text) => $"http://tekito.kanichat.com/nmoudame/response.php?str={HttpUtility.UrlEncode(text)}&mode=json&length=6&normal=1&small=1&dots=1&ltu_prob=30&ex_prob=30&c=0";
 	}

@@ -19,7 +19,7 @@ namespace Citrine.Core
 				return "このコマンドはユーザーが実行してください.";
 			var n = p.Post;
 
-			Console.WriteLine($@"Dumped Post
+			logger.Info($@"Dumped Post
 id: {n.Id}
 name: {n.User.Name ?? "NULL"}
 screenName: {n.User.ScreenName ?? "NULL"}
@@ -27,5 +27,7 @@ text: {n.Text ?? "NULL"}
 visibility: {n.Visiblity}");
 				return "この投稿をコンソールに出力しました. コンソール画面を確認してください.";
 		}
+
+		private Logger logger = new Logger(nameof(DumpCommand));
 	}
 }
