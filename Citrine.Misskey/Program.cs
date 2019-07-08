@@ -13,10 +13,10 @@ namespace Citrine.Misskey
 			var logger = new Logger("Bootstrap");
 			logger.Info("Citrine.Misskey " + Shell.Version);
 			var sh = await Shell.InitializeAsync();
-			logger.Info("Initialized Shell!");
+			logger.Info("シェルを初期化しました！");
 			sh.Core.AddCommand(new EmojiCommand());
-			logger.Info("Added command /emoji");
-			logger.Info("Launched!");
+			logger.Info("/emoji コマンドを追加しました。"); 
+			logger.Info("起動しました！");
 
 			await Task.Delay(-1);
 		}

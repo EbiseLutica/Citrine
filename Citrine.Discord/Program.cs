@@ -12,8 +12,8 @@ namespace Citrine.Discord
 			var logger = new Logger("Bootstrap");
 			logger.Info("Citrine.Discord " + Shell.Version);
 			var sh = await Shell.InitializeAsync();
-			logger.Info("Initialized Shell!");
-			logger.Info("Launched!");
+			logger.Info("シェルを初期化しました！");
+			logger.Info("起動しました！");
 
 			await Task.Delay(-1);
         }
