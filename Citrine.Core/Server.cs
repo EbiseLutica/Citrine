@@ -22,7 +22,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.2.1";
+		public static string Version => "5.3.0";
 
 		[Obsolete("6.0.0で廃止されます。 " + nameof(Version) + " を使用してください。")]
 		public static string VersionAsXelticaBot => Version;
@@ -309,6 +309,8 @@ namespace Citrine.Core
 				catch (Exception ex)
 				{
 					WriteException(ex);
+                    await Shell.ReplyAsync(mention, $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}", "ん...何の話してたんだっけ...?　(エラーが発生したようです。)");
+					break;
 				}
 			}
 		}
@@ -356,6 +358,7 @@ namespace Citrine.Core
 				}
 				catch (Exception ex)
 				{
+                    await Shell.ReplyAsync(post, "ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。)");
 					WriteException(ex);
 				}
 			}
