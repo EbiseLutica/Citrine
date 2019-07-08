@@ -116,6 +116,13 @@ namespace Citrine.Core
 
 			Logger.Info($"管理者はID {Config.Instance.Admin ?? "null"}。");
 
+			if (Config.Instance.Moderators.Count > 0)
+			{
+				Logger.Info($"モデレーターは {string.Join(", ", Config.Instance.Moderators)}。");
+			}
+			else
+			{
+				Logger.Info("モデレーターは いません。");
 			}
 
 			if (File.Exists("./nicknames"))
@@ -223,12 +230,30 @@ namespace Citrine.Core
 		/// <returns></returns>
 		public bool IsLocal(IUser user) => user.Host == "";
 
+		
+		[Obsolete("Use " + nameof(IsSuperUser) + " instead")]
+		public bool IsAdmin(IUser user) => IsSuperUser(user);
+
+		/// <summary>
+		/// 指定したユーザーが管理者またはモデレーターであるかどうかを取得します。
+		/// </summary>mi
+		/// <returns>管理者かモデレーターであれば <c>true</c>、そうでなければ<c>false</c>。</returns>
+		/// <param name="user">ユーザー。</param>
+		public bool IsSuperUser(IUser user) => IsAdministrator(user) || IsModerator(user);
+
 		/// <summary>
 		/// 指定したユーザーが管理者であるかどうかを取得します。
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdmin(IUser user) => user.Name.ToLower() == adminId.ToLower() && string.IsNullOrEmpty(user.Host);
+		public bool IsAdministrator(IUser user) => Config.Instance.Admin == user.Name;
+
+		/// <summary>
+		/// 指定したユーザーがモデレーターであるかどうかを取得します。
+		/// </summary>mi
+		/// <returns>モデレーターであれば <c>true</c>、そうでなければ<c>false</c>。</returns>
+		/// <param name="user">ユーザー。</param>
+		public bool IsModerator(IUser user) => Config.Instance.Moderators?.Contains(user.Name) ?? false;
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
