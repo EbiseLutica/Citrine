@@ -22,6 +22,7 @@ namespace Citrine.Core.Modules
 			{
 				core.LikeWithLimited(n.User);
 				await shell.ReactAsync(n, m.Groups[1].Value.Trim());
+				return true;
 			}
 			else if (n.Text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !n.Text.IsMatch("(じゃ|では?)な[いく]"))
 			{
@@ -32,7 +33,6 @@ namespace Citrine.Core.Modules
 				return true;
 			}
 
-			// 多分競合しないから常にfalse
 			return false;
 		}
 
