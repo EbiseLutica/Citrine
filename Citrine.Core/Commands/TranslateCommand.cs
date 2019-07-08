@@ -22,7 +22,7 @@ namespace Citrine.Core
 			var to = args[1].ToLowerInvariant();
 			var text = string.Join(" ", args.Skip(2));
 
-			var url = $"https://script.google.com/macros/s/AKfycby9-QKJAYXlXSH-Evq-f5y2enIb92jIoqtyTdeUR1A/exec?text={text}&source={from}&target={to}";
+			var url = $"https://script.google.com/macros/s/AKfycbzBORthiOILTTAOHd778LawGkjp5Lii7p2ttaMADMHSDHuUS3M/exec?text={text}&source={from}&target={to}";
 			return await (await Server.Http.GetAsync(url)).Content.ReadAsStringAsync();
 		}
 	}
