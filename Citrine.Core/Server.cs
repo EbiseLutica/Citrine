@@ -98,15 +98,24 @@ namespace Citrine.Core
 
 			if (File.Exists("./admin"))
 			{
+				// マイグレ
+				Logger.Warn("管理者名の古い保存形式を使用しています。コンフィグファイルへのマイグレーションを開始します。");
 				adminId = File.ReadAllText("./admin").Trim().ToLower();
-				Logger.Info($"管理者はID {adminId ?? "null"}。");
+				Config.Instance.Admin = adminId;
+				Config.Instance.Save();
+				File.Delete("./admin");
+				Logger.Info("管理者名のデータを移行しました。");
 			}
-			else
+			if (string.IsNullOrEmpty(Config.Instance.Admin))
 			{
 				Console.Write("Admin's ID > ");
 				adminId = Console.ReadLine().Trim().ToLower();
-				File.WriteAllText("./admin", adminId);
-				Logger.Info($"管理者はID {adminId ?? "null"}。");
+				Config.Instance.Admin = adminId;
+				Config.Instance.Save();
+			}
+
+			Logger.Info($"管理者はID {Config.Instance.Admin ?? "null"}。");
+
 			}
 
 			if (File.Exists("./nicknames"))
