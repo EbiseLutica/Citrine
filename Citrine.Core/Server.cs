@@ -246,14 +246,14 @@ namespace Citrine.Core
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdministrator(IUser user) => Config.Instance.Admin == user.Name;
+		public bool IsAdministrator(IUser user) => Config.Instance.Admin == user.Name && IsLocal(user);
 
 		/// <summary>
 		/// 指定したユーザーがモデレーターであるかどうかを取得します。
 		/// </summary>mi
 		/// <returns>モデレーターであれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsModerator(IUser user) => Config.Instance.Moderators?.Contains(user.Name) ?? false;
+		public bool IsModerator(IUser user) => Config.Instance.Moderators?.Contains(user.Name) ?? false && IsLocal(user);
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
