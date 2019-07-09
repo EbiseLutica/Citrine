@@ -228,7 +228,7 @@ namespace Citrine.Core
 		/// </summary>
 		/// <param name="user"></param>
 		/// <returns></returns>
-		public bool IsLocal(IUser user) => user.Host == "";
+		public bool IsLocal(IUser user) => string.IsNullOrEmpty(user.Host);
 
 		
 		[Obsolete("Use " + nameof(IsSuperUser) + " instead")]
@@ -246,14 +246,17 @@ namespace Citrine.Core
 		/// </summary>mi
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsAdministrator(IUser user) => Config.Instance.Admin == user.Name && IsLocal(user);
+		public bool IsAdministrator(IUser user) => IsLocal(user) &&
+		                                           string.Equals(Config.Instance.Admin, user.Name, StringComparison.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// 指定したユーザーがモデレーターであるかどうかを取得します。
 		/// </summary>mi
 		/// <returns>モデレーターであれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
-		public bool IsModerator(IUser user) => Config.Instance.Moderators?.Contains(user.Name) ?? false && IsLocal(user);
+		public bool IsModerator(IUser user) => Config.Instance.Moderators?.Any(u =>
+			                                       IsLocal(user) && string.Equals(u, user.Name, StringComparison.OrdinalIgnoreCase) ||
+			                                       string.Equals(u, $@"{user.Name}@{user.Host}", StringComparison.OrdinalIgnoreCase)) ?? false;
 
 		/// <summary>
 		/// 指定したユーザーの好感度を取得します。
