@@ -22,6 +22,7 @@ namespace Citrine.Core
 			logger.Info($@"Dumped Post
 id: {n.Id}
 name: {n.User.Name ?? "NULL"}
+host: {n.User.Host ?? "NULL"}
 screenName: {n.User.ScreenName ?? "NULL"}
 text: {n.Text ?? "NULL"}
 visibility: {n.Visiblity}");
