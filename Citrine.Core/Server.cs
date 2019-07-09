@@ -247,7 +247,8 @@ namespace Citrine.Core
 		/// <returns>管理者であれば <c>true</c>、そうでなければ<c>false</c>。</returns>
 		/// <param name="user">ユーザー。</param>
 		public bool IsAdministrator(IUser user) => IsLocal(user) &&
-		                                           string.Equals(Config.Instance.Admin, user.Name, StringComparison.OrdinalIgnoreCase);
+		                                           string.Equals(Config.Instance.Admin, user.Name, StringComparison.OrdinalIgnoreCase) ||
+												   string.Equals(Config.Instance.Admin, $@"{user.Name}@{user.Host}", StringComparison.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// 指定したユーザーがモデレーターであるかどうかを取得します。
