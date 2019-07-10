@@ -45,6 +45,8 @@ namespace Citrine.Misskey
 
 		public Logger Logger { get; }
 
+		public int MaxNoteLength { get; private set; }
+
 		public Shell(MisskeyClient mi, User myself, Logger logger)
 		{
 			Logger = logger;
@@ -84,6 +86,7 @@ namespace Citrine.Misskey
 			await mi.Streaming.ConnectAsync();
 
 			var sh = new Shell(mi, myself, logger);
+			sh.MaxNoteLength = (await mi.MetaAsync()).MaxNoteTextLength;
 			return sh;
 		}
 
@@ -120,6 +123,8 @@ namespace Citrine.Misskey
 		{
 			if (cw == null && (text.Length > 140 || text.Split("\n").Length > 5))
 				cw = "ながい";
+			if (text.Length > MaxNoteLength)
+				text = text.Substring(0, MaxNoteLength);
 			PollParameter poll = null;
 			List<string> files = attachments?.Select(a => a.Id).ToList();
 			if (choices != null)
@@ -259,7 +264,7 @@ namespace Citrine.Misskey
 
 		private static async Task AuthorizeAsync(MisskeyClient mi, Logger logger)
 		{
-			var app = await mi.App.CreateAsync("Citrine for Misskey", "バーチャル嫁bot", ((Permission[])Enum.GetValues(typeof(Permission))).Select(p => p.ToStr()).ToArray(), "http://xeltica.work");
+			var app = await mi.App.CreateAsync("Citrine for Misskey", "Kawaii Bot Framework", ((Permission[])Enum.GetValues(typeof(Permission))).Select(p => p.ToStr()).ToArray(), "http://xeltica.work");
 
 			var session = await mi.Auth.Session.GenerateAsync();
 
