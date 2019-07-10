@@ -30,9 +30,9 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.4.2";
+		public static string Version => "5.4.3";
 
-		[Obsolete("6.0.0で廃止されます。 " + nameof(Version) + " を使用してください。")]
+		[Obsolete("6.0.0で廃止されます。")]
 		public static string VersionAsXelticaBot => Version;
 
 		/// <summary>
@@ -66,6 +66,7 @@ namespace Citrine.Core
 		/// ニックネームの辞書を取得します。
 		/// </summary>
 		/// <value></value>
+		[Obsolete("常に null を返します。 6.0.0 から削除されます。SetNicknameOf() メソッドなどを使用してください。")]
 		public Dictionary<string, string> NicknameMap { get; }
 
 		/// <summary>
