@@ -336,6 +336,8 @@ namespace Citrine.Core
 
 		public async Task HandleMentionAsync(IPost mention)
 		{
+			if (mention.User.IsBot)
+				return;
 			await Task.Delay(400);
 
 			if (mention.IsReply && ContextPostDictionary.ContainsKey(mention.Reply.Id))
@@ -366,6 +368,8 @@ namespace Citrine.Core
 
 		public async Task HandleTimelineAsync(IPost post)
 		{
+			if (post.User.IsBot)
+				return;
 			await Task.Delay(400);
 
 			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
@@ -386,6 +390,8 @@ namespace Citrine.Core
 
 		public async Task HandleDmAsync(IPost post)
 		{
+			if (post.User.IsBot)
+				return;
 			await Task.Delay(400);
 
 			if (ContextUserDictionary.ContainsKey(post.User.Id))
