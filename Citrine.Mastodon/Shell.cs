@@ -23,7 +23,7 @@ namespace Citrine.Mastodon
 	using static Console;
 	public class Shell : IShell
 	{
-		public static string Version => "2.0.0";
+		public static string Version => "2.1.0";
 
 		public IUser Myself { get; private set; }
 
