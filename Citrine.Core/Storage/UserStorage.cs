@@ -39,6 +39,7 @@ namespace Citrine.Core.Api
         {
             lock (fileLock)
                 File.WriteAllText("./storage.json", SerializeStorage());
+            logger.Debug("Saved storage data!");
         }
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace Citrine.Core.Api
         {
             if (File.Exists("./storage.json"))
                 DeserializeStorage(File.ReadAllText("./storage.json"));
+            logger.Debug("Reloaded storage data!");
         }
 
         private string SerializeStorage()
@@ -71,12 +73,25 @@ namespace Citrine.Core.Api
                 foreach (var kv in obj)
                 {
                     storage[kv.Key] = CreateRecord(kv.Value);
+                    logger.Debug($"Set {kv.Key}");
                 }
             }
         }
 
         private UserRecord CreateRecord(Dictionary<string, object> r = null)
         {
+            if (Config.Instance.LoggingLevel <= LoggingLevel.Debug)
+            {
+                if (r == null)
+                {
+                    logger.Debug("r is null");
+                }
+                else
+                {
+                    foreach (var kv in r)
+                        logger.Debug($"{kv.Key}= {kv.Value ?? "null"}");
+                }
+            }
             var rec = r == null ? new UserRecord() : new UserRecord(r);
             rec.Updated += () => Save();
             return rec;
@@ -85,6 +100,8 @@ namespace Citrine.Core.Api
         private ConcurrentDictionary<string, UserRecord> storage = new ConcurrentDictionary<string, UserRecord>();
 
         private object fileLock = new object();
+
+        protected static Logger logger = new Logger("UserStorage");
 
         public class UserRecord
         {
@@ -100,7 +117,44 @@ namespace Citrine.Core.Api
                     return defaultValue;
                 
                 // 正しい型の値があれば返す　なければデフォルト
-                return Is<T>(key) ? (T)record[key] : defaultValue;
+                var retvalue = record[key];
+                try
+                {
+                    switch (defaultValue)
+                    {
+                        case int _:
+                            return (T)(object)Convert.ToInt32(retvalue);
+                        case long _:
+                            return (T)(object)Convert.ToInt64(retvalue);
+                        case short _:
+                            return (T)(object)Convert.ToInt16(retvalue);
+                        case byte _:
+                            return (T)(object)Convert.ToByte(retvalue);
+                        case uint _:
+                            return (T)(object)Convert.ToUInt32(retvalue);
+                        case ulong _:
+                            return (T)(object)Convert.ToUInt64(retvalue);
+                        case ushort _:
+                            return (T)(object)Convert.ToUInt16(retvalue);
+                        case sbyte _:
+                            return (T)(object)Convert.ToSByte(retvalue);
+                        case float _:
+                            return (T)(object)Convert.ToSingle(retvalue);
+                        case double _:
+                            return (T)(object)Convert.ToDouble(retvalue);
+                        case decimal _:
+                            return (T)(object)Convert.ToDecimal(retvalue);
+                        case string _:
+                            return (T)(object)(retvalue.ToString());
+                        default:
+                            return (T)retvalue;
+                    }
+                }
+                catch (InvalidCastException)
+                {
+                    logger.Warn($"Failed to get value {key} as {typeof(T).Name}");
+                    return default;
+                }
             }
 
             public bool Has(string key) => record.ContainsKey(key);
@@ -113,6 +167,7 @@ namespace Citrine.Core.Api
                 if (Has(key) && record[key] == (object)value)
                     return;
                 record[key] = value;
+                
                 Updated?.Invoke();
             }
 
