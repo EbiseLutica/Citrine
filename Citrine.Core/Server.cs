@@ -30,7 +30,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.4.3";
+		public static string Version => "5.4.4";
 
 		[Obsolete("6.0.0で廃止されます。")]
 		public static string VersionAsXelticaBot => Version;
