@@ -23,7 +23,7 @@ namespace Citrine.Core
 					core.Storage[p.User].Set(args[1], args[2]);
 					return "success";
 				case "get":
-					return core.Storage[p.User].Get<string>(args[1], "null");
+					return (core.Storage[p.User].Get<object>(args[1], (object)"null")).ToString();
 				case "has":
 					return core.Storage[p.User].Has(args[1]).ToString();
 				default:
