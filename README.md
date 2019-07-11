@@ -30,7 +30,6 @@ Platform adapters are implemented Citrine API to run Citrine on the specified pl
 - [ ] Slack
 - [ ] LINE
 - [ ] Twitter
-- [ ] Skype
 
 
 ### How to write your own platform adapter
@@ -54,10 +53,13 @@ git submodule update --init
 dotnet build
 
 # Run Citrine for Misskey
-cd Citrine && dotnet run
+cd Citrine.Misskey && dotnet run
 
 # Run Citrine for Mastodon
-cd Citrine.Mastodoon && dotnet run
+cd Citrine.Mastodon && dotnet run
+
+# Run Citrine for Discord
+cd Citrine.Discord && dotnet run
 
 # Run Citrine Interactive
 cd Citrine.Standalone && dotnet run

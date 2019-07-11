@@ -11,9 +11,9 @@ Citrine は、オープンソースな bot フレームワークです。
 
 モジュールは、Citrine の脳にあたります。リプライ, リアクションなどを行う為には、モジュールを bot の機能として作成し、 Citrine に読み込ませます。
 
-## How to write your own module
+## モジュールを自作する方法
 
-To write your module for Citrine, [read this document(TBD)](/docs/module)
+シトリンに対応するモジュールを自作するためには、 [これを読んでください(工事中)](/docs/ja/module)
 
 ## プラットフォームアダプター
 
@@ -31,12 +31,11 @@ Citrine API は 各ソーシャルメディアの持つ API を抽象化した�
 - [ ] Slack
 - [ ] LINE
 - [ ] Twitter
-- [ ] Skype
 
 
-### How to write your own platform adapter
+### プラットフォームアダプターを自作する方法
 
-To write your own platform adapter for Citrine, [read this doc(TBD)](/docs/adapter)
+シトリンに対応するプラットフォームアダプターを自作するためには、 [これを読んでください(工事中)](/docs/ja/adapter)
 
 ## 必要なソフトウェア
 
@@ -55,10 +54,13 @@ git submodule update --init
 dotnet build
 
 # Citrine for Misskey を実行
-cd Citrine && dotnet run
+cd Citrine.Misskey && dotnet run
 
 # Citrine for Mastodon を実行
 cd Citrine.Mastodon && dotnet run
+
+# Citrine for Discord を実行
+cd Citrine.Discord && dotnet run
 
 # Citrine Interactive を実行
 cd Citrine.Standalone && dotnet run
