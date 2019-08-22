@@ -23,7 +23,7 @@ namespace Citrine.Misskey
 
 	public class Shell : IShell
 	{
-		public static string Version => "2.1.0";
+		public static string Version => "2.1.1";
 
 		public MisskeyClient Misskey { get; private set; }
 
@@ -272,7 +272,7 @@ namespace Citrine.Misskey
 			{
 				Server.OpenUrl(session.Url);
 			}
-			catch (NotSupportedException)
+			catch (Exception)
 			{
 				logger.Error("ユーザー認証のためのURLを開くことができませんでした。以下のURLにアクセスして認証を進めてください。");
 				logger.Error("> " + session.Url);
