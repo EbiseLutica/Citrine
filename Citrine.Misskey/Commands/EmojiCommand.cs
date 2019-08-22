@@ -39,7 +39,12 @@ namespace Citrine.Misskey
 				return "このコマンドはユーザーが実行してください.";
 			var u = (shell.Myself as MiUser).Native;
 			var s = shell as Shell;
-			var note = (p.Post as MiPost).Native;
+			var note = (p.Post as MiPost)?.Native;
+
+			if (p.Post is MiDmPost)
+			{
+				return "このコマンドはトークから実行することができません.";
+			}
 
 			if (u == null || note == null || s == null)
 			{
