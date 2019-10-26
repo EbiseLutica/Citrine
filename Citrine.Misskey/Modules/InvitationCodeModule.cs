@@ -18,6 +18,7 @@ namespace Citrine.Misskey
 				if (core.Storage[n.User].Get<string>("invitation-code") is string code)
 				{
 					await shell.ReplyAsync(n, $"あれ, あなたには既にコードをお渡ししていますよ. 招待コードは **{code}** です.", null, Visiblity.Direct);
+					return true;
 				}
 
 				var meta = await mk.MetaAsync();
