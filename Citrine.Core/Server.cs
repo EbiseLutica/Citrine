@@ -19,10 +19,10 @@ namespace Citrine.Core
     /// </summary>
     public class Server
 	{
-		public static string CitrineAA => 
-@" _____  _  _          _              
-/  __ \(_)| |        (_)             
-| /  \/ _ | |_  _ __  _  _ __    ___ 
+		public static string CitrineAA =>
+@" _____  _  _          _
+/  __ \(_)| |        (_)
+| /  \/ _ | |_  _ __  _  _ __    ___
 | |    | || __|| '__|| || '_ \  / _ \
 | \__/\| || |_ | |   | || | | ||  __/
  \____/|_| \__||_|   |_||_| |_| \___|";
@@ -30,7 +30,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.5.1";
+		public static string Version => "5.6.0";
 
 		[Obsolete("6.0.0で廃止されます。")]
 		public static string VersionAsXelticaBot => Version;
@@ -148,7 +148,12 @@ namespace Citrine.Core
 		{
 			if (Modules.Contains(mod))
 				return;
-			Modules?.Add(mod);
+
+			if (Modules != null)
+			{
+				Modules.Add(mod);
+				Modules.Sort((m1, m2) => m1.Priority - m2.Priority);
+			}
 		}
 
 		/// <summary>
@@ -231,7 +236,7 @@ namespace Citrine.Core
 		/// <returns></returns>
 		public bool IsLocal(IUser user) => string.IsNullOrEmpty(user.Host);
 
-		
+
 		[Obsolete("Use " + nameof(IsSuperUser) + " instead")]
 		public bool IsAdmin(IUser user) => IsSuperUser(user);
 
@@ -270,7 +275,7 @@ namespace Citrine.Core
 			var r = GetRatingValueOf(user);
 			return r < -3  ? Rating.Hate :
 			       r < 4  ? Rating.Normal :
-				   r < 8 ? Rating.Like : 
+				   r < 8 ? Rating.Like :
 				   r < 20 ? Rating.BestFriend : Rating.Partner;
 		}
 
@@ -291,7 +296,7 @@ namespace Citrine.Core
 		{
 			SetRatingValueOf(userId, GetRatingValueOf(userId) + amount);
 		}
-		
+
 		/// <summary>
 		/// 指定したユーザーの好感度を設定します。
 		/// </summary>

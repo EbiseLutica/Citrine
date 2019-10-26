@@ -15,7 +15,13 @@ namespace Citrine.Misskey
 			var sh = await Shell.InitializeAsync();
 			logger.Info("シェルを初期化しました！");
 			sh.Core.AddCommand(new EmojiCommand());
-			logger.Info("/emoji コマンドを追加しました。"); 
+			logger.Info("/emoji コマンドを追加しました。");
+			sh.Core.AddCommand(new IsCatCommand());
+			logger.Info("/iscat コマンドを追加しました。");
+			sh.Core.AddCommand(new ToggleFeatureCommand());
+			logger.Info("/config コマンドを追加しました。");
+			sh.Core.AddModule(new InvitationCodeModule());
+			logger.Info($"{nameof(InvitationCodeModule)} モジュールを追加しました。");
 			logger.Info("起動しました！");
 
 			await Task.Delay(-1);

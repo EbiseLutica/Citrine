@@ -10,9 +10,9 @@
 			"request": "launch",
 			"preLaunchTask": "build-misskey",
 			// If you have changed target frameworks, make sure to update the program path.
-			"program": "${workspaceFolder}/Citrine.Misskey/bin/Debug/netcoreapp2.1/Citrine.Misskey.dll",
+			"program": "${workspaceFolder}/Citrine.Misskey/bin/Debug/netcoreapp3.0/Citrine.Misskey.dll",
 			"args": [],
-			"cwd": "${workspaceFolder}/Citrine.Misskey/bin/Debug/netcoreapp2.1/",
+			"cwd": "${workspaceFolder}/Citrine.Misskey/bin/Debug/netcoreapp3.0/",
 			// For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
 			"console": "integratedTerminal",
 			"stopAtEntry": false,
@@ -24,9 +24,9 @@
 			"request": "launch",
 			"preLaunchTask": "build-mastodon",
 			// If you have changed target frameworks, make sure to update the program path.
-			"program": "${workspaceFolder}/Citrine.Mastodon/bin/Debug/netcoreapp2.1/Citrine.Mastodon.dll",
+			"program": "${workspaceFolder}/Citrine.Mastodon/bin/Debug/netcoreapp3.0/Citrine.Mastodon.dll",
 			"args": [],
-			"cwd": "${workspaceFolder}/Citrine.Mastodon/bin/Debug/netcoreapp2.1/",
+			"cwd": "${workspaceFolder}/Citrine.Mastodon/bin/Debug/netcoreapp3.0/",
 			// For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
 			"console": "integratedTerminal",
 			"stopAtEntry": false,
@@ -38,9 +38,9 @@
 			"request": "launch",
 			"preLaunchTask": "build-discord",
 			// If you have changed target frameworks, make sure to update the program path.
-			"program": "${workspaceFolder}/Citrine.Discord/bin/Debug/netcoreapp2.1/Citrine.Discord.dll",
+			"program": "${workspaceFolder}/Citrine.Discord/bin/Debug/netcoreapp3.0/Citrine.Discord.dll",
 			"args": [],
-			"cwd": "${workspaceFolder}/Citrine.Discord/bin/Debug/netcoreapp2.1/",
+			"cwd": "${workspaceFolder}/Citrine.Discord/bin/Debug/netcoreapp3.0/",
 			// For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
 			"console": "integratedTerminal",
 			"stopAtEntry": false,

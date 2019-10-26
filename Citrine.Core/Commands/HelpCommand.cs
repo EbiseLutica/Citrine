@@ -29,7 +29,7 @@ namespace Citrine.Core
 			{
 				var name = args[0];
 				var cmd = core.TryGetCommand(name);
-				if (cmd == default)
+				if (cmd == null)
 					return $"コマンド {name} は見つかりませんでした.";
 				var sb = new StringBuilder();
 				sb.AppendLine(GetDescription(cmd));

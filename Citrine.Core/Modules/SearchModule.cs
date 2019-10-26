@@ -55,7 +55,7 @@ namespace Citrine.Core.Modules
 
 				response = response ?? $"{query} について調べてみたけどわからなかった. ごめん...";
 				await shell.ReplyAsync(n, response);
-				
+
 				core.LikeWithLimited(n.User);
 				return true;
 			}
@@ -105,7 +105,7 @@ namespace Citrine.Core.Modules
 				return default;
 			}
 			var pages = q["pages"].First.First;
-			if (pages["extract"] == default)
+			if (pages["extract"] == null)
 				return default;
 			var text = pages["extract"].ToObject<string>();
 			var title = pages["title"].ToObject<string>();

@@ -44,3 +44,5 @@ Citrine/token
 token
 admin
 nicknames
+*.log
+config.json
