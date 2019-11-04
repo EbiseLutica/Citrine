@@ -28,6 +28,7 @@ Citrine API は 各ソーシャルメディアの持つ API を抽象化した�
 - [x] Standalone
 	- 対話型シェル
 - [x] Discord
+- [x] [rinsuki/sea](https://github.com/rinsuki/sea)
 - [ ] Slack
 - [ ] LINE
 - [ ] Twitter

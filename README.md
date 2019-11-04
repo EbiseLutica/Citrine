@@ -16,7 +16,7 @@ To write your module for Citrine, [read this document(TBD)](/docs/module)
 
 ## Platform Adapters
 
-Citrine API is an abstractive API of each social media. 
+Citrine API is an abstractive API of each social media.
 
 Platform adapters are implemented Citrine API to run Citrine on the specified platform. It's same as hubot's adapter.
 
@@ -27,6 +27,7 @@ Platform adapters are implemented Citrine API to run Citrine on the specified pl
 - [x] Standalone
 	- A REPL
 - [x] Discord
+- [x] [rinsuki/sea](https://github.com/rinsuki/sea)
 - [ ] Slack
 - [ ] LINE
 - [ ] Twitter
