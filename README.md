@@ -22,7 +22,7 @@ Platform adapters are implemented Citrine API to run Citrine on the specified pl
 
 [✔] is implemented, and [ ] is in plan.
 
-- [x] Misskey
+- [x] Misskey v11 (and compatible servers)
 - [x] Mastodon
 - [x] Standalone
 	- A REPL

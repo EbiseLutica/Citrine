@@ -23,7 +23,7 @@ Citrine API は 各ソーシャルメディアの持つ API を抽象化した�
 
 [✔] は実装済み, [ ] は計画中のもの。
 
-- [x] Misskey
+- [x] Misskey 11 (と互換性のあるサーバー)
 - [x] Mastodon
 - [x] Standalone
 	- 対話型シェル
