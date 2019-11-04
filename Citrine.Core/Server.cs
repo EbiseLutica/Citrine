@@ -173,21 +173,18 @@ namespace Citrine.Core
 			var nl = n.ToLowerInvariant();
 			var nameIsMatch = c.IgnoreCase ? (cnl == nl) : cn == n;
 			var lowerAliases = c.Aliases?.Select(a => a.ToLowerInvariant());
-			return c.Aliases == default ? nameIsMatch : nameIsMatch || (c.IgnoreCase ? lowerAliases.Contains(nl) : c.Aliases.Contains(n));
+			return c.Aliases == null ? nameIsMatch : nameIsMatch || (c.IgnoreCase ? lowerAliases.Contains(nl) : c.Aliases.Contains(n));
 		});
 
 		public async Task<string> ExecCommand(ICommandSender sender, string command)
 		{
-
 			if (command == null)
 				throw new ArgumentNullException(nameof(command));
 			if (command.StartsWith("/"))
 				command = command.Substring(1).Trim();
 			var splitted = Regex.Split(command, @"\s").Where(s => !string.IsNullOrWhiteSpace(s));
 			var name = splitted.First();
-			var cmd = TryGetCommand(name);
-			if (cmd == default)
-				throw new NoSuchCommandException();
+			var cmd = TryGetCommand(name) ?? throw new NoSuchCommandException();
 
 			if (cmd.Permission.HasFlag(PermissionFlag.AdminOnly) && !sender.IsAdmin)
 				throw new AdminOnlyException();
