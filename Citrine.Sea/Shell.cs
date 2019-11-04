@@ -10,6 +10,9 @@ using System.Net.Http;
 using System.Linq;
 using System.Web;
 using System.Runtime.CompilerServices;
+using WebSocket4Net;
+using Newtonsoft.Json.Linq;
+using System.Text;
 
 namespace Citrine.Sea
 {
@@ -38,6 +41,8 @@ namespace Citrine.Sea
 
         public Credential Credential { get; private set; }
 
+        public WebSocket? WSClient { get; private set; }
+
         public Shell(Credential credential, Logger logger)
         {
             Logger = logger;
@@ -46,7 +51,6 @@ namespace Citrine.Sea
             Http = new HttpClient();
             Http.DefaultRequestHeaders.Add("User-Agent", Server.Http.DefaultRequestHeaders.GetValues("User-Agent").FirstOrDefault());
             Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {Credential.AccessToken}");
-            SubscribeStreams();
         }
 
         public static async Task<Shell> InitializeAsync()
@@ -85,12 +89,68 @@ namespace Citrine.Sea
             s.Myself = new CUser(user, true);
 
             s.Core = new Server(s);
+
+            await s.SubscribeStreamsAsync();
             return s;
         }
 
-        public void SubscribeStreams()
+        public async Task SubscribeStreamsAsync()
         {
-            //todo 実装(しなさい)
+            var uri = Credential.Uri;
+            // スキームの置き換え
+            if (uri.StartsWith("http")) uri = "ws" + uri.Substring(4);
+            // 末尾に /api を付加
+            uri = (uri.EndsWith("/") ? uri : uri + "/") + "api";
+            Logger.Info($"'{uri}' に接続します。");
+
+            WSClient = new WebSocket(uri);
+
+            WSClient.Opened += (s, e) => Logger.Info("Streaming API に接続しました。");
+            WSClient.Error += async (s, e) =>
+            {
+                Logger.Error($"ストリーミング エラー {e.Exception.GetType().Name}: {e.Exception.Message}");
+                Logger.Error("再接続します。");
+                await WSClient.CloseAsync();
+                await WSClient.OpenAsync();
+            };
+            WSClient.MessageReceived += HandleMessage;
+
+            WSClient.EnableAutoSendPing = true;
+            await WSClient.OpenAsync();
+
+            WSClient.Send(JsonConvert.SerializeObject(new
+            {
+                stream = "v1/timelines/public",
+                token = Credential.AccessToken,
+                type = "connect",
+            }));
+        }
+
+        public async void HandleMessage(object? sender, MessageReceivedEventArgs e)
+        {
+            var obj = JObject.Parse(e.Message);
+            var type = obj.Value<string>("type");
+            switch (type)
+            {
+                case "message":
+                    // 遊び時間
+                    await Task.Delay(1000);
+
+                    var post = new CPost(obj["content"].ToObject<Post>());
+                    await Core!.HandleTimelineAsync(post);
+
+                    if (post.Text != null && post.Text.ToLowerInvariant().Contains($"@{Myself!.Name.ToLowerInvariant()}"))
+                    {
+                        await Core!.HandleMentionAsync(post);
+                    }
+                    break;
+                case "success":
+                    Logger.Info("リクエストは成功しました。");
+                    break;
+                default:
+                    Logger.Info($"unknown message type {type}");
+                    break;
+            }
         }
 
         #region Sea API
@@ -132,7 +192,6 @@ namespace Citrine.Sea
         #endregion
 
         #region Citrine API
-
         public Task<IAttachment> GetAttachmentAsync(string fileId)
         {
             throw new NotImplementedException();
@@ -148,9 +207,14 @@ namespace Citrine.Sea
             return ReactAsync(post, "❤️");
         }
 
-        public Task<IPost> PostAsync(string text, string? cw = null, Visiblity visiblity = Visiblity.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
+        public async Task<IPost> PostAsync(string text, string? cw = null, Visiblity visiblity = Visiblity.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
         {
-            throw new NotImplementedException();
+            var payload = JsonConvert.SerializeObject(new
+            {
+                fileIds = new int[0],
+                text = cw == null ? text : $"{cw}\n\n{text}",
+            });
+            return new CPost(await PostAsync<Post>("posts", new StringContent(payload, Encoding.UTF8, "application/json")));
         }
 
         public Task<IPost> PostWithFilesAsync(string text, string? cw = null, Visiblity visiblity = Visiblity.Default, List<string>? choices = null, params string[] filePaths)
@@ -160,12 +224,12 @@ namespace Citrine.Sea
 
         public Task ReactAsync(IPost post, string reactionChar)
         {
-            return PostAsync($"@{post.User.Name} {reactionChar}");
+            return ReplyAsync(post, reactionChar);
         }
 
         public Task<IPost> ReplyAsync(IPost post, string text, string? cw = null, Visiblity visiblity = Visiblity.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
         {
-            throw new NotImplementedException();
+            return PostAsync($"@{post.User.Name} {text}", cw, visiblity, choices, attachments);
         }
 
         public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string? cw = null, Visiblity visiblity = Visiblity.Default, List<string>? choices = null, List<string>? filePaths = null)
@@ -175,34 +239,29 @@ namespace Citrine.Sea
 
         public Task<IPost> RepostAsync(IPost post, string? text = null, string? cw = null, Visiblity visiblity = Visiblity.Default)
         {
-            return PostAsync($"RP @{post.User.Name}: {post.Text}");
-        }
-
-        public Task UnblockAsync(IUser user)
-        {
-            throw new NotImplementedException();
+            return PostAsync($"RP @{post.User.Name}: {post.Text}", cw, visiblity);
         }
 
         public Task<IAttachment> UploadAsync(string path, string name)
         {
             throw new NotImplementedException();
         }
-
         #endregion
 
         #region Not supported APIs
+        public Task MuteAsync(IUser user) => throw new NotSupportedException();
+        public Task UnmuteAsync(IUser user) => throw new NotSupportedException();
         public Task BlockAsync(IUser user) => throw new NotSupportedException();
-        public Task DeleteFileAsync(IAttachment attachment) => throw new NotSupportedException();
-        public Task DeletePostAsync(IPost post) => throw new NotSupportedException();
+        public Task UnblockAsync(IUser user) => throw new NotSupportedException();
         public Task FollowAsync(IUser user) => throw new NotSupportedException();
+        public Task UnfollowAsync(IUser user) => throw new NotSupportedException();
+        public Task DeletePostAsync(IPost post) => throw new NotSupportedException();
+        public Task VoteAsync(IPost post, int choice) => throw new NotSupportedException();
+        public Task DeleteFileAsync(IAttachment attachment) => throw new NotSupportedException();
+        public Task<IPost> SendDirectMessageAsync(IUser user, string text) => throw new NotSupportedException();
         public Task<IUser> GetUserAsync(string id) => throw new NotSupportedException();
         public Task<IUser> GetUserByNameAsync(string name) => throw new NotSupportedException();
-        public Task MuteAsync(IUser user) => throw new NotSupportedException();
-        public Task UnfollowAsync(IUser user) => throw new NotSupportedException();
-        public Task VoteAsync(IPost post, int choice) => throw new NotSupportedException();
         public async Task UnlikeAsync(IPost post) => await Task.Yield();
-        public async Task UnmuteAsync(IUser user) => await Task.Yield();
-        public Task<IPost> SendDirectMessageAsync(IUser user, string text) => throw new NotSupportedException();
         #endregion
     }
 
