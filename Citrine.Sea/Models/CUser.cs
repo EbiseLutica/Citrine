@@ -14,7 +14,7 @@ namespace Citrine.Sea
 
         public string Id { get; }
 
-		// 投稿を見て判断する必要がある
+        // 投稿を見て判断する必要がある
         public bool IsBot { get; }
 
         public long PostsCount { get; }
@@ -29,13 +29,14 @@ namespace Citrine.Sea
 
         public long FollowersCount => 0;
 
-		public CUser(User u, bool isBot)
-		{
-			Name = u.ScreenName;
-			ScreenName = u.Name;
-			IconUrl = u.AvatarFile?.Variants.FirstOrDefault()?.Url;
-			Id = u.Id.ToString();
-			IsBot = isBot;
-		}
+        public CUser(User u, bool isBot)
+        {
+            Name = u.ScreenName;
+            ScreenName = u.Name;
+            IconUrl = u.AvatarFile?.Variants.FirstOrDefault()?.Url;
+            Id = u.Id.ToString();
+            PostsCount = u.PostsCount;
+            IsBot = isBot;
+        }
     }
 }
