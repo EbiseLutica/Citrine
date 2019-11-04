@@ -30,6 +30,16 @@
 				"${workspaceFolder}/Citrine.Discord/Citrine.Discord.csproj"
 			],
 			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "build-sea",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/Citrine.Sea/Citrine.Sea.csproj"
+			],
+			"problemMatcher": "$msCompile"
 		}
 	]
 }
