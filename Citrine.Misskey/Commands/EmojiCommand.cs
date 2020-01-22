@@ -99,7 +99,7 @@ namespace Citrine.Misskey
 			}
 			else
 			{
-				return "僕はここの管理者じゃないから, それはできないんだ...ごめんね";
+				return "私はここの管理者じゃないから, それはできないんだ...ごめんね";
 			}
 			await shell.ReplyAsync(p.Post, output, cw);
 			return null;

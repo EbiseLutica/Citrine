@@ -45,7 +45,7 @@ namespace Citrine.Core.Modules
 				return false;
 			if (core.GetRatingOf(n.User) == Rating.Normal)
 				return false;
-			
+
 			if (n.IsReply || n.Text.ContainsMentions())
 				return false;
 
@@ -55,14 +55,14 @@ namespace Citrine.Core.Modules
 				await shell.ReactAsync(n, "😮");
 				return true;
 			}
-			
+
 			var tukareta = Regex.Match(n.Text, "帰宅|帰っ(てき)?た|[お終]わっ?た|(しご|がこ|ば)おわ|(疲|つか)れた");
 			if (tukareta.Success)
 			{
 				await shell.ReactAsync(n, "🎉");
 				if (rnd.Next(100) < 20)
 				{
-                    await shell.ReplyAsync(n, otsukarePattern.Random());
+					await shell.ReplyAsync(n, otsukarePattern.Random());
 					return true;
 				}
 			}
@@ -73,7 +73,7 @@ namespace Citrine.Core.Modules
 				await shell.ReactAsync(n, "🎉");
 				if (rnd.Next(100) < 20)
 				{
-                    await shell.ReplyAsync(n, ohayouPattern.Random());
+					await shell.ReplyAsync(n, ohayouPattern.Random());
 					return true;
 				}
 			}
@@ -84,7 +84,7 @@ namespace Citrine.Core.Modules
 				await shell.ReactAsync(n, "👍");
 				if (rnd.Next(100) < 20)
 				{
-                    await shell.ReplyAsync(n, oyasumiPattern.Random());
+					await shell.ReplyAsync(n, oyasumiPattern.Random());
 					return true;
 				}
 			}
@@ -95,15 +95,15 @@ namespace Citrine.Core.Modules
 				await shell.ReactAsync(n, "👍");
 				if (rnd.Next(100) < 20)
 				{
-                    await shell.ReplyAsync(n, itteraPattern.Random());
+					await shell.ReplyAsync(n, itteraPattern.Random());
 					return true;
 				}
 			}
-			
+
 			return false;
 		}
 		private static readonly Random rnd = new Random();
-		private static readonly string[] otsukarePattern = 
+		private static readonly string[] otsukarePattern =
 		{
 			"おつかれ〜!",
 			"おつかれ.",
@@ -112,7 +112,7 @@ namespace Citrine.Core.Modules
 			"今日も一日お疲れ様でした.",
 		};
 
-		private static readonly string[] ohayouPattern = 
+		private static readonly string[] ohayouPattern =
 		{
 			"おはよ〜!",
 			"おはよ!",
@@ -120,7 +120,7 @@ namespace Citrine.Core.Modules
 			"おはよう",
 		};
 
-		private static readonly string[] oyasumiPattern = 
+		private static readonly string[] oyasumiPattern =
 		{
 			"おやすみ!",
 			"おやすみ〜!",
@@ -128,7 +128,7 @@ namespace Citrine.Core.Modules
 			"おやすみなさい!",
 		};
 
-		private static readonly string[] itteraPattern = 
+		private static readonly string[] itteraPattern =
 		{
 			"いってらっしゃいませ!",
 			"いってら!",
@@ -136,7 +136,7 @@ namespace Citrine.Core.Modules
 			"いってら〜!",
 		};
 
-		private static readonly string[] ponkotsuPattern = 
+		private static readonly string[] ponkotsuPattern =
 		{
 			"酷いです...",
 			"ひどい...",
@@ -147,18 +147,18 @@ namespace Citrine.Core.Modules
 			"..."
 		};
 
-		private static readonly string[] ponkotsuPatternHate = 
+		private static readonly string[] ponkotsuPatternHate =
 		{
 			"本当に最低だね",
 			"は?",
 			"何なの?",
 			"いい加減にして.",
-			"どこまで僕を侮蔑すれば気が済むの?",
+			"どこまで私を侮蔑すれば気が済むの?",
 			"最低",
 			"..."
 		};
 
-		private static readonly string[] ponkotsuPatternLove = 
+		private static readonly string[] ponkotsuPatternLove =
 		{
 			"ひどいよ!",
 			"え, 何でそういうこと言うの?",

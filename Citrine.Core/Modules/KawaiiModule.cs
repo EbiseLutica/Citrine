@@ -18,9 +18,9 @@ namespace Citrine.Core.Modules
 				var input = n.Text.Replace($"@{shell.Myself.Name}", "").Trim();
 
 				const string adjective = "かわいい|可愛い|カワイイ";
-				var teacherPattern = Regex.Match(input, $"(.+)は({adjective})[でっ]?す?の?よ?");
-				var questionPattern = Regex.Match(input, $"(.+)は({adjective})(と((思|おも)う)|ですか|の|かな)?[?？]");
-				var queryPattern = Regex.Match(input, $"({adjective})(もの|物|の|人|子|娘|ひと)(は|って|とは)(何|なに|誰|どなた|何方)?[？?]*");
+				var teacherPattern = Regex.Match(input, $"(.+)(は|って)({adjective})[でっ]?す?の?よ?");
+				var questionPattern = Regex.Match(input, $"(.+)(は|って)({adjective})(と((思|おも)う)|ですか|の|かな)?[?？]");
+				var queryPattern = Regex.Match(input, $"({adjective})(もの|物|の|人|子|娘|ひと)((は|って|とは|)(何|なに|誰|どなた|何方)|を(教|おし)えて)?[？?]*");
 
 				if (questionPattern.Success)
 				{
@@ -47,12 +47,12 @@ namespace Citrine.Core.Modules
 					// 記憶
 					kawaiiList.Add(s);
 					core.GetMyStorage().Set("kawaiiList", kawaiiList);
-                    await shell.ReplyAsync(n, $"{s}はかわいい... 覚えました");
+					await shell.ReplyAsync(n, $"{s}はかわいい... 覚えました");
 				}
 				else if (queryPattern.Success)
 				{
 					// ランダムに可愛いものを引く
-					await shell.ReplyAsync(n, kawaiiList.Random() + " はかわいいです");
+					await shell.ReplyAsync(n, kawaiiList.Random() is string k ? k + " はかわいいよ" : "かわいいものをまだ知らない");
 				}
 				else
 				{

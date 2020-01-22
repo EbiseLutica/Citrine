@@ -18,11 +18,11 @@ namespace Citrine.Core.Modules
 		private static readonly string EnWikipediaApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
 		private static readonly string NicopediaApiUrl = "http://api.nicodic.jp/page.summary/n/a/{0}";
 		private static readonly Regex regexMath = new Regex(@"^([1234567890\+\-\*/\(\)\^piesqrtlogabnc]+?)(っ?て|と?は|[=＝])");
-		private static readonly Regex regexPedia = new Regex(@"(.+?)(っ?て|と?は)(何|なに|なん|誰|だれ|どなた|何方)");
+		private static readonly Regex regexPedia = new Regex(@"(.+?)((っ?て|と?は)(何|なに|なん|誰|だれ|どなた|何方)|について(教|おし)えて)");
 
 		private static readonly (string regex, string value)[] myDictionary = {
-			("シトリン|citrine|しとりん", "僕の名前だよ. 詳しくは https://xeltica.work/char.html?citrine を見るといいかも."),
-			("ゼルチカ|ぜるちか|xeltica|ぜるち", "僕の生みの親だよ."),
+			("シトリン|citrine|しとりん", "私の名前だよ. 詳しくは https://xeltica.work/char.html?citrine を見るといいかも."),
+			("ゼルチカ|ぜるちか|xeltica|ぜるち", "私の生みの親だよ."),
 			("生命、?宇宙、?そして万物についての究極の疑問の(答|こた)え|answer to the ultimate question of life,? the universe,? and everything|人類、?宇宙、?(全|すべ)ての(答|こた)え", "42"),
 		};
 

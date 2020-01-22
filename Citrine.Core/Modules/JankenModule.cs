@@ -17,7 +17,7 @@ namespace Citrine.Core.Modules
 				{
 					case "ちょき":
 					case "チョキ":
-					case "✌️":
+					case "✌":
 						player = "✌";
 						break;
 					case "グー":
@@ -34,7 +34,7 @@ namespace Citrine.Core.Modules
 						await shell.ReplyAsync(n, "なにその手. グー/チョキ/パーで選んでほしいな.");
 						return true;
 				}
-				var me = new[] { "✊", "✌", "✋" } [rnd.Next(3)];
+				var me = new[] { "✊", "✌", "✋" }[rnd.Next(3)];
 
 				string output;
 				Result result = DoJanken(player, me);
@@ -44,10 +44,10 @@ namespace Citrine.Core.Modules
 						output = "あいこだ... はーい, あいこで";
 						break;
 					case Result.Win:
-						output = "僕の勝ち! " + winMessage.Random().Replace("$user$", core.GetNicknameOf(n.User));
+						output = "私の勝ち! " + winMessage.Random().Replace("$user$", core.GetNicknameOf(n.User));
 						break;
 					case Result.Lose:
-						output = $"僕の負け..." + loseMessage.Random().Replace("$user$", core.GetNicknameOf(n.User));
+						output = $"私の負け..." + loseMessage.Random().Replace("$user$", core.GetNicknameOf(n.User));
 						break;
 					default:
 						output = $"(Bug) Invalid State {result}";

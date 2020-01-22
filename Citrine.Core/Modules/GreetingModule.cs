@@ -7,108 +7,103 @@ using System.Threading.Tasks;
 using Citrine.Core.Api;
 using Newtonsoft.Json;
 
-// メモ
-// idariti 5
-// godzhigella 3
-// 2vg 1
-
 namespace Citrine.Core.Modules
 {
-    /* === リプライ文字列の仕様 ===
+	/* === リプライ文字列の仕様 ===
 	 * $user$ は相手のユーザー名, もしくはニックネームに置き換わる
 	 * $prefix$ はラッキーアイテムの修飾子辞書からランダムに取る
 	 * $item$ はラッキーアイテム辞書からランダムに取る
 	 * $rndA,B$はAからBまでの乱数
 	 */
-    public class GreetingModule : ModuleBase
-    {
-        public override int Priority => 10000;
-        List<Pattern> patterns;
-        readonly Random random = new Random();
-        public GreetingModule()
-        {
+	public class GreetingModule : ModuleBase
+	{
+		public override int Priority => 10000;
+		List<Pattern> patterns;
+		readonly Random random = new Random();
+		public GreetingModule()
+		{
 			using (var reader = new StreamReader(Server.GetEmbeddedResource("greeting.json")))
 			{
 				patterns = JsonConvert.DeserializeObject<List<Pattern>>(reader.ReadToEnd());
 			}
-        }
+		}
 
-        public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
-        {
-            if (n.Text == null)
-                return false;
+		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
+		{
+			if (n.Text == null)
+				return false;
 
-            core.LikeWithLimited(n.User);
+			core.LikeWithLimited(n.User);
 
-            var pattern = patterns.FirstOrDefault(record => Regex.IsMatch(n.Text.Trim().Replace("にゃ", "な"), record.Regex));
+			var pattern = patterns.FirstOrDefault(record => Regex.IsMatch(n.Text.Trim().Replace("にゃ", "な"), record.Regex));
 
-            if (pattern == null)
-                return false;
+			if (pattern == null)
+				return false;
 
-            string message;
+			string message;
 
-            switch (core.GetRatingOf(n.User))
-            {
-                case Rating.Hate:
-                    message = pattern.Hate();
-                    break;
-                case Rating.Normal:
+			switch (core.GetRatingOf(n.User))
+			{
+				case Rating.Hate:
+					message = pattern.Hate();
+					break;
+				case Rating.Normal:
 					message = pattern.Normal();
 					break;
-                case Rating.Like:
+				case Rating.Like:
 					message = pattern.Like();
 					break;
-                case Rating.BestFriend:
+				case Rating.BestFriend:
 					message = pattern.BestFriend();
 					break;
-                case Rating.Partner:
+				case Rating.Partner:
 					message = pattern.Partner();
-                    break;
-                default:
-                    message = "...?";
-                    break;
-            }
+					break;
+				default:
+					message = "...?";
+					break;
+			}
 
-            message = message
-                        .Replace("$user$", core.GetNicknameOf(n.User))
-                        .Replace("$prefix$", FortuneModule.ItemPrefixes.Random())
-                        .Replace("$item$", FortuneModule.Items.Random());
+			message = message
+						.Replace("$user$", core.GetNicknameOf(n.User))
+						.Replace("$prefix$", FortuneModule.ItemPrefixes.Random())
+						.Replace("$item$", FortuneModule.Items.Random());
 
-            // 乱数
-            message = Regex.Replace(message, @"\$rnd(\d+),(\d+)\$", (m) =>
-            {
-                return random.Next(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value)).ToString();
-            });
+			// 乱数
+			message = Regex.Replace(message, @"\$rnd(\d+),(\d+)\$", (m) =>
+			{
+				return random.Next(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value)).ToString();
+			});
 
-            // からっぽは既読無視
-            if (message != "")
-                await shell.ReplyAsync(n, message);
+			// からっぽは既読無視
+			if (message != "")
+				await shell.ReplyAsync(n, message);
 
-            return true;
-        }
+			return true;
+		}
 
 
-        public class Pattern
-        {
-            [JsonProperty("regex")]
-            public string Regex { get; set; }
+		public class Pattern
+		{
+			[JsonProperty("regex")]
+			public string Regex { get; set; }
 
-            [JsonProperty("replyNormal")]
-            public string[] ReplyNormal { get; set; }
+			[JsonProperty("replyNormal")]
+			public string[] ReplyNormal { get; set; }
 
-            [JsonProperty("replyPartner")]
-            public string[] ReplyPartner { get; set; }
+			[JsonProperty("replyPartner")]
+			public string[] ReplyPartner { get; set; }
 
-            [JsonProperty("replyHate")]
-            public string[] ReplyHate { get; set; }
+			[JsonProperty("replyHate")]
+			public string[] ReplyHate { get; set; }
 
-            [JsonProperty("replyBestFriend")]
-            public string[] ReplyBestFriend { get; set; }
+			[JsonProperty("replyBestFriend")]
+			public string[] ReplyBestFriend { get; set; }
 
-            [JsonProperty("replyLike")]
-            public string[] ReplyLike { get; set; }
-        }
-    }
+			[JsonProperty("replyLike")]
+			public string[] ReplyLike { get; set; }
+		}
+	}
 
 	public static class PatternExtension
 	{
