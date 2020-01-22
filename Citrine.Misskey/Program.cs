@@ -22,6 +22,8 @@ namespace Citrine.Misskey
 			logger.Info("/config コマンドを追加しました。");
 			// sh.Core.AddModule(new InvitationCodeModule());
 			// logger.Info($"{nameof(InvitationCodeModule)} モジュールを追加しました。");
+			sh.Core.AddModule(new AttachmentHandlerModule());
+			logger.Info($"{nameof(AttachmentHandlerModule)} モジュールを追加しました。");
 			logger.Info("起動しました！");
 
 			await Task.Delay(-1);
