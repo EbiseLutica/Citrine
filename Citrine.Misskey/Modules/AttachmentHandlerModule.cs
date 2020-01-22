@@ -49,14 +49,14 @@ namespace Citrine.Misskey
 					var label = labels.First();
 					var hasConfidence = label.Score >= .5f;
 					output.Append(hasConfidence ? "わかった! これは, " : "うーん, 多分これは");
-					output.Append(core.ExecCommand("/translate en ja " + label.Description));
+					output.Append(await core.ExecCommand("/translate en ja " + label.Description));
 					output.Append(hasConfidence ? "!" : "かなー?");
 					if (labels.Count >= 2)
 					{
 						label = labels.Skip(1).First();
 						hasConfidence = label.Score >= .5f;
 						output.Append(hasConfidence ? " または," : " それとも, 多分これは");
-						output.Append(core.ExecCommand("/translate en ja " + label.Description));
+						output.Append(await core.ExecCommand("/translate en ja " + label.Description));
 						output.Append(hasConfidence ? "!" : "?");
 					}
 				}
