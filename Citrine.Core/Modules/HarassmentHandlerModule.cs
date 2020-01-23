@@ -19,7 +19,7 @@ namespace Citrine.Core.Modules
 	public class HarassmentHandlerModule : ModuleBase
 	{
 		// コマンドよりも優先的
-		public override int Priority => -10001;
+		public override int Priority => -10005;
 
 		public List<string> NgWords { get; } = new List<string>();
 
