@@ -38,7 +38,7 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"ラッキーアイテム💎: {GenerateWord(r)}");
 
 				await shell.ReplyAsync(n, builder.ToString(), $"私が今日の{core.GetNicknameOf(n.User)}の運勢を占ったよ:");
-
+				EconomyModule.Pay(n, shell, core);
 				return true;
 			}
 

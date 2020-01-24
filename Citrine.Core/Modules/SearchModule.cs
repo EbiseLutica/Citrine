@@ -56,6 +56,7 @@ namespace Citrine.Core.Modules
 				response = response ?? $"{query} について調べてみたけどわからなかった. ごめん...";
 				await shell.ReplyAsync(n, response);
 
+				EconomyModule.Pay(n, shell, core);
 				core.LikeWithLimited(n.User);
 				return true;
 			}

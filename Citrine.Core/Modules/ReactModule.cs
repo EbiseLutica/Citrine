@@ -21,6 +21,7 @@ namespace Citrine.Core.Modules
 			if (m.Success)
 			{
 				core.LikeWithLimited(n.User);
+				EconomyModule.Pay(n, shell, core);
 				await shell.ReactAsync(n, m.Groups[1].Value.Trim());
 				return true;
 			}

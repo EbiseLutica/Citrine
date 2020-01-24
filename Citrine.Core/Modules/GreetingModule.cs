@@ -77,7 +77,10 @@ namespace Citrine.Core.Modules
 
 			// からっぽは既読無視
 			if (message != "")
+			{
+				EconomyModule.Pay(n, shell, core);
 				await shell.ReplyAsync(n, message);
+			}
 
 			return true;
 		}

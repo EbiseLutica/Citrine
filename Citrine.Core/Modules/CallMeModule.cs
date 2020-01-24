@@ -24,6 +24,8 @@ namespace Citrine.Core.Modules
 					default:
 						var nick = m.Groups[1].Value;
 						core.SetNicknameOf(n.User, nick);
+						EconomyModule.Pay(n, shell, core);
+						core.LikeWithLimited(n.User);
 						await shell.ReplyAsync(n, $"わかった. これからは君のことを{core.GetNicknameOf(n.User)}と呼ぶね.");
 						break;
 				}

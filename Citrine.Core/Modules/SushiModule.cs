@@ -17,6 +17,8 @@ namespace Citrine.Core.Modules
 				for (var i = 0; i < max; i++)
 					res += s ?? candidates.Random();
 				await shell.ReplyAsync(n, "ヘイお待ち! " + res);
+				EconomyModule.Pay(n, shell, core);
+				core.LikeWithLimited(n.User);
 				return true;
 			}
 			return false;

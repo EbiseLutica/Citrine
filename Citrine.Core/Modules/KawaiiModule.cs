@@ -80,7 +80,8 @@ namespace Citrine.Core.Modules
 				{
 					return false;
 				}
-
+				EconomyModule.Pay(n, shell, core);
+				core.LikeWithLimited(n.User);
 				return true;
 			}
 

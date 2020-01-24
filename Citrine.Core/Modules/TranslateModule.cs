@@ -27,6 +27,9 @@ namespace Citrine.Core.Modules
 				{
 					var result = await core.ExecCommand("/translate auto " + lang.code + " " + HttpUtility.UrlEncode(m.Groups[1].Value));
 					var reply = await shell.ReplyAsync(n, result);
+
+					EconomyModule.Pay(n, shell, core);
+					core.LikeWithLimited(n.User);
 					core.RegisterContext(reply, this, new Dictionary<string, object>()
 					{
 						{ "result", result},
@@ -55,6 +58,9 @@ namespace Citrine.Core.Modules
 					core.LikeWithLimited(n.User);
 					var result = await core.ExecCommand($"/translate {store["code"]} {lang.code} {store["result"]}");
 					var reply = await shell.ReplyAsync(n, result);
+
+					EconomyModule.Pay(n, shell, core);
+					core.LikeWithLimited(n.User);
 					core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
 					{
 						{ "result", result},

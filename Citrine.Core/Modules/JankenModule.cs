@@ -70,6 +70,7 @@ namespace Citrine.Core.Modules
 			{
 				core.LikeWithLimited(n.User);
 				var note = await shell.ReplyAsync(n, "いいね〜, じゃあやろう. 最初は✊, じゃんけん――");
+				EconomyModule.Pay(n, shell, core);
 				cache[note.Id] = n.User.Id;
 				return true;
 			}

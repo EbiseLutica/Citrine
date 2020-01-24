@@ -17,11 +17,15 @@ namespace Citrine.Core.Modules
 			if (reg.Success)
 			{
 				await shell.ReplyAsync(n, $"{reg.Groups[1].Value}のえらい!");
+				core.LikeWithLimited(n.User);
+				EconomyModule.Pay(n, shell, core);
 				return true;
 			}
 			else if (reg2.Success)
 			{
 				await shell.ReplyAsync(n, "えらい!");
+				EconomyModule.Pay(n, shell, core);
+				core.LikeWithLimited(n.User);
 				return true;
 			}
 			return false;
