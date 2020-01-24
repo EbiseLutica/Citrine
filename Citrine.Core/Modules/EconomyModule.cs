@@ -15,12 +15,13 @@ namespace Citrine.Core.Modules
 				{
 					var balance = core.Storage[n.User].Get("economy.balance", 0);
 					await shell.ReplyAsync(n, $"{core.GetNicknameOf(n.User)}の所持金は, {balance} クォーツです!");
+					return true;
 				}
 				if (text.IsMatch("[買か]い(物|もの)"))
 				{
 					await shell.ReplyAsync(n, "クォーツショップはまだ開店準備中だよ. もう少しだけ待っててね");
+					return true;
 				}
-				return true;
 			}
 			return false;
 		}
