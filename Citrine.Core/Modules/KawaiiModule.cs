@@ -90,7 +90,7 @@ namespace Citrine.Core.Modules
 		private const string adjectiveKawaii = "(?:か[あわ]い|可愛|カワイ)[いイー〜]?";
 		private const string adjectiveKawaikunai = "(?:可愛|かわい|カワイ)くない";
 		private const string adjectiveOishii = "(?:美味|おい|うま|旨)し?[いー〜]?";
-		private const string adjectiveMazui = "(?:美味|おい)しくない|(まず不味)[いイ]";
+		private const string adjectiveMazui = "(?:美味|おい)しくない|(?:まず|不味)[いイ]";
 
 		private readonly Logger logger = new Logger(nameof(KawaiiModule));
 	}
