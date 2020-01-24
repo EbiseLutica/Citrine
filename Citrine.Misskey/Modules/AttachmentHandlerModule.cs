@@ -15,7 +15,7 @@ namespace Citrine.Misskey
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-			if (n.Attachments.Count > 0)
+			if (n.Attachments?.Count > 0)
 			{
 				if (Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") == null)
 				{
