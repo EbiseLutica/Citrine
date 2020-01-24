@@ -11,7 +11,7 @@ namespace Citrine.Core.Modules
 			if (n.Text == null)
 				return false;
 			if (core.GetRatingOf(n.User) == Rating.Hate)
-				return true;
+				return false;
 			var reg = Regex.Match(n.Text.TrimMentions(), @"(.+)(から褒めて|の(えら|偉)い)");
 			var reg2 = Regex.Match(n.Text.TrimMentions(), @"褒めて|(えら|偉)い\?？");
 			if (reg.Success)
