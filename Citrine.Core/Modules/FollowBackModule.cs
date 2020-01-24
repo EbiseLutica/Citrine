@@ -8,6 +8,8 @@ namespace Citrine.Core.Modules
 	{
 		public override async Task<bool> OnFollowedAsync(IUser user, IShell shell, Server core)
 		{
+			if (core.GetRatingOf(user) == Rating.Hate)
+				return true;
 			core.LikeWithLimited(user);
 			await shell.FollowAsync(user);
 			return false;
