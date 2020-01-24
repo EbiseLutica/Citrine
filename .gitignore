@@ -46,3 +46,4 @@ admin
 nicknames
 *.log
 config.json
+storage.json
