@@ -10,11 +10,12 @@ namespace Citrine.Core.Modules
 		{
 			if (n.Text is string text && text.IsMatch("寿司(握|にぎ)"))
 			{
+				var candidates = core.GetRatingOf(n.User) == Rating.Hate ? dusts : sushi;
 				var res = "";
-				var s = random.Next(10) > 3 ? null : sushi.Random();
+				var s = random.Next(10) > 3 ? null : candidates.Random();
 				var max = random.Next(1, 10);
 				for (var i = 0; i < max; i++)
-					res += s ?? sushi.Random();
+					res += s ?? candidates.Random();
 				await shell.ReplyAsync(n, "ヘイお待ち! " + res);
 				return true;
 			}
@@ -26,6 +27,11 @@ namespace Citrine.Core.Modules
 		private readonly string[] sushi =
 		{
 			"🍣", "🍣", "🍣", "🍣", "🍣", "🍣", "🍕", "🍔", "🍱", "🍘", "🍫", "📱", "💻",
+		};
+
+		private readonly string[] dusts =
+		{
+			"🐛", "🍂", "🥦", "💩"
 		};
 	}
 }
