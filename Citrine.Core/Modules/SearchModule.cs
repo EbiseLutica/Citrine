@@ -33,7 +33,7 @@ namespace Citrine.Core.Modules
 			if (n.Text == default)
 				return false;
 
-			var m = regexMath.Match(n.Text);
+			var m = regexMath.Match(n.Text.TrimMentions());
 			var mpedia = regexPedia.Match(n.Text);
 			if (m.Success || mpedia.Success)
 			{

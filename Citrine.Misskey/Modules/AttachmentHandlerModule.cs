@@ -25,7 +25,7 @@ namespace Citrine.Misskey
 				}
 
 				// トリガーテキスト
-				if (!(n.Text is string text) || !text.IsMatch("^こ(れ|の(写真|画像|絵|イラスト))見"))
+				if (!(n.Text is string text) || !text.TrimMentions().IsMatch("^こ(れ|の(写真|画像|絵|イラスト))見"))
 					return false;
 
 				// 課金

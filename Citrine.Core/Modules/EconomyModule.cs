@@ -32,7 +32,7 @@ namespace Citrine.Core.Modules
 				}
 				foreach (var item in ShopItems)
 				{
-					if (text.IsMatch($"^{Regex.Escape(item.DisplayName)}を(ください|ちょうだい|くれ|頂戴)"))
+					if (text.TrimMentions().IsMatch($"^{Regex.Escape(item.DisplayName)}を(ください|ちょうだい|くれ|頂戴)"))
 					{
 						string res;
 						if (HasItem(n.User, item.Id, core))
