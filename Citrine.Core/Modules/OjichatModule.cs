@@ -11,7 +11,7 @@ namespace Citrine.Core.Modules
 	{
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-			if (n.Text is string text && text.Contains("おじさん"))
+			if (n.Text is string text && text.IsMatch("おじさんの(真似|まね)"))
 			{
 				EconomyModule.Pay(n, shell, core);
 				core.LikeWithLimited(n.User);
