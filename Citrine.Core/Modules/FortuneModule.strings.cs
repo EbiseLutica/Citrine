@@ -3,17 +3,13 @@ namespace Citrine.Core.Modules
 	public partial class FortuneModule
 	{
 		readonly string[] results = {
-			"大凶",
 			"凶",
 			"小吉",
-			"中吉",
 			"吉",
 			"大吉",
 			"大大吉",
-			"超吉",
-			"メガ吉",
-			"ギガ吉",
 		};
+
 		public static readonly string[] ItemPrefixes = {
 			"プラチナ製の",
 			"新鮮な",
@@ -176,7 +172,7 @@ namespace Citrine.Core.Modules
 			"市立",
 			"次世代型",
 			"都合の良い",
-			"頭洗い"
+			"頭洗い",
 		};
 
 		public static readonly string[] Items = {
@@ -487,7 +483,7 @@ namespace Citrine.Core.Modules
 			"コレクター",
 			"アルファ版",
 			"ベータ版",
-			"インサイダープレビュー"
+			"インサイダープレビュー",
 		};
 
 	}
