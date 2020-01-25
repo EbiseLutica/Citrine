@@ -17,11 +17,24 @@ namespace Citrine.Misskey
 		{
 			if (n.Attachments?.Count > 0)
 			{
+				// GCP 設定がなければこのモジュールは機能しない
 				if (Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") == null)
 				{
 					logger.Warn("GOOGLE_APPLICATION_CREDENTIALS 環境変数が設定されていないため、このモジュールをご利用いただけません。");
 					return false;
 				}
+
+				// トリガーテキスト
+				if (!(n.Text is string text) || !text.IsMatch("^こ(れ|の(写真|画像|絵|イラスト))見"))
+					return false;
+
+				// 課金
+				if (!EconomyModule.TryUseMoney(n.User, 100, core))
+				{
+					await shell.ReplyAsync(n, "お金が足りないよ. 写真を見てあげるには100クォーツがいるよ.");
+					return true;
+				}
+
 				var a = n.Attachments.First();
 				var file = (a as MiAttachment).Native;
 				var path =
