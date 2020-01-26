@@ -32,8 +32,8 @@ namespace Citrine.Core.Modules
 			InitializeIfNeeded(core);
 			if (n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)"))
 			{
-				await shell.ReplyAsync(n, Say());
-				core.RegisterContext(n, this, null);
+				var ctx = await shell.ReplyAsync(n, Say());
+				core.RegisterContext(ctx, this, null);
 				return true;
 			}
 			return false;
