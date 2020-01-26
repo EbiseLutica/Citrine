@@ -32,6 +32,16 @@
 			"problemMatcher": "$msCompile"
 		},
 		{
+			"label": "build-standalone",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/Citrine.Standalone/Citrine.Standalone.csproj"
+			],
+			"problemMatcher": "$msCompile"
+		},
+		{
 			"label": "build-sea",
 			"command": "dotnet",
 			"type": "process",
