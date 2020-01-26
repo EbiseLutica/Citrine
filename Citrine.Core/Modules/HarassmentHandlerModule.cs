@@ -51,10 +51,7 @@ namespace Citrine.Core.Modules
 			if (n.Text == null)
 				return false;
 
-			var text = Regex.Replace(n.Text.TrimMentions(), @"[\s\.,/／]", "").ToLowerInvariant().ToHiragana();
-			foreach (var w in ExcludedWords)
-				text = text.Replace(w, "");
-			if (NgWords.Any(w => text.Contains(w)))
+			if (IsHarassmented(n.Text))
 			{
 				// セクハラ
 				switch (core.GetRatingOf(n.User))
@@ -75,6 +72,21 @@ namespace Citrine.Core.Modules
 				return true;
 			}
 			return false;
+		}
+
+		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
+		{
+			// セクハラ投稿であれば見なかったことにする
+			return n.Text is string t && IsHarassmented(t);
+		}
+
+
+		private bool IsHarassmented(string text)
+		{
+			text = Regex.Replace(text.TrimMentions(), @"[\s\.,/／]", "").ToLowerInvariant().ToHiragana();
+			foreach (var w in ExcludedWords)
+				text = text.Replace(w, "");
+			return NgWords.Any(w => text.Contains(w));
 		}
 
 		private string[] replyHate =

@@ -25,7 +25,7 @@ namespace Citrine.Core.Modules
 				await shell.ReactAsync(n, m.Groups[1].Value.Trim());
 				return true;
 			}
-			else if (n.Text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !n.Text.IsMatch("(じゃ|では?)な[いく]"))
+			else if (IsTerribleText(n.Text))
 			{
 				core.OnHarassment(n.User);
 				await shell.ReactAsync(n, "😥");
@@ -42,67 +42,18 @@ namespace Citrine.Core.Modules
 			if (string.IsNullOrEmpty(n.Text))
 				return false;
 
-			if (core.GetRatingOf(n.User) == Rating.Hate)
-				return false;
-			if (core.GetRatingOf(n.User) == Rating.Normal)
-				return false;
 
-			if (n.IsReply || n.Text.ContainsMentions())
-				return false;
-
-			var murakamiStyleReturnMethod = Regex.Match(n.Text, "帰宅(しよ[うっ]?かな?|するか)");
-			if (murakamiStyleReturnMethod.Success)
-			{
-				await shell.ReactAsync(n, "😮");
+			// ひどい言葉は見て見ぬ振り
+			if (IsTerribleText(n.Text))
 				return true;
-			}
-
-			var tukareta = Regex.Match(n.Text, "帰宅|帰っ(てき)?た|[お終]わっ?た|(しご|がこ|ば)おわ|(疲|つか)れた");
-			if (tukareta.Success)
-			{
-				await shell.ReactAsync(n, "🎉");
-				if (rnd.Next(100) < 20)
-				{
-					await shell.ReplyAsync(n, otsukarePattern.Random());
-					return true;
-				}
-			}
-
-			var morning = Regex.Match(n.Text, "起床|[起おぽ]きた|起きました|おはよう");
-			if (morning.Success)
-			{
-				await shell.ReactAsync(n, "🎉");
-				if (rnd.Next(100) < 20)
-				{
-					await shell.ReplyAsync(n, ohayouPattern.Random());
-					return true;
-				}
-			}
-
-			var sleep = Regex.Match(n.Text, "寝ます|寝る|ねる|[ぽお]や[しす]み");
-			if (morning.Success)
-			{
-				await shell.ReactAsync(n, "👍");
-				if (rnd.Next(100) < 20)
-				{
-					await shell.ReplyAsync(n, oyasumiPattern.Random());
-					return true;
-				}
-			}
-
-			var ittera = Regex.Match(n.Text, "[行い]って(き|まいり|参り)ます|行ってくる");
-			if (ittera.Success)
-			{
-				await shell.ReactAsync(n, "👍");
-				if (rnd.Next(100) < 20)
-				{
-					await shell.ReplyAsync(n, itteraPattern.Random());
-					return true;
-				}
-			}
-
 			return false;
 		}
+
+		private bool IsTerribleText(string text)
+		{
+			return text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !text.IsMatch("(じゃ|では?)な[いく]")
+		}
+
 		private static readonly Random rnd = new Random();
 		private static readonly string[] otsukarePattern =
 		{
