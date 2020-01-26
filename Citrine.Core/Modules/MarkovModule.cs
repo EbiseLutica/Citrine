@@ -19,7 +19,7 @@ namespace Citrine.Core.Modules
 		{
 			InitializeIfNeeded(core);
 
-			if (n.User == shell.Myself) return false;
+			if (n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)")) return false;
 
 			Input(n);
 			Save(core);
@@ -105,11 +105,11 @@ namespace Citrine.Core.Modules
 			// 一度形態素解析する
 			var tokenized = TinySegmenter.Instance.Segment(text);
 
-			var patternYou = "^(おまえ|お前|[てお]め[ー〜え]|[テオ]メ[エー〜]|貴様|おぬし|お主|君|きみ)$";
-			var patternMe = "^(俺|おれ|オレ|おら|私|わたく?し|ワ[オイシ]|ぼく|ボク|僕|ワイ|わい|ウチ|うち)$";
+			var patternYou = "(おまえ|お前|[てお]め[ー〜え]|[テオ]メ[エー〜]|貴様|おぬし|お主|君|きみ)";
+			var patternMe = "(俺|おれ|オレ|おら|わたく?し|ワ[オイシ]|ぼく|ボク|僕|ワイ|わい|ウチ|うち)";
 
 			return string.Concat(tokenized.Select(
-				t => t.IsMatch(patternYou) ? "あなた" : t.IsMatch(patternMe) ? "私" : t
+				t => Regex.Replace(Regex.Replace(t, patternYou, "あなた"), patternMe, "私")
 			));
 		}
 
@@ -119,7 +119,7 @@ namespace Citrine.Core.Modules
 			{
 				n = n.Repost;
 			}
-			if (!string.IsNullOrEmpty(n.Text) && n.Visiblity == Visiblity.Public)
+			if (!string.IsNullOrEmpty(n.Text) && n.Visiblity == Visiblity.Public && !n.Text.TrimMentions().StartsWith("/"))
 			{
 				// 句点や感嘆符、疑問符などで区切る
 				var texts = Regex.Split(n.Text.TrimMentions(), @"([\.。．…‥？！\?!・･]+)");
