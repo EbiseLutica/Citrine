@@ -41,6 +41,7 @@ namespace Citrine.Core.Modules
 
 				if (questionPattern.Success)
 				{
+					await Task.Delay(4000);
 					var target = questionPattern.Groups[1].Value.Trim().ToLowerInvariant();
 
 					var response = map.ContainsKey(target) ? map[target] : "わからない";
@@ -48,6 +49,7 @@ namespace Citrine.Core.Modules
 				}
 				else if (teacherPattern.Success)
 				{
+					await Task.Delay(4000);
 					var targetUnnormalized = teacherPattern.Groups[1].Value.Trim();
 					var target = targetUnnormalized.ToLowerInvariant();
 					var adj = teacherPattern.Groups[2].Value.Trim();
@@ -65,6 +67,7 @@ namespace Citrine.Core.Modules
 				}
 				else if (queryPattern.Success)
 				{
+					await Task.Delay(4000);
 					// ランダムに可愛いものを引く
 					var adj = queryPattern.Groups[1].Value.Trim();
 					var regex =

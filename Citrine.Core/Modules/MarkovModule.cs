@@ -34,6 +34,7 @@ namespace Citrine.Core.Modules
 			InitializeIfNeeded(core);
 			if (n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)"))
 			{
+				await Task.Delay(4000);
 				var ctx = await shell.ReplyAsync(n, Say());
 				core.RegisterContext(ctx, this, null);
 				return true;
@@ -43,6 +44,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core)
 		{
+			await Task.Delay(4000);
 			var ctx = await shell.ReplyAsync(n, Say());
 			core.RegisterContext(ctx, this, null);
 			return true;

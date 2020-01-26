@@ -14,6 +14,7 @@ namespace Citrine.Core.Modules
 			if (n.Text is string text && text.IsMatch("おじさんの(真似|まね)"))
 			{
 				EconomyModule.Pay(n, shell, core);
+				await Task.Delay(4000);
 				core.LikeWithLimited(n.User);
 				await shell.ReplyAsync(n, await core.ExecCommand("/ojisan " + core.GetNicknameOf(n.User)));
 				return true;
