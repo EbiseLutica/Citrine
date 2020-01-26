@@ -19,7 +19,7 @@ namespace Citrine.Core.Modules
 		{
 			InitializeIfNeeded(core);
 
-			if (n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)")) return false;
+			if (n.Text == null || n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)")) return false;
 
 			Input(n);
 			Save(core);
@@ -84,6 +84,7 @@ namespace Citrine.Core.Modules
 			var serialized = JsonConvert.SerializeObject(Root, new JsonSerializerSettings
 			{
 				PreserveReferencesHandling = PreserveReferencesHandling.All,
+				StringEscapeHandling = StringEscapeHandling.EscapeNonAscii,
 			});
 			File.WriteAllText("markov.root.json", serialized);
 		}
