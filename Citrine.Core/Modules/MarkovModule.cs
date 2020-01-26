@@ -105,16 +105,12 @@ namespace Citrine.Core.Modules
 			// 一度形態素解析する
 			var tokenized = TinySegmenter.Instance.Segment(text);
 
-			var patternYou = new Regex("^(おまえ|お前|[てお]め[ー〜え]|[テオ]メ[エー〜]|貴様|おぬし|お主|君|きみ)$");
-			var patternMe = new Regex("^(俺|おれ|オレ|おら|私|わたく?し|ワ[オイシ]|ぼく|ボク|僕|ワイ|わい|ウチ|うち)$");
+			var patternYou = "^(おまえ|お前|[てお]め[ー〜え]|[テオ]メ[エー〜]|貴様|おぬし|お主|君|きみ)$";
+			var patternMe = "^(俺|おれ|オレ|おら|私|わたく?し|ワ[オイシ]|ぼく|ボク|僕|ワイ|わい|ウチ|うち)$";
 
-
-			for (var i = 0; i < tokenized.Count; i++)
-			{
-
-			}
-
-			return text;
+			return string.Concat(tokenized.Select(
+				t => t.IsMatch(patternYou) ? "あなた" : t.IsMatch(patternMe) ? "私" : t
+			));
 		}
 
 		private void Input(IPost n)
