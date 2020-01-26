@@ -42,7 +42,6 @@ namespace Citrine.Core.Modules
 			if (string.IsNullOrEmpty(n.Text))
 				return false;
 
-
 			// ひどい言葉は見て見ぬ振り
 			if (IsTerribleText(n.Text))
 				return true;
@@ -51,7 +50,7 @@ namespace Citrine.Core.Modules
 
 		private bool IsTerribleText(string text)
 		{
-			return text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !text.IsMatch("(じゃ|では?)な[いく]")
+			return text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !text.IsMatch("(じゃ|では?)な[いく]");
 		}
 
 		private static readonly Random rnd = new Random();
