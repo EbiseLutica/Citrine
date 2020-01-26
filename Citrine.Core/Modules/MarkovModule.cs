@@ -33,6 +33,7 @@ namespace Citrine.Core.Modules
 			if (n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)"))
 			{
 				await shell.ReplyAsync(n, Say());
+				core.RegisterContext(n, this, null);
 				return true;
 			}
 			return false;
@@ -110,7 +111,7 @@ namespace Citrine.Core.Modules
 
 			return string.Concat(tokenized.Select(
 				t => Regex.Replace(Regex.Replace(t, patternYou, "あなた"), patternMe, "私")
-			));
+			)).Replace("。", ". ").Replace("、", ", ").Replace("！", "! ").Replace("？", "?");
 		}
 
 		private void Input(IPost n)
@@ -166,7 +167,5 @@ namespace Citrine.Core.Modules
 		private Logger logger = new Logger(nameof(MarkovModule));
 
 		private MarkovNode EON = MarkovNode.End;
-
-		private Server core;
 	}
 }
