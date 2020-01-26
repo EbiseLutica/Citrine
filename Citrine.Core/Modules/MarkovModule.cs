@@ -41,7 +41,8 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core)
 		{
-			await shell.ReplyAsync(n, Say());
+			var ctx = await shell.ReplyAsync(n, Say());
+			core.RegisterContext(ctx, this, null);
 			return true;
 		}
 
