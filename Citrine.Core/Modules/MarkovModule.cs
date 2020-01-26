@@ -19,6 +19,8 @@ namespace Citrine.Core.Modules
 		{
 			InitializeIfNeeded(core);
 
+			logger.Info($"@{n.User.Name} {n.NativeVisiblity}: {n.Text ?? "no text"}");
+
 			if (n.Text == null || n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)")) return false;
 
 			Input(n);
@@ -122,7 +124,7 @@ namespace Citrine.Core.Modules
 			{
 				n = n.Repost;
 			}
-			if (!string.IsNullOrEmpty(n.Text) && n.Visiblity == Visiblity.Public && !n.Text.TrimMentions().StartsWith("/"))
+			if (!string.IsNullOrEmpty(n.Text) && n.Visiblity != Visiblity.Private && !n.Text.TrimMentions().StartsWith("/"))
 			{
 				// 句点や感嘆符、疑問符などで区切る
 				var texts = Regex.Split(n.Text.TrimMentions(), @"([\.。．…‥？！\?!・･]+)");
