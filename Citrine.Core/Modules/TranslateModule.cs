@@ -52,7 +52,7 @@ namespace Citrine.Core.Modules
 
 			foreach (var lang in langs)
 			{
-				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再?翻訳");
+				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再翻訳");
 				if (m.Success)
 				{
 					core.LikeWithLimited(n.User);
