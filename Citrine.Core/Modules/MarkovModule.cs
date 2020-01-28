@@ -75,7 +75,7 @@ namespace Citrine.Core.Modules
 
 		private void Pick(List<MarkovNode> nodes)
 		{
-			nodes.ForEach(node =>
+			nodes.ToList().ForEach(node =>
 			{
 				if (node == MarkovNode.End)
 					EON = node;
