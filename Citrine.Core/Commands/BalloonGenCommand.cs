@@ -19,7 +19,7 @@ namespace Citrine.Core
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			body = "　" + body + "　";
-			var crown = "＿" + new string('人', body.Length) + "＿\n";
+			var crown = "\n＿" + new string('人', body.Length) + "＿\n";
 			var pate = "＞" + body + "＜\n";
 			var heel = "￣" + string.Concat(Enumerable.Repeat("Y^", body.Length - 1)) + "Y￣";
 			return crown + pate + heel;
