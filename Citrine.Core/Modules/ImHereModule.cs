@@ -17,8 +17,9 @@ namespace Citrine.Core.Modules
 				// 遊び時間
 				await Task.Delay(3000 + rnd.Next(4000));
 				await shell.ReactAsync(n, "❤️");
+
 				await Task.Delay(250);
-				await shell.ReplyAsync(n, patterns.Random(rnd));
+				await shell.ReplyAsync(n, patterns.Random(rnd).Replace("{user}", core.GetNicknameOf(n.User)));
 			}
 			return false;
 		}
