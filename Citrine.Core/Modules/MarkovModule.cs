@@ -15,13 +15,15 @@ namespace Citrine.Core.Modules
 		public MarkovNode Root { get; private set; }
 		public List<MarkovNode> Nodes { get; private set; }
 
+		public string MatchPattern => "(何|な[にん])か([喋話]|しゃべ|はな)([しっ]て|せ|れ)";
+
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
 			InitializeIfNeeded(core);
 
 			logger.Info($"@{n.User.Name} {n.NativeVisiblity}: {n.Text ?? "no text"}");
 
-			if (n.Text == null || n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)")) return false;
+			if (n.Text == null || n.Text.IsMatch(MatchPattern)) return false;
 
 			Input(n);
 			Save(core);
@@ -32,7 +34,7 @@ namespace Citrine.Core.Modules
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			InitializeIfNeeded(core);
-			if (n.Text.IsMatch("(何|な[にん])か[喋話]([しっ]て|せ|れ)"))
+			if (n.Text.IsMatch(MatchPattern))
 			{
 				await Task.Delay(4000);
 				var ctx = await shell.ReplyAsync(n, Say());
