@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace Citrine.Core.Modules
 			if (n.Text == null || n.Text.IsMatch(MatchPattern)) return false;
 
 			Input(n);
+			RunGc();
 			Save(core);
 
 			return false;
@@ -166,12 +168,32 @@ namespace Citrine.Core.Modules
 		private MarkovNode GetOrCreateNode(string token)
 		{
 			if (Nodes.FirstOrDefault(n => n.Value == token) is MarkovNode n)
+			{
+				// 参照された単語は新しいものとする
+				n.CreatedAt = DateTime.Now;
 				return n;
+			}
 
 			var newNode = new MarkovNode(token);
 			Nodes.Add(newNode);
 			return newNode;
 		}
+
+		private void RunGc()
+		{
+			bool IsGarvageNode(MarkovNode n) => DateTime.Now - n.CreatedAt > new TimeSpan(6, 0, 0);
+
+			// 12時間以上前の古いツリーは削除する
+			var removedTree = Root.Children.RemoveAll(IsGarvageNode);
+			// 12時間以上前の古い単語は削除する
+			var removedNodes = Nodes.RemoveAll(IsGarvageNode);
+
+			if (removedTree > 0)
+				logger.Info(removedTree + " 件の文章を忘れました");
+			if (removedNodes > 0)
+				logger.Info(removedNodes + " 件の単語を忘れました");
+		}
+
 		private Logger logger = new Logger(nameof(MarkovModule));
 
 		private MarkovNode EON = MarkovNode.End;
