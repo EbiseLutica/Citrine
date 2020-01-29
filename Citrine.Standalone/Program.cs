@@ -13,13 +13,15 @@ namespace Citrine.Standalone
 		const string Version = "1.0.0";
 		static async Task Main(string[] args)
 		{
+			Console.WriteLine(Server.CitrineAA + " version " + Server.Version);
 			WriteLine($"Citrine.Standalone version {Version}");
+			WriteLine("(C)2019-2020 Xeltica");
+			WriteLine();
+
+			var logger = new Logger("Client");
 			var shell = new Shell();
 			var server = new Server(shell);
-			WriteLine($"Citrine version {Core.Server.Version}");
-			WriteLine("(C)2019 Xeltica");
-			WriteLine();
-			WriteLine("終了時は exit と入力してください");
+			logger.Info("終了時は .exit と入力してください");
 			var isDm = false;
 			while (true)
 			{
@@ -30,10 +32,11 @@ namespace Citrine.Standalone
 				switch (text.ToLowerInvariant().Trim())
 				{
 					case ".exit":
+						logger.Info("bye");
 						return;
 					case ".modetoggle":
 						isDm = !isDm;
-						Console.WriteLine("Changed the mode to " + (isDm ? "DM" : "Reply"));
+						logger.Info("Changed the mode to " + (isDm ? "DM" : "Reply"));
 						continue;
 				}
 				var post = new Post
@@ -43,13 +46,15 @@ namespace Citrine.Standalone
 					Recipient = UserStore.Citrine,
 				};
 				WriteLine($"{post.User.ScreenName}: {post.Text}");
-				await Task.WhenAll
+#pragma warning disable CS4014
+				Task.WhenAll
 				(
 					isDm ?
 						server.HandleMentionAsync(post) :
 						server.HandleDmAsync(post),
 					server.HandleTimelineAsync(post)
 				);
+#pragma warning restore CS4014
 			}
 		}
 	}
