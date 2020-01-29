@@ -23,8 +23,8 @@ namespace Citrine.Core.Modules.Markov
 			Children = new List<MarkovNode>(),
 		};
 
-		public static bool operator ==(MarkovNode n1, MarkovNode n2) => n1?.Value == n2?.Value;
-		public static bool operator !=(MarkovNode n1, MarkovNode n2) => n1?.Value != n2?.Value;
+		public static bool operator ==(MarkovNode? n1, MarkovNode? n2) => n1?.Value == n2?.Value;
+		public static bool operator !=(MarkovNode? n1, MarkovNode? n2) => n1?.Value != n2?.Value;
 
 		public override bool Equals(object obj)
 		{

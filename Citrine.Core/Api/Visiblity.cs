@@ -3,7 +3,7 @@ namespace Citrine.Core.Api
 	/// <summary>
 	/// 投稿の公開範囲を指定します。
 	/// </summary>
-	public enum Visiblity
+	public enum Visibility
 	{
 		/// <summary>
 		/// デフォルト。多くの場合元の投稿を継承します。

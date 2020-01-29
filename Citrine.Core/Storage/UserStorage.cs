@@ -78,21 +78,21 @@ namespace Citrine.Core.Api
 			}
 		}
 
-		private UserRecord CreateRecord(JObject r = null)
+		private UserRecord CreateRecord(JObject? initialRecord = null)
 		{
 			if (Config.Instance.LoggingLevel <= LoggingLevel.Debug)
 			{
-				if (r == null)
+				if (initialRecord == null)
 				{
 					logger.Debug("r is null");
 				}
 				else
 				{
-					foreach (var kv in r)
+					foreach (var kv in initialRecord)
 						logger.Debug($"{kv.Key}= {kv.Value ?? "null"}");
 				}
 			}
-			var rec = r == null ? new UserRecord() : new UserRecord(r);
+			var rec = initialRecord == null ? new UserRecord() : new UserRecord(initialRecord);
 			rec.Updated += () => Save();
 			return rec;
 		}
@@ -124,7 +124,7 @@ namespace Citrine.Core.Api
 				catch (ArgumentException ex)
 				{
 					logger.Debug($"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
-					return default;
+					return defaultValue;
 				}
 			}
 
@@ -152,7 +152,7 @@ namespace Citrine.Core.Api
 				Updated?.Invoke();
 			}
 
-			public event Action Updated;
+			public event Action? Updated;
 
 			private JObject record = new JObject();
 		}

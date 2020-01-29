@@ -18,7 +18,7 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// 表示名を取得します。
 		/// </summary>
-		string ScreenName { get; }
+		string? ScreenName { get; }
 
 		/// <summary>
 		/// ID を取得します。
@@ -28,12 +28,12 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// ユーザーの説明を取得します。
 		/// </summary>
-		string Description { get; }
+		string? Description { get; }
 
 		/// <summary>
 		/// ユーザーの所属するホストを取得します。
 		/// </summary>
-		string Host { get; }
+		string? Host { get; }
 
 		/// <summary>
 		/// ユーザーが認証済みであるかどうか示す値を取得します。

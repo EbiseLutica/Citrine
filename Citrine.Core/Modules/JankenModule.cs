@@ -9,7 +9,7 @@ namespace Citrine.Core.Modules
 	{
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-			if (n.IsReply && n.Text != default && cache.ContainsKey(n.Reply.Id) && cache[n.Reply.Id] == n.User.Id)
+			if (n.Reply is IPost reply && n.Text != default && cache.ContainsKey(reply.Id) && cache[reply.Id] == n.User.Id)
 			{
 				string player;
 				// じゃんけん入力

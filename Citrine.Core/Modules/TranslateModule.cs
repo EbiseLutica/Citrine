@@ -42,7 +42,7 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
-		public override async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core)
+		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
 		{
 			if (n.User.Id == shell.Myself.Id)
 				return false;

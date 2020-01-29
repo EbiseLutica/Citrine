@@ -37,8 +37,8 @@ namespace Citrine.Core.Modules
 			var mpedia = regexPedia.Match(n.Text);
 			if (m.Success || mpedia.Success)
 			{
-				string response = default;
-				string query = default;
+				string? response = default;
+				string? query = default;
 				if (m.Success)
 				{
 					query = m.Groups[1].Value.TrimMentions();
@@ -66,7 +66,7 @@ namespace Citrine.Core.Modules
 		private string FromMyKnowledge(string query)
 			=> myDictionary.FirstOrDefault(dic => Regex.IsMatch(query, dic.regex)).value;
 
-		private async Task<string> FromNicopediaAsync(string query)
+		private async Task<string?> FromNicopediaAsync(string query)
 		{
 			var json = await (await Server.Http.GetAsync(CreateUrl(NicopediaApiUrl, query))).Content.ReadAsStringAsync();
 			// JSONP なので対策
@@ -84,7 +84,7 @@ namespace Citrine.Core.Modules
 
 		}
 
-		private async Task<string> FromCalcAsync(string query)
+		private async Task<string?> FromCalcAsync(string query)
 		{
 			var res = await (await Server.Http.GetAsync(CreateUrl(CalcApiUrl, query))).Content.ReadAsStringAsync();
 			var json = JsonConvert.DeserializeObject<CalcModel>(res);
@@ -93,7 +93,7 @@ namespace Citrine.Core.Modules
 			return $"{json.Expression} = {json.Value[0].CalculatedValue}";
 		}
 
-		public async Task<string> FromWikipediaAsync(string query, string url, string langCode)
+		public async Task<string?> FromWikipediaAsync(string query, string url, string langCode)
 		{
 			var res = JObject.Parse(await (await Server.Http.GetAsync(CreateUrl(url, query))).Content.ReadAsStringAsync());
 			if (!res.ContainsKey("query"))
@@ -105,6 +105,7 @@ namespace Citrine.Core.Modules
 			{
 				return default;
 			}
+			if (q == null) return default;
 			var pages = q["pages"].First.First;
 			if (pages["extract"] == null)
 				return default;
@@ -130,20 +131,20 @@ namespace Citrine.Core.Modules
 		public class CalcModel
 		{
 			[JsonProperty("expression")]
-			public string Expression { get; set; }
+			public string Expression { get; set; } = "";
 			[JsonProperty("status")]
 			public int Status { get; set; }
 			[JsonProperty("message")]
-			public string Message { get; set; }
+			public string Message { get; set; } = "";
 			[JsonProperty("count")]
 			public int Count { get; set; }
 			[JsonProperty("value")]
-			public CalcModelValue[] Value { get; set; }
+			public CalcModelValue[] Value { get; set; } = new CalcModelValue[0];
 
 			public class CalcModelValue
 			{
 				[JsonProperty("calculatedvalue")]
-				public string CalculatedValue { get; set; }
+				public string CalculatedValue { get; set; } = "";
 			}
 		}
 

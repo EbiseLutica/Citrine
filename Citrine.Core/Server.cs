@@ -32,9 +32,6 @@ namespace Citrine.Core
 		/// </summary>
 		public static string Version => "5.6.0";
 
-		[Obsolete("6.0.0で廃止されます。")]
-		public static string VersionAsXelticaBot => Version;
-
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
 		/// </summary>
@@ -63,13 +60,6 @@ namespace Citrine.Core
 		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextUserDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
 
 		/// <summary>
-		/// ニックネームの辞書を取得します。
-		/// </summary>
-		/// <value></value>
-		[Obsolete("常に null を返します。 6.0.0 から削除されます。SetNicknameOf() メソッドなどを使用してください。")]
-		public Dictionary<string, string> NicknameMap { get; }
-
-		/// <summary>
 		/// ユーザーストレージを取得します。
 		/// </summary>
 		/// <returns></returns>
@@ -88,14 +78,18 @@ namespace Citrine.Core
 			Shell = shell;
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
-						.Select(a => Activator.CreateInstance(a) as ModuleBase)
+						.Select(a => Activator.CreateInstance(a))
+						.OfType<ModuleBase>()
 						.OrderBy(mod => mod.Priority)
 						.ToList();
 
 			Commands = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(a => a.IsSubclassOf(typeof(CommandBase)))
-						.Select(a => Activator.CreateInstance(a) as CommandBase)
+						.Select(a => Activator.CreateInstance(a))
+						.OfType<CommandBase>()
 						.ToList();
+
+			string adminId = "";
 
 			if (File.Exists("./admin"))
 			{
@@ -234,10 +228,6 @@ namespace Citrine.Core
 		/// <returns></returns>
 		public bool IsLocal(IUser user) => string.IsNullOrEmpty(user.Host);
 
-
-		[Obsolete("Use " + nameof(IsSuperUser) + " instead")]
-		public bool IsAdmin(IUser user) => IsSuperUser(user);
-
 		/// <summary>
 		/// 指定したユーザーが管理者またはモデレーターであるかどうかを取得します。
 		/// </summary>mi
@@ -343,7 +333,7 @@ namespace Citrine.Core
 				return;
 			await Task.Delay(1000);
 
-			if (mention.IsReply && ContextPostDictionary.ContainsKey(mention.Reply.Id))
+			if (mention.Reply is IPost reply && ContextPostDictionary.ContainsKey(reply.Id))
 			{
 				var (mod, arg) = ContextPostDictionary[mention.Reply.Id];
 				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
@@ -465,15 +455,15 @@ namespace Citrine.Core
 			}
 		}
 
-		public void RegisterContext(IPost post, ModuleBase mod, Dictionary<string, object> args = null)
+		public void RegisterContext(IPost post, ModuleBase mod, Dictionary<string, object>? args = null)
 		{
 			if (post is IDirectMessage dm)
 			{
-				ContextUserDictionary[dm.Recipient.Id] = (mod, args);
+				ContextUserDictionary[dm.Recipient.Id] = (mod, args ?? new Dictionary<string, object>());
 			}
 			else
 			{
-				ContextPostDictionary[post.Id] = (mod, args);
+				ContextPostDictionary[post.Id] = (mod, args ?? new Dictionary<string, object>());
 			}
 		}
 
@@ -494,6 +484,5 @@ namespace Citrine.Core
 		}
 
 		public static readonly HttpClient Http = new HttpClient();
-		readonly string adminId;
 	}
 }

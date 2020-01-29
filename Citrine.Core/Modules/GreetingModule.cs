@@ -91,47 +91,41 @@ namespace Citrine.Core.Modules
 		public class Pattern
 		{
 			[JsonProperty("regex")]
-			public string Regex { get; set; }
+			public string Regex { get; set; } = "";
 
 			[JsonProperty("replyNormal")]
-			public string[] ReplyNormal { get; set; }
+			public string[] ReplyNormal { get; set; } = new string[0];
 
 			[JsonProperty("replyPartner")]
-			public string[] ReplyPartner { get; set; }
+			public string[] ReplyPartner { get; set; } = new string[0];
 
 			[JsonProperty("replyHate")]
-			public string[] ReplyHate { get; set; }
+			public string[] ReplyHate { get; set; } = new string[0];
 
 			[JsonProperty("replyBestFriend")]
-			public string[] ReplyBestFriend { get; set; }
+			public string[] ReplyBestFriend { get; set; } = new string[0];
 
 			[JsonProperty("replyLike")]
-			public string[] ReplyLike { get; set; }
+			public string[] ReplyLike { get; set; } = new string[0];
 		}
 	}
 
 	public static class PatternExtension
 	{
 		public static string Hate(this GreetingModule.Pattern p)
-		{
-			return p.ReplyHate?.Random() ?? p.Normal();
-		}
+			=> p.ReplyHate?.Random() ?? p.Normal();
+
 		public static string Normal(this GreetingModule.Pattern p)
-		{
-			return p.ReplyNormal?.Random() ?? "null";
-		}
+			=> p.ReplyNormal?.Random() ?? "null";
+
 		public static string Like(this GreetingModule.Pattern p)
-		{
-			return p.ReplyLike?.Random() ?? p.Normal();
-		}
+			=> p.ReplyLike?.Random() ?? p.Normal();
+
 		public static string BestFriend(this GreetingModule.Pattern p)
-		{
-			return p.ReplyBestFriend?.Random() ?? p.Like();
-		}
+			=> p.ReplyBestFriend?.Random() ?? p.Like();
+
 		public static string Partner(this GreetingModule.Pattern p)
-		{
-			return p.ReplyPartner?.Random() ?? p.BestFriend();
-		}
+			=> p.ReplyPartner?.Random() ?? p.BestFriend();
 	}
 
 }

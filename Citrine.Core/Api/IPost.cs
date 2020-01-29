@@ -18,7 +18,7 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// 投稿のテキストを取得します。
 		/// </summary>
-		string Text { get; }
+		string? Text { get; }
 		/// <summary>
 		/// 投稿がリポストであるかどうかを示す値を取得します。
 		/// </summary>
@@ -26,7 +26,7 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// リポスト元の投稿を取得します。
 		/// </summary>
-		IPost Repost { get; }
+		IPost? Repost { get; }
 		/// <summary>
 		/// 投稿がリプライであるかどうかを示す値を取得します。
 		/// </summary>
@@ -34,7 +34,7 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// リプライ元の投稿を取得します。
 		/// </summary>
-		IPost Reply { get; }
+		IPost? Reply { get; }
 		/// <summary>
 		/// リポストの数を取得します。
 		/// </summary>
@@ -42,16 +42,16 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// 投稿の公開範囲を取得します。
 		/// </summary>
-		Visiblity Visiblity { get; }
-		string NativeVisiblity { get; }
+		Visibility Visiblity { get; }
+		string? NativeVisiblity { get; }
 		/// <summary>
 		/// 投稿に使用されたクライアント名を取得します。
 		/// </summary>
-		string Via { get; }
+		string? Via { get; }
 		/// <summary>
 		/// 投稿に付属する投票を取得します。
 		/// </summary>
-		IPoll Poll { get; }
+		IPoll? Poll { get; }
 		/// <summary>
 		/// 投票の添付ファイルを取得します。
 		/// </summary>
