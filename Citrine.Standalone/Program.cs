@@ -22,7 +22,13 @@ namespace Citrine.Standalone
 			var shell = new Shell();
 			var server = new Server(shell);
 			logger.Info("終了時は .exit と入力してください");
-			var isDm = false;
+			var mode = 0;
+			var modeText = new[]
+			{
+				"Reply",
+				"DM",
+				"Timeline",
+			};
 			while (true)
 			{
 				Write("> ");
@@ -35,8 +41,8 @@ namespace Citrine.Standalone
 						logger.Info("bye");
 						return;
 					case ".modetoggle":
-						isDm = !isDm;
-						logger.Info("Changed the mode to " + (isDm ? "DM" : "Reply"));
+						mode = (mode + 1) % 3;
+						logger.Info("Changed the mode to " + modeText[mode]);
 						continue;
 				}
 				var post = new Post
@@ -47,13 +53,16 @@ namespace Citrine.Standalone
 				};
 				WriteLine($"{post.User.ScreenName}: {post.Text}");
 #pragma warning disable CS4014
-				Task.WhenAll
-				(
-					isDm ?
-						server.HandleMentionAsync(post) :
-						server.HandleDmAsync(post),
-					server.HandleTimelineAsync(post)
-				);
+				switch (mode)
+				{
+					case 0:
+						server.HandleMentionAsync(post);
+						break;
+					case 1:
+						server.HandleDmAsync(post);
+						break;
+				}
+				server.HandleTimelineAsync(post);
 #pragma warning restore CS4014
 			}
 		}
