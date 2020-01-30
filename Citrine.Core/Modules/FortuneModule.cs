@@ -43,7 +43,7 @@ namespace Citrine.Core.Modules
 				var list = new List<(string name, string emoji, int value, string bestMessage, string worstMessage)>();
 
 				list.Add(("恋愛運", "❤", love, "気になるあの人にアタックしてみては...?", "グイグイ迫るとかえって痛い目を見るかも..."));
-				list.Add(("金運運", "💰", money, "意外なことで得するかも...", "ぼったくりには気をつけてね."));
+				list.Add(("金運", "💰", money, "意外なことで得するかも...", "ぼったくりには気をつけてね."));
 				list.Add(("仕事運", "💻", work, "日頃の頑張りがきっと報われるよ.", "やる気が空回りして大ミスしちゃわないように気をつけてね."));
 				list.Add(("勉強運", "📒", study, "昨日わからなかったことがわかる日かも.", "無理して勉強しても頭に入らないかも..."));
 
@@ -77,7 +77,7 @@ namespace Citrine.Core.Modules
 						.AppendLine()
 						.Append("シトリンから一言: ")
 						.Append($"{worst.name}が低いね. {worst.worstMessage}")
-						.AppendLine($"{best.name}が良いね. {best.bestMessage}");
+						.AppendLine($"{best.name}が高いね. {best.bestMessage}");
 				}
 
 				await shell.ReplyAsync(n, builder.ToString(), $"私が今日の{core.GetNicknameOf(n.User)}の運勢を占ったよ:");
