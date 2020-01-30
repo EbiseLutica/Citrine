@@ -26,7 +26,7 @@ namespace Citrine.Core.Modules
 						core.SetNicknameOf(n.User, nick);
 						EconomyModule.Pay(n, shell, core);
 						core.LikeWithLimited(n.User);
-						await shell.ReplyAsync(n, $"わかった. これからは君のことを{core.GetNicknameOf(n.User)}と呼ぶね.");
+						await shell.ReplyAsync(n, $"わかった. これからはあなたのことを{core.GetNicknameOf(n.User)}と呼ぶね.");
 						break;
 				}
 				return true;
