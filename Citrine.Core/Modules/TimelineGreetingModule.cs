@@ -17,9 +17,9 @@ namespace Citrine.Core.Modules
 			var storage = core.Storage[n.User];
 
 			// 返事する
-			foreach (var (greeting, pattern, replyPattern) in greetings)
+			foreach (var (greeting, pattern, length, replyPattern) in greetings)
 			{
-				if (pattern.IsMatch(text) && !IsAlreadyDone(greeting, n.User, core))
+				if (text.Length <= length && pattern.IsMatch(text) && !IsAlreadyDone(greeting, n.User, core))
 				{
 					UpdateGreeting(greeting, n.User, core);
 					await Task.Delay(2000);
@@ -61,28 +61,28 @@ namespace Citrine.Core.Modules
 
 		private readonly string postWithoutSleepingCountKey = $"post-without-sleeping-count";
 
-		private readonly (Greeting greeting, Regex regex, string[] replyPattern)[] greetings =
+		private readonly (Greeting greeting, Regex regex, int maxLength, string[] replyPattern)[] greetings =
 		{
-			(Greeting.GoodMorning, patternGoodMorning, new []
+			(Greeting.GoodMorning, patternGoodMorning, 11, new []
 			{
 				"おはよ〜!",
 				"おはよ, $user$.",
 			}),
-			(Greeting.GoodNight, patternGoodNight, new []
+			(Greeting.GoodNight, patternGoodNight, 9, new []
 			{
 				"おやすみなさい",
 				"おやすみ, $user$.",
 				"おやすみ",
 				"ちゃんと寝るんだぞ〜$user$."
 			}),
-			(Greeting.SeeYouLater, patternSeeYouLater, new []
+			(Greeting.SeeYouLater, patternSeeYouLater, 9, new []
 			{
 				"いってらっしゃい!",
 				"いってら!",
 				"頑張ってね〜!",
 				"いってらっしゃい, $user$.",
 			}),
-			(Greeting.WelcomeBack, patternWelcomeBack, new []
+			(Greeting.WelcomeBack, patternWelcomeBack, 12, new []
 			{
 				"おかえり",
 				"おつかれ〜!",
