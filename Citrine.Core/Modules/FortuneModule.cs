@@ -71,8 +71,8 @@ namespace Citrine.Core.Modules
 				if (isPremium)
 				{
 					var orderby = list.OrderByDescending(r => r.value);
-					var best = list.First();
-					var worst = list.Last();
+					var best = orderby.First();
+					var worst = orderby.Last();
 					builder
 						.AppendLine()
 						.Append("シトリンから一言: ")
