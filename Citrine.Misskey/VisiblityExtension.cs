@@ -5,35 +5,35 @@ namespace Citrine.Misskey
 {
 	public static class VisiblityExtension
 	{
-		public static Visiblity ToVisiblity(this string visiblity)
+		public static Visibility ToVisiblity(this string visiblity)
 		{
 			switch (visiblity)
 			{
 				case "public":
-					return Visiblity.Public;
+					return Visibility.Public;
 				case "specified":
-					return Visiblity.Direct;
+					return Visibility.Direct;
 				case "home":
-					return Visiblity.Limited;
+					return Visibility.Limited;
 				case "followers":
-					return Visiblity.Private;
+					return Visibility.Private;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-		public static string ToStr(this Visiblity visiblity)
+		public static string ToStr(this Visibility visiblity)
 		{
 			switch (visiblity)
 			{
-				case Visiblity.Default:
+				case Visibility.Default:
 					return null;
-				case Visiblity.Public:
+				case Visibility.Public:
 					return "public";
-				case Visiblity.Limited:
+				case Visibility.Limited:
 					return "home";
-				case Visiblity.Private:
+				case Visibility.Private:
 					return "followers";
-				case Visiblity.Direct:
+				case Visibility.Direct:
 					return "specified";
 				default:
 					throw new ArgumentOutOfRangeException(nameof(visiblity));

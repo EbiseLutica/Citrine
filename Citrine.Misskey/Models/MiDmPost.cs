@@ -42,7 +42,7 @@ namespace Citrine.Misskey
 
 		public long RepostCount => 0;
 
-		public Visiblity Visiblity => Visiblity.Default;
+		public Visibility Visiblity => Visibility.Default;
 
 		public string NativeVisiblity => default;
 

@@ -97,12 +97,12 @@ namespace Citrine.Discord
 			return ReactAsync(post, "⭐️");
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
 		{
 			return new DCPost(await PostAsync(text, cw, attachments));
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
 		{
 			if (string.IsNullOrEmpty(text))
 				return null;
@@ -126,7 +126,7 @@ namespace Citrine.Discord
 			}
 		}
 
-		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visibility visiblity = Visibility.Default)
 		{
 			var t = $"{text ?? ""} RP: {(post.User as DCUser).Native.Mention}\n```{post.Text ?? ""}```\n{(post as DCPost).Native.GetJumpUrl()}";
 			return new DCPost(await PostAsync(t, cw, null));
@@ -149,7 +149,7 @@ namespace Citrine.Discord
 			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<string> filePaths = null)
 		{
 			foreach (var f in filePaths)
 			{
@@ -158,7 +158,7 @@ namespace Citrine.Discord
 			return await ReplyAsync(post, text, cw, visiblity, choices);
 		}
 
-		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, params string[] filePaths)
 		{
 			foreach (var f in filePaths)
 			{

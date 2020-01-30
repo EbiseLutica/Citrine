@@ -7,7 +7,7 @@ namespace Citrine.Mastodon
 {
 	using System.Collections.Generic;
 	using System.Linq;
-	using V = Core.Api.Visiblity;
+	using V = Core.Api.Visibility;
 
 	public class DonPost : IPost
 	{
@@ -27,7 +27,7 @@ namespace Citrine.Mastodon
 
 		public long RepostCount { get; private set; }
 
-		public Visiblity Visiblity { get; private set; }
+		public Visibility Visiblity { get; private set; }
 
 		public string NativeVisiblity { get; private set; }
 
@@ -49,10 +49,10 @@ namespace Citrine.Mastodon
 			Reply = IsReply ? shell.GetPostAsync(toot.InReplyToId.ToString()).Result : default;
 			RepostCount = toot.ReblogsCount;
 			Visiblity =
-				toot.Visibility == VisibilityType.Public ? V.Public    :
+				toot.Visibility == VisibilityType.Public ? V.Public :
 				toot.Visibility == VisibilityType.Unlisted ? V.Limited :
-				toot.Visibility == VisibilityType.Private ? V.Private  :
-				toot.Visibility == VisibilityType.Direct ? V.Direct    : V.Default;
+				toot.Visibility == VisibilityType.Private ? V.Private :
+				toot.Visibility == VisibilityType.Direct ? V.Direct : V.Default;
 			NativeVisiblity = toot.Visibility?.ToString().ToLowerInvariant();
 			Via = toot.Application?.Name;
 			Poll = default;

@@ -111,7 +111,7 @@ namespace Citrine.Standalone
 
 		public long RepostCount => 0;
 
-		public Visiblity Visiblity => Visiblity.Public;
+		public Visibility Visiblity => Visibility.Public;
 
 		public string NativeVisiblity { get; set; }
 
@@ -194,7 +194,7 @@ namespace Citrine.Standalone
 			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost> PostAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName}: {text}");
 			return new Post
@@ -205,12 +205,12 @@ namespace Citrine.Standalone
 			};
 		}
 
-		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, params string[] filePaths)
 		{
 			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<IAttachment> attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName} » {post.User.ScreenName}: {text}");
 			return new Post
@@ -222,7 +222,7 @@ namespace Citrine.Standalone
 			};
 		}
 
-		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<string> filePaths = null)
 		{
 			throw new NotSupportedException();
 		}
@@ -232,7 +232,7 @@ namespace Citrine.Standalone
 			WriteLine($"{Myself.ScreenName} がリアクション: {reactionChar}");
 		}
 
-		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visibility visiblity = Visibility.Default)
 		{
 			WriteLine($"{Myself.ScreenName} RP: {post.User.ScreenName}: {post.Text}");
 

@@ -78,7 +78,7 @@ namespace Citrine.Core.Modules
 		}
 
 		private readonly HttpClient cli = new HttpClient() { };
-		private readonly (string name, string id)[] areaDefinitions =
+		private readonly (string name, string id)[] areaDefinitions = new[]
 		{
 			( "北海道", "016010" ),
 			( "稚内", "011000" ),
@@ -239,7 +239,7 @@ namespace Citrine.Core.Modules
 			( "宮古島", "473000" ),
 			( "石垣島", "474010" ),
 			( "与那国島", "474020" )
-		};
+		}.OrderByDescending(rec => rec.Item1.Length).ToArray();
 
 		class TenkiModel
 		{

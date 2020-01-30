@@ -25,7 +25,7 @@ namespace Citrine.Discord
 
 		public long RepostCount => 0;
 
-		public Visiblity Visiblity => Visiblity.Public;
+		public Visibility Visiblity => Visibility.Public;
 
 		public string NativeVisiblity => "";
 

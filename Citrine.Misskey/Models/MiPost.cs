@@ -27,27 +27,27 @@ namespace Citrine.Misskey
 			Attachments = n.Files?.Select(file => new MiAttachment(file) as IAttachment).ToList();
 		}
 
-		public string Id  { get; }
+		public string Id { get; }
 
-		public IUser User  { get; }
+		public IUser User { get; }
 
-		public string Text  { get; }
+		public string Text { get; }
 
-		public bool IsRepost  { get; }
+		public bool IsRepost { get; }
 
-		public Visiblity Visiblity { get; }
+		public Visibility Visiblity { get; }
 
 		public string NativeVisiblity { get; }
 
-		public IPost Repost  { get; }
+		public IPost Repost { get; }
 
-		public bool IsReply  { get; }
+		public bool IsReply { get; }
 
-		public IPost Reply  { get; }
+		public IPost Reply { get; }
 
-		public long RepostCount  { get; }
+		public long RepostCount { get; }
 
-		public IPoll Poll  { get; }
+		public IPoll Poll { get; }
 
 		public string Via { get; }
 
