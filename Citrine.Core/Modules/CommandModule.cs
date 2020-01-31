@@ -32,7 +32,7 @@ namespace Citrine.Core.Modules
 				}
 				catch (NoSuchCommandException)
 				{
-					return false;
+					response = $"No such command.";
 				}
 
 				if (response != default)
