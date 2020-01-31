@@ -174,13 +174,14 @@ namespace Citrine.Standalone
 
 		public async Task<IUser> GetUserAsync(string id)
 		{
-			return id == "0" ? UserStore.Citrine : id == "1" ? UserStore.You : null;
+			return id == UserStore.Citrine.Id ? UserStore.Citrine : id == UserStore.You.Id ? UserStore.You : null;
 		}
+
 
 		public async Task<IUser> GetUserByNameAsync(string name)
 		{
 			name = name.ToLowerInvariant();
-			return name == "citrine" ? UserStore.Citrine : name == "you" ? UserStore.You : null;
+			return name == UserStore.Citrine.Name ? UserStore.Citrine : name == UserStore.You.Name ? UserStore.You : null;
 		}
 
 		public async Task LikeAsync(IPost post)
