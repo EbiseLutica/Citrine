@@ -29,7 +29,7 @@ namespace Citrine.Core.Modules
 
 			prevDate = t;
 
-			if (t.Month == 2 && t.Day == 14)
+			if (IsValentineDay(t))
 			{
 				var fans = core.Storage.Records.Keys.Where(id => core.GetRatingOf(id) >= Rating.BestFriend);
 				foreach (var fan in fans)
@@ -51,9 +51,32 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
+		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
+		{
+			if (IsValentineDay(DateTime.Today) && n.Text is string text)
+			{
+				if (text.IsMatch("(チョコ|ちょこ|🍫).*(あげる|どうぞ)") && core.GetRatingOf(n.User) >= Rating.Like)
+				{
+					await shell.ReplyAsync(n, thanksMessage.Random());
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool IsValentineDay(DateTime date) => date.Month == 2 && date.Day == 14;
+
 		private readonly Timer timer;
 		private DateTime prevDate;
 		private Server core;
 		private IShell shell;
+
+		private readonly string[] thanksMessage =
+		{
+			"ありがと〜!",
+			"ほんと!? 嬉しい, ありがとう",
+			"わぁ, ありがとう!",
+			"私に!? ありがとう!",
+		};
 	}
 }
