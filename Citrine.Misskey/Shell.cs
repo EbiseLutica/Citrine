@@ -90,7 +90,7 @@ namespace Citrine.Misskey
 			return sh;
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost?> ReplyAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
 			if (post is MiDmPost dm)
 			{
@@ -102,7 +102,7 @@ namespace Citrine.Misskey
 			}
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost?> PostAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
 			return new MiPost(await CreateNoteAsync(text, visiblity, cw, choices: choices, attachments: attachments));
 		}
@@ -113,20 +113,20 @@ namespace Citrine.Misskey
 			await Misskey.Notes.Reactions.CreateAsync(post.Id, reactionChar);
 		}
 
-		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visibility visiblity = Visibility.Default)
+		public async Task<IPost?> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default)
 		{
 			if (post is MiDmPost) throw new NotSupportedException("You cannot react DM message.");
 			return new MiPost(await CreateNoteAsync(text, visiblity, cw, repost: post));
 		}
 
-		public Task<Note> CreateNoteAsync(string text, Visibility vis, string cw = null, IPost repost = null, IPost reply = null, List<string> choices = null, List<IAttachment> attachments = null)
+		public Task<Note> CreateNoteAsync(string? text, Visibility vis, string? cw = null, IPost? repost = null, IPost? reply = null, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
-			if (cw == null && (text.Length > 140 || text.Split("\n").Length > 5))
+			if (cw == null && (text?.Length > 140 || text?.Split("\n").Length > 5))
 				cw = "ながい";
-			if (text.Length > MaxNoteLength)
+			if (text?.Length > MaxNoteLength)
 				text = text.Substring(0, MaxNoteLength);
-			PollParameter poll = null;
-			List<string> files = attachments?.Select(a => a.Id).ToList();
+			PollParameter? poll = null;
+			List<string>? files = attachments?.Select(a => a.Id).ToList();
 			if (choices != null)
 			{
 				poll = new PollParameter { Choices = choices };
@@ -134,7 +134,7 @@ namespace Citrine.Misskey
 			return Misskey.Notes.CreateAsync(text, (reply ?? repost) != null ? MapVisiblity(reply ?? repost, vis) : vis.ToStr(), null, cw, false, null, files, reply?.Id, repost?.Id, poll);
 		}
 
-		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
+		public async Task<IPost?> SendDirectMessageAsync(IUser user, string text)
 		{
 			return new MiDmPost(await Misskey.Messaging.Messages.CreateAsync(user.Id, text));
 		}
@@ -144,19 +144,21 @@ namespace Citrine.Misskey
 			await Misskey.Notes.Polls.VoteAsync(post.Id, choice);
 		}
 
-		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<string> filePaths = null)
+		public async Task<IPost?> ReplyWithFilesAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null)
 		{
-			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			if (filePaths == null)
+				return null;
+			var attachments = (await Task.WhenAll(filePaths.Select(path => UploadAsync(path)))).ToList();
 			return await ReplyAsync(post, text, cw, visiblity, choices, attachments);
 		}
 
-		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, params string[] filePaths)
+		public async Task<IPost?> PostWithFilesAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths)
 		{
-			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			var attachments = (await Task.WhenAll(filePaths.Select(path => UploadAsync(path)))).ToList();
 			return await PostAsync(text, cw, visiblity, choices, attachments);
 		}
 
-		public async Task<IAttachment> UploadAsync(string path, string name = null)
+		public async Task<IAttachment?> UploadAsync(string path, string? name = null)
 		{
 			var file = await Misskey.Drive.Files.CreateAsync(path);
 			if (name != null)
@@ -204,14 +206,14 @@ namespace Citrine.Misskey
 			await Misskey.Notes.DeleteAsync(post.Id);
 		}
 
-		public async Task<IAttachment> GetAttachmentAsync(string fileId)
+		public async Task<IAttachment?> GetAttachmentAsync(string fileId)
 		{
 			return new MiAttachment(await Misskey.Drive.Files.ShowAsync(fileId));
 		}
 
-		public string MapVisiblity(IPost post, Visibility v)
+		public string? MapVisiblity(IPost? post, Visibility v)
 		{
-			return (v == Visibility.Default ? post.Visiblity : v).ToStr();
+			return (v == Visibility.Default && post != null ? post.Visiblity : v).ToStr();
 		}
 
 		public static Reaction ConvertReaction(string reactionChar)
@@ -246,11 +248,11 @@ namespace Citrine.Misskey
 			}
 		}
 
-		public async Task<IPost> GetPostAsync(string id) => new MiPost(await Misskey.Notes.ShowAsync(id));
+		public async Task<IPost?> GetPostAsync(string id) => new MiPost(await Misskey.Notes.ShowAsync(id));
 
-		public async Task<IUser> GetUserAsync(string id) => new MiUser((await Misskey.Users.ShowAsync(userId: id)).First());
+		public async Task<IUser?> GetUserAsync(string id) => new MiUser((await Misskey.Users.ShowAsync(userId: id)).First());
 
-		public async Task<IUser> GetUserByNameAsync(string name) => new MiUser((await Misskey.Users.ShowAsync(username: name)).First());
+		public async Task<IUser?> GetUserByNameAsync(string name) => new MiUser((await Misskey.Users.ShowAsync(username: name)).First());
 
 		public async Task LikeAsync(IPost post)
 		{
@@ -331,6 +333,6 @@ namespace Citrine.Misskey
 			Logger.Info("トーク監視開始");
 		}
 
-		private IDisposable followed, reply, tl, dm;
+		private IDisposable? followed, reply, tl, dm;
 	}
 }

@@ -21,7 +21,7 @@ namespace Citrine.Misskey
 					throw new ArgumentOutOfRangeException();
 			}
 		}
-		public static string ToStr(this Visibility visiblity)
+		public static string? ToStr(this Visibility visiblity)
 		{
 			switch (visiblity)
 			{

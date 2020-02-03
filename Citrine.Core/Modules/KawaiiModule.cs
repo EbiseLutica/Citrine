@@ -29,7 +29,7 @@ namespace Citrine.Core.Modules
 					storage.Clear("kawaiiList");
 				}
 
-				var input = n.Text.Replace($"@{shell.Myself.Name}", "").TrimMentions();
+				var input = n.Text.TrimMentions();
 
 				var adjectiveCombined = $"{adjectiveKawaii}|{adjectiveKawaikunai}|{adjectiveOishii}|{adjectiveMazui}";
 

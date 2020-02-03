@@ -19,13 +19,13 @@ namespace Citrine.Discord
 	{
 		public static string Version => "1.0.0";
 
-		public ICUser Myself { get; private set; }
+		public ICUser? Myself { get; private set; }
 
 		public Server Core { get; }
 
 		public DiscordSocketClient Client { get; private set; }
 
-		public IMessageChannel CurrentChannel { get; private set; }
+		public IMessageChannel? CurrentChannel { get; private set; }
 
 		public bool CanCreatePoll => false;
 
@@ -75,19 +75,19 @@ namespace Citrine.Discord
 			return sh;
 		}
 
-		public Task<IPost> GetPostAsync(string id)
+		public async Task<IPost?> GetPostAsync(string id)
 		{
 			return null;
 		}
 
-		public async Task<ICUser> GetUserAsync(string id)
+		public async Task<ICUser?> GetUserAsync(string id)
 		{
 			var splitted = id.Split('#');
 			var (name, discriminator) = (splitted[0], splitted[1]);
 			return new DCUser(Client.GetUser(name, discriminator));
 		}
 
-		public Task<ICUser> GetUserByNameAsync(string name)
+		public async Task<ICUser?> GetUserByNameAsync(string name)
 		{
 			return null;
 		}
@@ -97,28 +97,32 @@ namespace Citrine.Discord
 			return ReactAsync(post, "⭐️");
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
+		public async Task<IPost?> PostAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<Core.Api.IAttachment>? attachments = null)
 		{
-			return new DCPost(await PostAsync(text, cw, attachments));
+			if (await PostAsync(text, cw, attachments) is IMessage mes)
+				return new DCPost(mes);
+			return null;
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<Core.Api.IAttachment> attachments = null)
+		public async Task<IPost?> ReplyAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<Core.Api.IAttachment>? attachments = null)
 		{
 			if (string.IsNullOrEmpty(text))
 				return null;
-			var mention = (post.User as DCUser).Native.Mention;
-			return new DCPost(await PostAsync($"{text}", cw, attachments), post);
+			var mention = (post.User as DCUser)?.Native.Mention;
+			if (await PostAsync($"@{mention ?? "null"} {text}", cw, attachments) is IMessage mes)
+				return new DCPost(mes, post);
+			return null;
 		}
 
 		public async Task ReactAsync(IPost post, string reactionChar)
 		{
-			if ((post as DCPost).Native is IUserMessage um)
+			if ((post as DCPost)?.Native is IUserMessage um)
 			{
 				Match m = Regex.Match(reactionChar, "^:(.+):$");
 				var guild = (um.Channel as IGuildChannel)?.Guild;
 
 				// 鯖でない場所に、カスタム絵文字は存在しない
-				if (m.Success && guild == null)
+				if (m.Success || guild == null)
 					return;
 				// カスタム絵文字とそうでない場合で場合分けが必要らしい
 				var emote = m.Success ? (IEmote)guild.Emotes.FirstOrDefault(e => e.Name == m.Groups[1].Value) : new Emoji(reactionChar);
@@ -126,21 +130,25 @@ namespace Citrine.Discord
 			}
 		}
 
-		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visibility visiblity = Visibility.Default)
+		public async Task<IPost?> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default)
 		{
-			var t = $"{text ?? ""} RP: {(post.User as DCUser).Native.Mention}\n```{post.Text ?? ""}```\n{(post as DCPost).Native.GetJumpUrl()}";
-			return new DCPost(await PostAsync(t, cw, null));
+			var t = $"{text ?? ""} RP: {(post.User as DCUser)!.Native.Mention}\n```{post.Text ?? ""}```\n{(post as DCPost)!.Native.GetJumpUrl()}";
+			if (await PostAsync(t, cw, null) is IMessage p)
+				return new DCPost(p);
+			return null;
 		}
 
-		public async Task<IPost> SendDirectMessageAsync(ICUser user, string text)
+		public async Task<IPost?> SendDirectMessageAsync(ICUser user, string text)
 		{
-			var ch = await (user as DCUser).Native.GetOrCreateDMChannelAsync();
+			var ch = await (user as DCUser)!.Native.GetOrCreateDMChannelAsync();
 			return new DCPost(await ch.SendMessageAsync(text));
 		}
 
 		public async Task UnlikeAsync(IPost post)
 		{
-			await (post as IUserMessage)?.RemoveAllReactionsAsync();
+			var native = (post as DCPost)!.Native;
+			if (native is IUserMessage um)
+				await um.RemoveAllReactionsAsync();
 		}
 
 		public async Task VoteAsync(IPost post, int choice)
@@ -149,8 +157,10 @@ namespace Citrine.Discord
 			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<string> filePaths = null)
+		public async Task<IPost?> ReplyWithFilesAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null)
 		{
+			if (filePaths == null)
+				return null;
 			foreach (var f in filePaths)
 			{
 				await UploadAsync(f);
@@ -158,7 +168,7 @@ namespace Citrine.Discord
 			return await ReplyAsync(post, text, cw, visiblity, choices);
 		}
 
-		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, params string[] filePaths)
+		public async Task<IPost?> PostWithFilesAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths)
 		{
 			foreach (var f in filePaths)
 			{
@@ -167,9 +177,11 @@ namespace Citrine.Discord
 			return await PostAsync(text, cw, visiblity, choices);
 		}
 
-		public async Task<Core.Api.IAttachment> UploadAsync(string path, string name = null)
+		public async Task<Core.Api.IAttachment?> UploadAsync(string path, string? name = null)
 		{
-			var file = (await CurrentChannel?.SendFileAsync(path, name)).Attachments?.FirstOrDefault();
+			if (CurrentChannel == null)
+				return null;
+			var file = (await CurrentChannel.SendFileAsync(path, name)).Attachments?.FirstOrDefault();
 			return file == null ? null : new DCAttachment(file);
 		}
 
@@ -209,14 +221,14 @@ namespace Citrine.Discord
 			throw new NotSupportedException();
 		}
 
-		public async Task<Core.Api.IAttachment> GetAttachmentAsync(string fileId)
+		public async Task<Core.Api.IAttachment?> GetAttachmentAsync(string fileId)
 		{
 			throw new NotSupportedException();
 		}
 
 		public async Task DeletePostAsync(IPost post)
 		{
-			await (post as DCPost).Native.DeleteAsync();
+			await (post as DCPost)!.Native.DeleteAsync();
 		}
 
 		// || で挟むと隠し文字列として機能する
@@ -242,7 +254,7 @@ namespace Citrine.Discord
 			{
 				await Core.HandleDmAsync(new DCPost(arg));
 			}
-			else if (arg.MentionedUsers?.Any(m => m.Id == (Myself as DCUser).Native.Id) ?? false)
+			else if (arg.MentionedUsers?.Any(m => m.Id == (Myself as DCUser)?.Native.Id) ?? false)
 			{
 				await Core.HandleMentionAsync(new DCPost(arg));
 			}
@@ -252,10 +264,12 @@ namespace Citrine.Discord
 			}
 		}
 
-		private async Task<IMessage> PostAsync(string text, string cw, List<Core.Api.IAttachment> attachments)
+		private async Task<IMessage?> PostAsync(string? text, string? cw, List<Core.Api.IAttachment>? attachments)
 		{
 			// Discord has no api to send file from ID
-			return await CurrentChannel?.SendMessageAsync(Cw(cw, text));
+			if (cw != null && text != null && CurrentChannel != null)
+				return await CurrentChannel.SendMessageAsync(Cw(cw, text));
+			return null;
 		}
 
 		private Logger logger = new Logger(nameof(Shell));

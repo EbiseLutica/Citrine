@@ -37,7 +37,7 @@ namespace Citrine.Misskey
 		{
 			if (!(sender is PostCommandSender p))
 				return "このコマンドはユーザーが実行してください.";
-			var u = (shell.Myself as MiUser).Native;
+			var u = (shell.Myself as MiUser)!.Native;
 			var s = shell as Shell;
 			var note = (p.Post as MiPost)?.Native;
 
@@ -55,7 +55,8 @@ namespace Citrine.Misskey
 			{
 				throw new CommandException();
 			}
-			string output, cw;
+			string output;
+			string? cw;
 			if ((u.IsAdmin ?? false) || (u.IsModerator ?? false))
 			{
 				try
@@ -94,7 +95,7 @@ namespace Citrine.Misskey
 					cw = "失敗しちゃいました... 報告書見ますか?";
 					output = $"{ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}";
 					logger.Error($"{ex.GetType().Name}: {ex.Message}");
-					logger.Error(ex.StackTrace);
+					logger.Error(ex.StackTrace ?? "no stacktrace");
 				}
 			}
 			else
@@ -102,16 +103,16 @@ namespace Citrine.Misskey
 				return "私はここの管理者じゃないから, それはできないんだ...ごめんね";
 			}
 			await shell.ReplyAsync(p.Post, output, cw);
-			return null;
+			return "";
 		}
 
 		// emoji add <name> <url> [aliases...]
 		// emoji add <name> (with a file)
-		private async Task<(string, string)> AddAsync(string[] args, Note note, Shell shell)
+		private async Task<(string, string?)> AddAsync(string[] args, Note note, Shell shell)
 		{
 			if (args.Length < 2)
 				throw new CommandException();
-			string url = default;
+			string url = "";
 			if (args.Length >= 3)
 			{
 				url = args[2];
@@ -125,7 +126,7 @@ namespace Citrine.Misskey
 		}
 
 		// /emoji copyfrom <host>
-		private async Task<(string, string)> CopyFromAsync(string[] args, Shell s)
+		private async Task<(string, string?)> CopyFromAsync(string[] args, Shell s)
 		{
 			if (args.Length < 2)
 				throw new CommandException();

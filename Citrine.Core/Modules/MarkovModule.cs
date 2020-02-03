@@ -42,7 +42,8 @@ namespace Citrine.Core.Modules
 			{
 				await Task.Delay(4000);
 				var ctx = await shell.ReplyAsync(n, Say());
-				core.RegisterContext(ctx, this, null);
+				if (ctx != null)
+					core.RegisterContext(ctx, this, null);
 				return true;
 			}
 			return false;
@@ -52,7 +53,8 @@ namespace Citrine.Core.Modules
 		{
 			await Task.Delay(4000);
 			var ctx = await shell.ReplyAsync(n, Say());
-			core.RegisterContext(ctx, this, null);
+			if (ctx != null)
+				core.RegisterContext(ctx, this, null);
 			return true;
 		}
 

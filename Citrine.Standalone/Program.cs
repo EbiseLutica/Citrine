@@ -45,12 +45,7 @@ namespace Citrine.Standalone
 						logger.Info("Changed the mode to " + modeText[mode]);
 						continue;
 				}
-				var post = new Post
-				{
-					User = UserStore.You,
-					Text = text,
-					Recipient = UserStore.Citrine,
-				};
+				var post = new Post(UserStore.You, UserStore.Citrine, text);
 				WriteLine($"{post.User.ScreenName}: {post.Text}");
 #pragma warning disable CS4014
 				switch (mode)
@@ -70,17 +65,17 @@ namespace Citrine.Standalone
 
 	public class User : IUser
 	{
-		public string Name { get; set; }
+		public string Name { get; set; } = "";
 
-		public string IconUrl { get; set; }
+		public string IconUrl { get; set; } = "";
 
-		public string ScreenName { get; set; }
+		public string ScreenName { get; set; } = "";
 
-		public string Id { get; set; }
+		public string Id { get; set; } = "";
 
-		public string Description { get; set; }
+		public string Description { get; set; } = "";
 
-		public string Host => default;
+		public string Host => "";
 
 		public bool IsVerified { get; set; }
 
@@ -103,27 +98,34 @@ namespace Citrine.Standalone
 
 		public bool IsRepost => Repost != null;
 
-		public IPost Repost { get; set; }
+		public IPost? Repost { get; set; }
 
 		public bool IsReply => Reply != null;
 
-		public IPost Reply { get; set; }
+		public IPost? Reply { get; set; }
 
 		public long RepostCount => 0;
 
 		public Visibility Visiblity => Visibility.Public;
 
-		public string NativeVisiblity { get; set; }
+		public string? NativeVisiblity { get; set; }
 
-		public string Via { get; set; }
+		public string? Via { get; set; }
 
-		public IPoll Poll => null;
+		public IPoll? Poll => null;
 
-		public List<IAttachment> Attachments => null;
+		public List<IAttachment> Attachments => new List<IAttachment>();
 
 		public IUser Recipient { get; set; }
 
 		public bool IsRead => false;
+
+		public Post(IUser user, IUser recipent, string text)
+		{
+			User = user;
+			Recipient = recipent;
+			Text = text;
+		}
 	}
 
 	public class Shell : IShell
@@ -162,23 +164,22 @@ namespace Citrine.Standalone
 			throw new NotSupportedException();
 		}
 
-		public Task<IAttachment> GetAttachmentAsync(string fileId)
+		public Task<IAttachment?> GetAttachmentAsync(string fileId)
 		{
 			throw new NotSupportedException();
 		}
 
-		public Task<IPost> GetPostAsync(string id)
+		public async Task<IPost?> GetPostAsync(string id)
 		{
 			return null;
 		}
 
-		public async Task<IUser> GetUserAsync(string id)
+		public async Task<IUser?> GetUserAsync(string id)
 		{
 			return id == UserStore.Citrine.Id ? UserStore.Citrine : id == UserStore.You.Id ? UserStore.You : null;
 		}
 
-
-		public async Task<IUser> GetUserByNameAsync(string name)
+		public async Task<IUser?> GetUserByNameAsync(string name)
 		{
 			name = name.ToLowerInvariant();
 			return name == UserStore.Citrine.Name ? UserStore.Citrine : name == UserStore.You.Name ? UserStore.You : null;
@@ -194,35 +195,27 @@ namespace Citrine.Standalone
 			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost?> PostAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName}: {text}");
-			return new Post
-			{
-				Recipient = UserStore.You,
-				User = Myself,
-				Text = text,
-			};
+			return new Post(Myself, UserStore.You, text ?? "");
 		}
 
-		public Task<IPost> PostWithFilesAsync(string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, params string[] filePaths)
+		public Task<IPost?> PostWithFilesAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths)
 		{
 			throw new NotSupportedException();
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost?> ReplyAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
 			WriteLine($"{Myself.ScreenName} » {post.User.ScreenName}: {text}");
-			return new Post
+			return new Post(Myself, UserStore.You, text ?? "")
 			{
-				Recipient = UserStore.You,
-				User = Myself,
-				Text = text,
 				Reply = post
 			};
 		}
 
-		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visibility visiblity = Visibility.Default, List<string> choices = null, List<string> filePaths = null)
+		public Task<IPost?> ReplyWithFilesAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null)
 		{
 			throw new NotSupportedException();
 		}
@@ -232,25 +225,21 @@ namespace Citrine.Standalone
 			WriteLine($"{Myself.ScreenName} がリアクション: {reactionChar}");
 		}
 
-		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visibility visiblity = Visibility.Default)
+		public async Task<IPost?> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default)
 		{
 			WriteLine($"{Myself.ScreenName} RP: {post.User.ScreenName}: {post.Text}");
 
-			return new Post
+			return new Post(Myself, UserStore.You, "")
 			{
-				Recipient = UserStore.You,
-				User = Myself,
 				Repost = post,
 			};
 		}
 
-		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
+		public async Task<IPost?> SendDirectMessageAsync(IUser user, string text)
 		{
 			WriteLine($"Message @{Myself.Name}: {text}");
-			return new Post
+			return new Post(Myself, UserStore.You, "")
 			{
-				Recipient = UserStore.You,
-				User = Myself,
 				Text = text,
 			};
 		}
@@ -275,7 +264,7 @@ namespace Citrine.Standalone
 			throw new NotSupportedException();
 		}
 
-		public Task<IAttachment> UploadAsync(string path, string name)
+		public Task<IAttachment?> UploadAsync(string path, string? name)
 		{
 			throw new NotSupportedException();
 		}

@@ -16,15 +16,17 @@ namespace Citrine.Misskey
 			User = new MiUser(Native.User);
 			Text = Native.Text;
 			IsRepost = Native.Renote != default;
-			Repost = IsRepost ? new MiPost(Native.Renote) : default;
+			Repost = Native.Renote != null ? new MiPost(Native.Renote) : default;
 			IsReply = Native.Reply != default;
-			Reply = IsReply ? new MiPost(Native.Reply) : default;
+			Reply = Native.Reply != null ? new MiPost(Native.Reply) : default;
 			RepostCount = Native.RenoteCount;
 			Poll = Native.Poll != default ? new MiPoll(Native.Poll) : default;
 			Via = Native.App?.Name;
 			Visiblity = Native.Visibility.ToVisiblity();
 			NativeVisiblity = Native.Visibility;
-			Attachments = n.Files?.Select(file => new MiAttachment(file) as IAttachment).ToList();
+			Attachments = new List<IAttachment>();
+			if (n.Files != null)
+				Attachments = n.Files.Select(file => new MiAttachment(file) as IAttachment).ToList();
 		}
 
 		public string Id { get; }
@@ -37,19 +39,19 @@ namespace Citrine.Misskey
 
 		public Visibility Visiblity { get; }
 
-		public string NativeVisiblity { get; }
+		public string? NativeVisiblity { get; }
 
-		public IPost Repost { get; }
+		public IPost? Repost { get; }
 
 		public bool IsReply { get; }
 
-		public IPost Reply { get; }
+		public IPost? Reply { get; }
 
 		public long RepostCount { get; }
 
-		public IPoll Poll { get; }
+		public IPoll? Poll { get; }
 
-		public string Via { get; }
+		public string? Via { get; }
 
 		public List<IAttachment> Attachments { get; }
 	}

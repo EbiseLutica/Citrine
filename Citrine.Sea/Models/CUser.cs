@@ -4,39 +4,39 @@ using Citrine.Core.Api;
 
 namespace Citrine.Sea
 {
-    public class CUser : IUser
-    {
-        public string Name { get; }
+	public class CUser : IUser
+	{
+		public string Name { get; }
 
-        public string? IconUrl { get; }
+		public string IconUrl { get; }
 
-        public string ScreenName { get; }
+		public string ScreenName { get; }
 
-        public string Id { get; }
+		public string Id { get; }
 
-        // 投稿を見て判断する必要がある
-        public bool IsBot { get; }
+		// 投稿を見て判断する必要がある
+		public bool IsBot { get; }
 
-        public long PostsCount { get; }
+		public long PostsCount { get; }
 
-        public string Description => "";
+		public string Description => "";
 
-        public string Host => "";
+		public string Host => "";
 
-        public bool IsVerified => false;
+		public bool IsVerified => false;
 
-        public long FollowingsCount => 0;
+		public long FollowingsCount => 0;
 
-        public long FollowersCount => 0;
+		public long FollowersCount => 0;
 
-        public CUser(User u, bool isBot)
-        {
-            Name = u.ScreenName;
-            ScreenName = u.Name;
-            IconUrl = u.AvatarFile?.Variants.FirstOrDefault()?.Url;
-            Id = u.Id.ToString();
-            PostsCount = u.PostsCount;
-            IsBot = isBot;
-        }
-    }
+		public CUser(User u, bool isBot)
+		{
+			Name = u.ScreenName;
+			ScreenName = u.Name;
+			IconUrl = u.AvatarFile?.Variants.FirstOrDefault()?.Url ?? "";
+			Id = u.Id.ToString();
+			PostsCount = u.PostsCount;
+			IsBot = isBot;
+		}
+	}
 }

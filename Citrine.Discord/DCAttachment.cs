@@ -29,7 +29,7 @@ namespace Citrine.Discord
 			Url = a.Url;
 			PreviewUrl = a.Url;
 			CreatedAt = default;
-			Comment = default;
+			Comment = "";
 		}
 	}
 }

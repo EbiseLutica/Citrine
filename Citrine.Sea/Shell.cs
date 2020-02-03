@@ -192,12 +192,12 @@ namespace Citrine.Sea
 		#endregion
 
 		#region Citrine API
-		public Task<IAttachment> GetAttachmentAsync(string fileId)
+		public Task<IAttachment?> GetAttachmentAsync(string fileId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<IPost> GetPostAsync(string id)
+		public Task<IPost?> GetPostAsync(string id)
 		{
 			throw new NotImplementedException();
 		}
@@ -207,7 +207,7 @@ namespace Citrine.Sea
 			return ReactAsync(post, "❤️");
 		}
 
-		public async Task<IPost> PostAsync(string text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
+		public async Task<IPost?> PostAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
 			var payload = JsonConvert.SerializeObject(new
 			{
@@ -217,7 +217,7 @@ namespace Citrine.Sea
 			return new CPost(await PostAsync<Post>("posts", new StringContent(payload, Encoding.UTF8, "application/json")));
 		}
 
-		public Task<IPost> PostWithFilesAsync(string text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths)
+		public Task<IPost?> PostWithFilesAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths)
 		{
 			throw new NotImplementedException();
 		}
@@ -227,22 +227,22 @@ namespace Citrine.Sea
 			return ReplyAsync(post, reactionChar);
 		}
 
-		public Task<IPost> ReplyAsync(IPost post, string text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
+		public Task<IPost?> ReplyAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
 			return PostAsync($"@{post.User.Name} {text}", cw, visiblity, choices, attachments);
 		}
 
-		public Task<IPost> ReplyWithFilesAsync(IPost post, string text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null)
+		public Task<IPost?> ReplyWithFilesAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<IPost> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default)
+		public Task<IPost?> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default)
 		{
 			return PostAsync($"RP @{post.User.Name}: {post.Text}", cw, visiblity);
 		}
 
-		public Task<IAttachment> UploadAsync(string path, string name)
+		public Task<IAttachment?> UploadAsync(string path, string? name)
 		{
 			throw new NotImplementedException();
 		}
@@ -258,9 +258,9 @@ namespace Citrine.Sea
 		public Task DeletePostAsync(IPost post) => throw new NotSupportedException();
 		public Task VoteAsync(IPost post, int choice) => throw new NotSupportedException();
 		public Task DeleteFileAsync(IAttachment attachment) => throw new NotSupportedException();
-		public Task<IPost> SendDirectMessageAsync(IUser user, string text) => throw new NotSupportedException();
-		public Task<IUser> GetUserAsync(string id) => throw new NotSupportedException();
-		public Task<IUser> GetUserByNameAsync(string name) => throw new NotSupportedException();
+		public Task<IPost?> SendDirectMessageAsync(IUser user, string text) => throw new NotSupportedException();
+		public Task<IUser?> GetUserAsync(string id) => throw new NotSupportedException();
+		public Task<IUser?> GetUserByNameAsync(string name) => throw new NotSupportedException();
 		public async Task UnlikeAsync(IPost post) => await Task.Yield();
 		#endregion
 	}

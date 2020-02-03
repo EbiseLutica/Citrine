@@ -57,7 +57,7 @@ namespace Citrine.Core.Modules
 				output = $"ポン! {me}\n{output}";
 
 				var replied = await shell.ReplyAsync(n, output);
-				if (result == Result.Draw)
+				if (result == Result.Draw && replied != null)
 				{
 					cache[replied.Id] = n.User.Id;
 				}
@@ -70,6 +70,8 @@ namespace Citrine.Core.Modules
 			{
 				core.LikeWithLimited(n.User);
 				var note = await shell.ReplyAsync(n, "いいね〜, じゃあやろう. 最初は✊, じゃんけん――");
+				if (note == null)
+					return true;
 				EconomyModule.Pay(n, shell, core);
 				cache[note.Id] = n.User.Id;
 				return true;
