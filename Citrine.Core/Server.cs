@@ -65,6 +65,11 @@ namespace Citrine.Core
 		/// <returns></returns>
 		public UserStorage Storage { get; } = new UserStorage();
 
+		/// <summary>
+		/// 乱数ジェネレーターのインスタンスを取得します。
+		/// </summary>
+		public Random Random { get; } = new Random();
+
 		static Server()
 		{
 			Http.DefaultRequestHeaders.Add("User-Agent", $"Mozilla/5.0 Citrine/{Server.Version} (https://github.com/xeltica/citrine) .NET/{Environment.Version}");
