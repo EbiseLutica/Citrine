@@ -35,12 +35,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
 		/// </summary>
-		public List<ModuleBase> Modules { get; }
+		public List<IModule> Modules { get; }
 
 		/// <summary>
 		/// 読み込まれているコマンド一覧を取得します。
 		/// </summary>
-		public List<CommandBase> Commands { get; }
+		public List<ICommand> Commands { get; }
 
 		/// <summary>
 		/// シェルを取得します。
@@ -52,12 +52,12 @@ namespace Citrine.Core
 		/// <summary>
 		/// 文脈の一覧を取得します。
 		/// </summary>
-		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextPostDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
+		public Dictionary<string, (IModule, Dictionary<string, object>)> ContextPostDictionary { get; } = new Dictionary<string, (IModule, Dictionary<string, object>)>();
 
 		/// <summary>
 		/// ユーザーの一覧を取得します。
 		/// </summary>
-		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextUserDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
+		public Dictionary<string, (IModule, Dictionary<string, object>)> ContextUserDictionary { get; } = new Dictionary<string, (IModule, Dictionary<string, object>)>();
 
 		/// <summary>
 		/// ユーザーストレージを取得します。
@@ -82,16 +82,16 @@ namespace Citrine.Core
 		{
 			Shell = shell;
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
-						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
+						.Where(typeof(IModule).IsAssignableFrom)
 						.Select(a => Activator.CreateInstance(a))
-						.OfType<ModuleBase>()
+						.OfType<IModule>()
 						.OrderBy(mod => mod.Priority)
 						.ToList();
 
 			Commands = Assembly.GetExecutingAssembly().GetTypes()
-						.Where(a => a.IsSubclassOf(typeof(CommandBase)))
+						.Where(typeof(IModule).IsAssignableFrom)
 						.Select(a => Activator.CreateInstance(a))
-						.OfType<CommandBase>()
+						.OfType<ICommand>()
 						.ToList();
 
 			string adminId = "";
@@ -144,7 +144,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// モジュールを追加します。
 		/// </summary>
-		public void AddModule(ModuleBase mod)
+		public void AddModule(IModule mod)
 		{
 			if (Modules.Contains(mod))
 				return;
@@ -159,14 +159,14 @@ namespace Citrine.Core
 		/// <summary>
 		/// コマンドを追加します。
 		/// </summary>
-		public void AddCommand(CommandBase cmd)
+		public void AddCommand(ICommand cmd)
 		{
 			if (Commands.Contains(cmd))
 				return;
 			Commands.Add(cmd);
 		}
 
-		public CommandBase TryGetCommand(string n) => Commands.FirstOrDefault(c =>
+		public ICommand TryGetCommand(string n) => Commands.FirstOrDefault(c =>
 		{
 			var cn = c.Name;
 			var cnl = c.Name.ToLowerInvariant();
@@ -460,7 +460,7 @@ namespace Citrine.Core
 			}
 		}
 
-		public void RegisterContext(IPost post, ModuleBase mod, Dictionary<string, object>? args = null)
+		public void RegisterContext(IPost post, IModule mod, Dictionary<string, object>? args = null)
 		{
 			if (post is IDirectMessage dm)
 			{

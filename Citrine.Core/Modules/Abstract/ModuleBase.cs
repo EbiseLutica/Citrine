@@ -8,7 +8,7 @@ namespace Citrine.Core.Modules
 	/// <summary>
 	/// Citrine のモジュールベース。
 	/// </summary>
-	public abstract class ModuleBase
+	public abstract class ModuleBase : IModule
 	{
 		public virtual int Priority => 0;
 
