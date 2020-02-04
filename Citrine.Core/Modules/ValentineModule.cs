@@ -35,9 +35,13 @@ namespace Citrine.Core.Modules
 				foreach (var fan in fans)
 				{
 					var user = await shell.GetUserAsync(fan);
+					if (user == null)
+						continue;
+
 					var storage = core.Storage[user];
 					if (storage.Get("lastValentineYear", 0) == t.Year)
 						continue;
+
 					var msg = $"{core.GetNicknameOf(user)}, ハッピーバレンタイン! 💝受け取ってほしいな.";
 					await shell.SendDirectMessageAsync(user, msg);
 					storage.Set("lastValentineYear", t.Year);
@@ -48,6 +52,7 @@ namespace Citrine.Core.Modules
 		public async override Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
 			(this.core, this.shell) = (core, shell);
+			await Task.Delay(0);
 			return false;
 		}
 
@@ -68,8 +73,8 @@ namespace Citrine.Core.Modules
 
 		private readonly Timer timer;
 		private DateTime prevDate;
-		private Server core;
-		private IShell shell;
+		private Server? core;
+		private IShell? shell;
 
 		private readonly string[] thanksMessage =
 		{
