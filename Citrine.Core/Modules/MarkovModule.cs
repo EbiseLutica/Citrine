@@ -51,6 +51,10 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
 		{
+			if (n.Text is string text && text.TrimMentions().IsMatch("^.{0,4}[終お]わり.{0,4}$"))
+			{
+				await shell.ReplyAsync(n, "ふう, 楽しかった. また話そうね");
+			}
 			await Task.Delay(4000);
 			var ctx = await shell.ReplyAsync(n, Say());
 			if (ctx != null)
