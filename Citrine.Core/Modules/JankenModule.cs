@@ -9,63 +9,6 @@ namespace Citrine.Core.Modules
 	{
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-			if (n.Reply is IPost reply && n.Text != default && cache.ContainsKey(reply.Id) && cache[reply.Id] == n.User.Id)
-			{
-				string player;
-				// じゃんけん入力
-				switch (n.Text.TrimMentions())
-				{
-					case "ちょき":
-					case "チョキ":
-					case "✌":
-						player = "✌";
-						break;
-					case "グー":
-					case "ぐー":
-					case "✊":
-						player = "✊";
-						break;
-					case "パー":
-					case "ぱー":
-					case "✋":
-						player = "✋";
-						break;
-					default:
-						await shell.ReplyAsync(n, "なにその手. グー/チョキ/パーで選んでほしいな.");
-						return true;
-				}
-				var me = new[] { "✊", "✌", "✋" }[rnd.Next(3)];
-
-				string output;
-				Result result = DoJanken(player, me);
-				switch (result)
-				{
-					case Result.Draw:
-						output = "あいこだ... はーい, あいこで";
-						break;
-					case Result.Win:
-						output = "私の勝ち! " + winMessage.Random().Replace("$user$", core.GetNicknameOf(n.User));
-						break;
-					case Result.Lose:
-						output = $"私の負け..." + loseMessage.Random().Replace("$user$", core.GetNicknameOf(n.User));
-						break;
-					default:
-						output = $"(Bug) Invalid State {result}";
-						break;
-				}
-
-				output = $"ポン! {me}\n{output}";
-
-				var replied = await shell.ReplyAsync(n, output);
-				if (result == Result.Draw && replied != null)
-				{
-					cache[replied.Id] = n.User.Id;
-				}
-
-				cache.Remove(n.Reply.Id);
-				return true;
-			}
-
 			if (n.Text != null && n.Text.Contains("じゃんけん"))
 			{
 				core.LikeWithLimited(n.User);
@@ -73,14 +16,56 @@ namespace Citrine.Core.Modules
 				if (note == null)
 					return true;
 				EconomyModule.Pay(n, shell, core);
-				cache[note.Id] = n.User.Id;
+				core.RegisterContext(note, this);
 				return true;
 			}
 
 			return false;
 		}
 
-		private Result DoJanken(string player, string citrine)
+		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
+		{
+			if (n.Text == null) return false;
+			var player = NormalizeHand(n.Text);
+			var me = new[] { "✊", "✌", "✋" }[rnd.Next(3)];
+
+			Result result = DoBSPGame(player, me);
+			var output = result switch
+			{
+				Result.Draw => "あいこだ... はーい, あいこで",
+				Result.Win => "私の勝ち! " + winMessage.Random().Replace("$user$", core.GetNicknameOf(n.User)),
+				Result.Lose => $"私の負け..." + loseMessage.Random().Replace("$user$", core.GetNicknameOf(n.User)),
+				_ => $"(Bug) Invalid State {result}",
+			};
+
+			output = $"ポン! {me}\n{output}";
+
+			var replied = await shell.ReplyAsync(n, output);
+			if (result == Result.Draw && replied != null)
+			{
+				core.RegisterContext(replied, this);
+			}
+			return true;
+		}
+
+		private static string NormalizeHand(string text)
+		{
+			return text switch
+			{
+				"ちょき" => "✌",
+				"チョキ" => "✌",
+				"✌" => "✌",
+				"グー" => "✊",
+				"ぐー" => "✊",
+				"✊" => "✊",
+				"パー" => "✋",
+				"ぱー" => "✋",
+				"✋" => "✋",
+				_ => throw new Exception(),
+			};
+		}
+
+		private Result DoBSPGame(string player, string citrine)
 		{
 			return citrine == player ? Result.Draw
 					: IsCitrinesWin(player, citrine) ? Result.Win
@@ -89,8 +74,6 @@ namespace Citrine.Core.Modules
 
 		private bool IsCitrinesWin(string p, string c) => (c == "✋" && p == "✊") || (c == "✌" && p == "✋") || (c == "✊" && p == "✌");
 
-		// シトリンのpostId と 対応する userid のキャッシュ。 IPost.Reply.Id と IPost.User.Id で照合する
-		private readonly Dictionary<string, string> cache = new Dictionary<string, string>();
 		private readonly Random rnd = new Random();
 
 		private readonly string[] loseMessage = {
