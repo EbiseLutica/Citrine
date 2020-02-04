@@ -411,7 +411,7 @@ namespace Citrine.Core
 				}
 				catch (Exception ex)
 				{
-					await Shell.ReplyAsync(post, "ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。)");
+					await Shell.ReplyAsync(post, $"ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。@{Config.Instance.Admin} はコンソールを確認して下さい。)");
 					WriteException(ex);
 				}
 			}
