@@ -83,13 +83,15 @@ namespace Citrine.Core
 			Shell = shell;
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
 						.Where(typeof(IModule).IsAssignableFrom)
+						.Where(a => a.GetConstructor(Type.EmptyTypes) != null)
 						.Select(a => Activator.CreateInstance(a))
 						.OfType<IModule>()
 						.OrderBy(mod => mod.Priority)
 						.ToList();
 
 			Commands = Assembly.GetExecutingAssembly().GetTypes()
-						.Where(typeof(IModule).IsAssignableFrom)
+						.Where(typeof(ICommand).IsAssignableFrom)
+						.Where(a => a.GetConstructor(Type.EmptyTypes) != null)
 						.Select(a => Activator.CreateInstance(a))
 						.OfType<ICommand>()
 						.ToList();
@@ -341,8 +343,8 @@ namespace Citrine.Core
 			if (mention.Reply is IPost reply && ContextPostDictionary.ContainsKey(reply.Id))
 			{
 				var (mod, arg) = ContextPostDictionary[mention.Reply.Id];
-				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
 				ContextPostDictionary.Remove(mention.Reply.Id);
+				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
 				return;
 			}
 
@@ -395,8 +397,8 @@ namespace Citrine.Core
 			if (ContextUserDictionary.ContainsKey(post.User.Id))
 			{
 				var (mod, arg) = ContextUserDictionary[post.User.Id];
-				await mod.OnRepliedContextually(post, null, arg, Shell, this);
 				ContextUserDictionary.Remove(post.User.Id);
+				await mod.OnRepliedContextually(post, null, arg, Shell, this);
 				return;
 			}
 
