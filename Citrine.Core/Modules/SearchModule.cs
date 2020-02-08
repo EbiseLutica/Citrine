@@ -13,6 +13,9 @@ namespace Citrine.Core.Modules
 	{
 		public override int Priority => -100;
 
+		public readonly string StatSearchedCount = "stat.searched-count";
+		public readonly string StatCalculatedCount = "stat.calculated-count";
+
 		private static readonly string CalcApiUrl = "http://www.rurihabachi.com/web/webapi/calculator/json?exp={0}";
 		private static readonly string WikipediaApiUrl = "https://ja.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
 		private static readonly string EnWikipediaApiUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
@@ -43,6 +46,7 @@ namespace Citrine.Core.Modules
 				{
 					query = m.Groups[1].Value.TrimMentions();
 					response = await FromCalcAsync(query);
+					core.Storage[n.User].Add(StatCalculatedCount);
 				}
 				else if (mpedia.Success)
 				{
@@ -51,6 +55,7 @@ namespace Citrine.Core.Modules
 					response = response ?? await FromWikipediaAsync(query, WikipediaApiUrl, "ja");
 					response = response ?? await FromWikipediaAsync(query, EnWikipediaApiUrl, "en");
 					response = response ?? await FromNicopediaAsync(query);
+					core.Storage[n.User].Add(StatSearchedCount);
 				}
 
 				response = response ?? $"{query} について調べてみたけどわからなかった. ごめん...";

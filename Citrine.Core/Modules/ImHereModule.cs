@@ -6,6 +6,7 @@ namespace Citrine.Core.Modules
 {
 	public class ImHereModule : ModuleBase
 	{
+		public static readonly string StatImHereCount = "stat.im-here-count";
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text != null && n.Text.TrimMentions().ToHiragana().IsMatch(@"^しとりん(ちゃん|さん|様)?(何処|どこ|[居い](ますか|る[\?？]))"))
@@ -19,6 +20,7 @@ namespace Citrine.Core.Modules
 				await shell.ReactAsync(n, "❤️");
 
 				await Task.Delay(250);
+				core.Storage[n.User].Add(StatImHereCount);
 				await shell.ReplyAsync(n, patterns.Random(rnd).Replace("{user}", core.GetNicknameOf(n.User)));
 			}
 			return false;

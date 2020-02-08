@@ -11,6 +11,10 @@ namespace Citrine.Core.Modules
 	{
 		public override int Priority => -9999;
 
+		public static readonly string StatKawaiiTeachedCount = "stat.kawaii.teached-count";
+		public static readonly string StatKawaiiQuestionedCount = "stat.kawaii.questioned-count";
+		public static readonly string StatKawaiiQueriedCount = "stat.kawaii.queried-count";
+
 		public async override Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text != null)
@@ -44,6 +48,7 @@ namespace Citrine.Core.Modules
 					var target = questionPattern.Groups[1].Value.Trim().ToLowerInvariant();
 
 					var response = map.ContainsKey(target) ? map[target] : "わからない";
+					core.Storage[n.User].Add(StatKawaiiQuestionedCount);
 					await shell.ReplyAsync(n, response);
 				}
 				else if (teacherPattern.Success)
@@ -62,6 +67,7 @@ namespace Citrine.Core.Modules
 					// 記憶
 					map[target] = adj;
 					SaveMap();
+					core.Storage[n.User].Add(StatKawaiiTeachedCount);
 					await shell.ReplyAsync(n, $"{targetUnnormalized}は{adj}... 覚えました");
 				}
 				else if (queryPattern.Success)
@@ -76,6 +82,7 @@ namespace Citrine.Core.Modules
 						adj.IsMatch(adjectiveMazui) ? adjectiveMazui : null;
 
 					var suggest = regex != null ? map.Where(kv => kv.Value.IsMatch(regex)).Select(kv => kv.Key).Random() : null;
+					core.Storage[n.User].Add(StatKawaiiQueriedCount);
 					await shell.ReplyAsync(n, suggest != null ? $"{suggest}はどう? {adj}よ" : $"{adj}ものをまだ知らない");
 				}
 				else

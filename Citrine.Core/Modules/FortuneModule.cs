@@ -13,6 +13,8 @@ namespace Citrine.Core.Modules
 
 	public partial class FortuneModule : ModuleBase
 	{
+		public static readonly string StatFortuneCount = "stat.fortune-count";
+
 		public async override Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text != null && Regex.IsMatch(n.Text.ToLowerInvariant(), "占|運勢|みくじ|fortune"))
@@ -80,6 +82,7 @@ namespace Citrine.Core.Modules
 						.AppendLine($"{best.name}が高いね. {best.bestMessage}");
 				}
 
+				core.Storage[n.User].Add(StatFortuneCount);
 				await shell.ReplyAsync(n, builder.ToString(), $"私が今日の{core.GetNicknameOf(n.User)}の運勢を占ったよ:");
 				EconomyModule.Pay(n, shell, core);
 				return true;

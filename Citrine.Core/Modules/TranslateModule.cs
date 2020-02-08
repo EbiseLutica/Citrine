@@ -12,6 +12,9 @@ namespace Citrine.Core.Modules
 	{
 		public override int Priority => -1000;
 
+		public static readonly string StatTranslatedCount = "stat.translated-count";
+		public static readonly string StatRetranslatedCount = "stat.retranslated-count";
+
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.User.Id == shell.Myself?.Id)
@@ -37,6 +40,7 @@ namespace Citrine.Core.Modules
 						{ "result", result},
 						{ "code", lang.code},
 					});
+					core.Storage[n.User].Add(StatTranslatedCount);
 					return true;
 				}
 			}
@@ -66,6 +70,7 @@ namespace Citrine.Core.Modules
 
 					EconomyModule.Pay(n, shell, core);
 					core.LikeWithLimited(n.User);
+					core.Storage[n.User].Add(StatRetranslatedCount);
 					core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
 					{
 						{ "result", result},

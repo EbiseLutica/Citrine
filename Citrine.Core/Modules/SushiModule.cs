@@ -6,6 +6,8 @@ namespace Citrine.Core.Modules
 {
 	public class SushiModule : ModuleBase
 	{
+		public readonly string StatSushiCount = "stat.sushi-count";
+
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text is string text && text.IsMatch("寿司(握|にぎ)"))
@@ -17,6 +19,7 @@ namespace Citrine.Core.Modules
 				for (var i = 0; i < max; i++)
 					res += s ?? candidates.Random();
 				await shell.ReplyAsync(n, "ヘイお待ち! " + res);
+				core.Storage[n.User].Add(StatSushiCount);
 				EconomyModule.Pay(n, shell, core);
 				core.LikeWithLimited(n.User);
 				return true;

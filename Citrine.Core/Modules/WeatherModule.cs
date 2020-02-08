@@ -14,6 +14,9 @@ namespace Citrine.Core.Modules
 	{
 		const string endPoint = "http://weather.livedoor.com/forecast/webservice/json/v1?city=";
 		public override int Priority => -9000;
+
+		public static readonly string StatForecastCount = "stat.forecast-count";
+
 		public async override Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			var req = n.Text?.TrimMentions();
@@ -40,6 +43,7 @@ namespace Citrine.Core.Modules
 
 {tenki.Link}";
 				await shell.ReplyAsync(n, result, $"[ {tenki.Title ?? "NULL"} ]");
+				core.Storage[n.User].Add(StatForecastCount);
 				return true;
 			}
 			return false;

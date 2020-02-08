@@ -16,6 +16,8 @@ namespace Citrine.Core.Modules
 		public MarkovNode? Root { get; private set; }
 		public List<MarkovNode>? Nodes { get; private set; }
 
+		public static readonly string StatMarkovCount = "stat.markov-count";
+
 		public string MatchPattern => "(何|な[にん])か([喋話]|しゃべ|はな)([しっ]て|せ|れ)";
 
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
@@ -41,6 +43,7 @@ namespace Citrine.Core.Modules
 			if (n.Text is string text && text.IsMatch(MatchPattern))
 			{
 				await Task.Delay(4000);
+				core.Storage[n.User].Add(StatMarkovCount);
 				var ctx = await shell.ReplyAsync(n, Say());
 				if (ctx != null)
 					core.RegisterContext(ctx, this, null);
@@ -53,10 +56,12 @@ namespace Citrine.Core.Modules
 		{
 			if (n.Text is string text && text.TrimMentions().IsMatch("^.{0,4}[終お]わり.{0,4}$"))
 			{
+				core.Storage[n.User].Add(StatMarkovCount);
 				await shell.ReplyAsync(n, "ふう, 楽しかった. また話そうね");
 				return true;
 			}
 			await Task.Delay(4000);
+			core.Storage[n.User].Add(StatMarkovCount);
 			var ctx = await shell.ReplyAsync(n, Say());
 			if (ctx != null)
 				core.RegisterContext(ctx, this, null);

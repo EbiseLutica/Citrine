@@ -9,6 +9,10 @@ namespace Citrine.Core.Modules
 	{
 		public override int Priority => -1000;
 
+		public static readonly string StatReactCount = "stat.react-count";
+
+		public static readonly string StatBadMouthCount = "stat.bad-mouth-count";
+
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.User.Id == shell.Myself?.Id)
@@ -23,12 +27,14 @@ namespace Citrine.Core.Modules
 				core.LikeWithLimited(n.User);
 				EconomyModule.Pay(n, shell, core);
 				await shell.ReactAsync(n, m.Groups[1].Value.Trim());
+				core.Storage[n.User].Add(StatReactCount);
 				return true;
 			}
 			else if (IsTerribleText(n.Text))
 			{
 				core.OnHarassment(n.User);
 				await shell.ReactAsync(n, "😥");
+				core.Storage[n.User].Add(StatBadMouthCount);
 				var rate = core.GetRatingOf(n.User);
 				await shell.ReplyAsync(n, (rate == Rating.Hate ? ponkotsuPatternHate : rate == Rating.Normal ? ponkotsuPattern : ponkotsuPatternLove).Random());
 				return true;

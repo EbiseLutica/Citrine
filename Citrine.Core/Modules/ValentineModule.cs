@@ -8,6 +8,8 @@ namespace Citrine.Core.Modules
 {
 	public class ValentineModule : ModuleBase
 	{
+		public static readonly string StatValentineCount = "stat.valentine-count";
+
 		public ValentineModule()
 		{
 			timer = new Timer(1000)
@@ -44,6 +46,7 @@ namespace Citrine.Core.Modules
 
 					var msg = $"{core.GetNicknameOf(user)}, ハッピーバレンタイン! 💝受け取ってほしいな.";
 					await shell.SendDirectMessageAsync(user, msg);
+					storage.Add(StatValentineCount);
 					storage.Set("lastValentineYear", t.Year);
 				}
 			}

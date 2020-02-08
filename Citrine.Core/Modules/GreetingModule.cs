@@ -20,6 +20,8 @@ namespace Citrine.Core.Modules
 		public override int Priority => 10000;
 		List<Pattern> patterns;
 		readonly Random random = new Random();
+		public static readonly string StatTalkedCount = "stat.talked-count";
+
 		public GreetingModule()
 		{
 			using (var reader = new StreamReader(Server.GetEmbeddedResource("greeting.json")))
@@ -81,6 +83,7 @@ namespace Citrine.Core.Modules
 			if (message != "")
 			{
 				EconomyModule.Pay(n, shell, core);
+				core.Storage[n.User].Add(StatTalkedCount);
 				await shell.ReplyAsync(n, message);
 			}
 

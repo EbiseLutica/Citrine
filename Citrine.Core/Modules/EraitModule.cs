@@ -6,6 +6,8 @@ namespace Citrine.Core.Modules
 {
 	public class EraitModule : ModuleBase
 	{
+		public static readonly string StatEraitedCount = "stat.eraited-count";
+
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text == null)
@@ -18,6 +20,7 @@ namespace Citrine.Core.Modules
 			if (reg.Success)
 			{
 				await shell.ReplyAsync(n, $"{reg.Groups[1].Value}のえらい!");
+				core.Storage[n.User].Add(StatEraitedCount);
 				core.LikeWithLimited(n.User);
 				EconomyModule.Pay(n, shell, core);
 				return true;
@@ -25,6 +28,7 @@ namespace Citrine.Core.Modules
 			else if (reg2.Success)
 			{
 				await shell.ReplyAsync(n, "えらい!");
+				core.Storage[n.User].Add(StatEraitedCount);
 				EconomyModule.Pay(n, shell, core);
 				core.LikeWithLimited(n.User);
 				return true;

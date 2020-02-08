@@ -51,9 +51,9 @@ namespace Citrine.Core.Modules
 			var storage = core.Storage[n.User];
 
 			if (result == Result.Win)
-				storage.Set(StatWinCount, storage.Get(StatWinCount, 0) + 1);
+				storage.Add(StatWinCount);
 			else if (result == Result.Lose)
-				storage.Set(StatLoseCount, storage.Get(StatLoseCount, 0) + 1);
+				storage.Add(StatLoseCount);
 
 			var replied = await shell.ReplyAsync(n, output);
 			if (result == Result.Draw && replied != null)

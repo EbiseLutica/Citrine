@@ -7,6 +7,12 @@ namespace Citrine.Core.Modules
 {
 	public class TimelineGreetingModule : ModuleBase
 	{
+		public static readonly string StatGoodMorningCount = "stat.good-morning-count";
+		public static readonly string StatGoodNightCount = "stat.good-morning-count";
+		public static readonly string StatSeeYouLaterCount = "stat.good-morning-count";
+		public static readonly string StatWelcomeBackCount = "stat.good-morning-count";
+		public static readonly string StatWithoutSleepingCount = "stat.without-sleeping-count";
+
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
 			if (!(n.Text?.TrimMentions() is string text))
@@ -17,12 +23,14 @@ namespace Citrine.Core.Modules
 			var storage = core.Storage[n.User];
 
 			// 返事する
-			foreach (var (greeting, pattern, length, replyPattern) in greetings)
+			foreach (var (greeting, pattern, length, replyPattern, statKey) in greetings)
 			{
 				if (text.Length <= length && pattern.IsMatch(text) && !IsAlreadyDone(greeting, n.User, core))
 				{
 					UpdateGreeting(greeting, n.User, core);
+					storage.Set(postWithoutSleepingCountKey, 0);
 					await Task.Delay(2000);
+					core.Storage[n.User].Add(statKey);
 					await shell.ReplyAsync(n, replyPattern.Random().Replace("$user$", core.GetNicknameOf(n.User)));
 					break;
 				}
@@ -35,6 +43,8 @@ namespace Citrine.Core.Modules
 			{
 				var count = storage.Get(postWithoutSleepingCountKey, 0);
 				storage.Set(postWithoutSleepingCountKey, ++count);
+				core.Storage[n.User].Add(StatWithoutSleepingCount);
+
 				if (count == 3)
 				{
 					await shell.ReplyAsync(n, postWithoutSleepingReply.Random().Replace("$user$", core.GetNicknameOf(n.User)));
@@ -61,34 +71,34 @@ namespace Citrine.Core.Modules
 
 		private readonly string postWithoutSleepingCountKey = $"post-without-sleeping-count";
 
-		private readonly (Greeting greeting, Regex regex, int maxLength, string[] replyPattern)[] greetings =
+		private readonly (Greeting greeting, Regex regex, int maxLength, string[] replyPattern, string statKey)[] greetings =
 		{
 			(Greeting.GoodMorning, patternGoodMorning, 11, new []
 			{
 				"おはよ〜!",
 				"おはよ, $user$.",
-			}),
+			}, StatGoodMorningCount),
 			(Greeting.GoodNight, patternGoodNight, 9, new []
 			{
 				"おやすみなさい",
 				"おやすみ, $user$.",
 				"おやすみ",
 				"ちゃんと寝るんだぞ〜$user$."
-			}),
+			}, StatGoodNightCount),
 			(Greeting.SeeYouLater, patternSeeYouLater, 9, new []
 			{
 				"いってらっしゃい!",
 				"いってら!",
 				"頑張ってね〜!",
 				"いってらっしゃい, $user$.",
-			}),
+			}, StatSeeYouLaterCount),
 			(Greeting.WelcomeBack, patternWelcomeBack, 12, new []
 			{
 				"おかえり",
 				"おつかれ〜!",
 				"おかえり, $user$!",
 				"おかえりなさい, $user$.",
-			}),
+			}, StatWelcomeBackCount),
 		};
 
 		private readonly string[] postWithoutSleepingReply =
