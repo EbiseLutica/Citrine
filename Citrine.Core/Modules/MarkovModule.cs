@@ -54,6 +54,7 @@ namespace Citrine.Core.Modules
 			if (n.Text is string text && text.TrimMentions().IsMatch("^.{0,4}[終お]わり.{0,4}$"))
 			{
 				await shell.ReplyAsync(n, "ふう, 楽しかった. また話そうね");
+				return true;
 			}
 			await Task.Delay(4000);
 			var ctx = await shell.ReplyAsync(n, Say());
