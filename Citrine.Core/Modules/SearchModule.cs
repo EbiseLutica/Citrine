@@ -13,8 +13,8 @@ namespace Citrine.Core.Modules
 	{
 		public override int Priority => -100;
 
-		public readonly string StatSearchedCount = "stat.searched-count";
-		public readonly string StatCalculatedCount = "stat.calculated-count";
+		public static readonly string StatSearchedCount = "stat.searched-count";
+		public static readonly string StatCalculatedCount = "stat.calculated-count";
 
 		private static readonly string CalcApiUrl = "http://www.rurihabachi.com/web/webapi/calculator/json?exp={0}";
 		private static readonly string WikipediaApiUrl = "https://ja.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&redirects=1&exchars=300&explaintext=1&titles={0}";
