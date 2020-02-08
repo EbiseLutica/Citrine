@@ -43,11 +43,11 @@ namespace Citrine.Core.Modules
 			{
 				var count = storage.Get(postWithoutSleepingCountKey, 0);
 				storage.Set(postWithoutSleepingCountKey, ++count);
-				core.Storage[n.User].Add(StatWithoutSleepingCount);
 
 				if (count == 3)
 				{
 					await shell.ReplyAsync(n, postWithoutSleepingReply.Random().Replace("$user$", core.GetNicknameOf(n.User)));
+					core.Storage[n.User].Add(StatWithoutSleepingCount);
 				}
 			}
 
