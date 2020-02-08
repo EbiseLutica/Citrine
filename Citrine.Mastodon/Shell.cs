@@ -46,11 +46,11 @@ namespace Citrine.Mastodon
 		public Shell(MastodonClient don, Account myself, Logger logger)
 		{
 			Core = new Server(this);
-            Mastodon = don;
-            Myself = new DonUser(myself);
+			Mastodon = don;
+			Myself = new DonUser(myself);
 			this.logger = logger;
-            SubscribeStreams();
-        }
+			SubscribeStreams();
+		}
 
 		/// <summary>
 		/// bot を初期化します。
@@ -79,21 +79,21 @@ namespace Citrine.Mastodon
 
 			logger.Info($"bot ユーザーを取得しました (@{myself.Username}");
 
-            var sh = new Shell(don, myself, logger);
+			var sh = new Shell(don, myself, logger);
 			return sh;
 		}
 
-		public async Task<IPost> GetPostAsync(string id)
+		public async Task<IPost?> GetPostAsync(string id)
 		{
 			return new DonPost(await Mastodon.Statuses.ShowAsync(long.Parse(id)), this);
 		}
 
-		public async Task<IUser> GetUserAsync(string id)
+		public async Task<IUser?> GetUserAsync(string id)
 		{
 			return new DonUser(await Mastodon.Account.ShowAsync(long.Parse(id)));
 		}
 
-		public async Task<IUser> GetUserByNameAsync(string name)
+		public async Task<IUser?> GetUserByNameAsync(string name)
 		{
 			var list = await Mastodon.Account.SearchAsync(name, 1);
 			return list.FirstOrDefault() is Account acct ? new DonUser(acct) : default;
@@ -104,29 +104,33 @@ namespace Citrine.Mastodon
 			Mastodon.Statuses.FavouriteAsync(long.Parse(post.Id));
 		}
 
-		public async Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost?> PostAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
-			if (text.Length > 500)
+			if (text?.Length > 500)
 				text = text.Substring(500);
-			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, attachments?.Select(a => a.Id.ToLong()).ToList(), cw != null, cw, MapVisibility(visiblity, Visiblity.Public)), this);
+			return new DonPost(await Mastodon.Statuses.UpdateAsync(text, null, attachments?.Select(a => a.Id.ToLong()).ToList(), cw != null, cw, MapVisibility(visiblity, Visibility.Public)), this);
 		}
 
-		public async Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths)
+		public async Task<IPost?> PostWithFilesAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths)
 		{
-			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			if (filePaths == null)
+				return null;
+			var attachments = (await Task.WhenAll(filePaths.Select(path => UploadAsync(path)))).ToList();
 			return await PostAsync(text, cw, visiblity, choices, attachments);
 		}
 
-		public async Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null)
+		public async Task<IPost?> ReplyAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null)
 		{
-			if (text.Length > 500)
+			if (text?.Length > 500)
 				text = text.Substring(500);
 			return new DonPost(await Mastodon.Statuses.UpdateAsync($"@{post.User.Name}{(!string.IsNullOrEmpty(post.User.Host) ? "@" + post.User.Host : "")} {text}", long.Parse(post.Id), attachments?.Select(a => long.Parse(a.Id)).ToList(), cw != null, cw, MapVisibility(visiblity, post.Visiblity)), this);
 		}
 
-		public async Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null)
+		public async Task<IPost?> ReplyWithFilesAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null)
 		{
-			var attachments = (await Task.WhenAll(filePaths?.Select(path => UploadAsync(path)))).ToList();
+			if (filePaths == null)
+				return null;
+			var attachments = (await Task.WhenAll(filePaths.Select(path => UploadAsync(path)))).ToList();
 			return await ReplyAsync(post, text, cw, visiblity, choices, attachments);
 		}
 
@@ -135,7 +139,7 @@ namespace Citrine.Mastodon
 			return LikeAsync(post);
 		}
 
-		public async Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default)
+		public async Task<IPost?> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default)
 		{
 			var reposted = new DonPost(await Mastodon.Statuses.ReblogAsync(long.Parse(post.Id)), this);
 			await Task.Delay(750);
@@ -146,9 +150,9 @@ namespace Citrine.Mastodon
 			return reposted;
 		}
 
-		public async Task<IPost> SendDirectMessageAsync(IUser user, string text)
+		public async Task<IPost?> SendDirectMessageAsync(IUser user, string text)
 		{
-			return await PostAsync($"@{user.Name} {text}", null, Visiblity.Direct);
+			return await PostAsync($"@{user.Name} {text}", null, Visibility.Direct);
 		}
 
 		public async Task UnlikeAsync(IPost post)
@@ -162,7 +166,7 @@ namespace Citrine.Mastodon
 			return Task.Delay(1);
 		}
 
-		public async Task<IAttachment> UploadAsync(string path, string name = null)
+		public async Task<IAttachment?> UploadAsync(string path, string? name = null)
 		{
 			return new DonAttachment(await Mastodon.Media.CreateAsync(path));
 		}
@@ -207,27 +211,27 @@ namespace Citrine.Mastodon
 			await Mastodon.Statuses.DestroyAsync(post.Id.ToLong());
 		}
 
-		public async Task<IAttachment> GetAttachmentAsync(string fileId)
+		public async Task<IAttachment?> GetAttachmentAsync(string fileId)
 		{
 			// Mastodon has no Media Showing API
 			throw new NotSupportedException();
 		}
 
-		private VisibilityType MapVisibility(Visiblity vis, Visiblity vis2)
+		private VisibilityType MapVisibility(Visibility vis, Visibility vis2)
 		{
 			switch (vis)
 			{
-				case Visiblity.Public:
+				case Visibility.Public:
 					return VisibilityType.Public;
-				case Visiblity.Private:
+				case Visibility.Private:
 					return VisibilityType.Private;
-				case Visiblity.Limited:
+				case Visibility.Limited:
 					return VisibilityType.Unlisted;
-				case Visiblity.Direct:
+				case Visibility.Direct:
 					return VisibilityType.Direct;
-				case Visiblity.Default:
+				case Visibility.Default:
 				default:
-					return MapVisibility(vis2, Visiblity.Public);
+					return MapVisibility(vis2, Visibility.Public);
 			}
 		}
 
@@ -290,7 +294,7 @@ namespace Citrine.Mastodon
 			File.WriteAllText("./token", credential);
 		}
 
-		private IDisposable followed, reply, tl;
+		private IDisposable? followed, reply, tl;
 		private Logger logger;
 	}
 

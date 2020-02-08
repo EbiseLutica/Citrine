@@ -9,7 +9,7 @@ namespace Citrine.Core.Api
 		/// <summary>
 		/// bot ユーザーを取得します。
 		/// </summary>
-		IUser Myself { get; }
+		IUser? Myself { get; }
 
 		/// <summary>
 		/// 投票を作れるかどうかを示す値を取得します。
@@ -51,7 +51,7 @@ namespace Citrine.Core.Api
 		/// <param name="choices">投票の選択肢。</param>
 		/// <param name="attachments">添付ファイル。</param>
 		/// <returns>作成された投稿。</returns>
-		Task<IPost> ReplyAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null);
+		Task<IPost?> ReplyAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null);
 
 		/// <summary>
 		/// 指定した投稿に対しファイルをアップロードし、添付してリプライします。
@@ -63,7 +63,7 @@ namespace Citrine.Core.Api
 		/// <param name="choices">投票の選択肢。</param>
 		/// <param name="filePaths">ファイルパス。</param>
 		/// <returns>作成された投稿。</returns>
-		Task<IPost> ReplyWithFilesAsync(IPost post, string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<string> filePaths = null);
+		Task<IPost?> ReplyWithFilesAsync(IPost post, string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<string>? filePaths = null);
 
 		/// <summary>
 		/// 投稿を作成します。
@@ -74,7 +74,7 @@ namespace Citrine.Core.Api
 		/// <param name="choices">投票の選択肢。</param>
 		/// <param name="attachments">添付ファイル。</param>
 		/// <returns>作成された投稿。</returns>
-		Task<IPost> PostAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, List<IAttachment> attachments = null);
+		Task<IPost?> PostAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, List<IAttachment>? attachments = null);
 
 		/// <summary>
 		/// ファイルをアップロードし、投稿に添付し送信します。
@@ -85,7 +85,7 @@ namespace Citrine.Core.Api
 		/// <param name="choices">投票の選択肢。</param>
 		/// <param name="attachments">添付ファイル。</param>
 		/// <returns>作成された投稿。</returns>
-		Task<IPost> PostWithFilesAsync(string text, string cw = null, Visiblity visiblity = Visiblity.Default, List<string> choices = null, params string[] filePaths);
+		Task<IPost?> PostWithFilesAsync(string? text, string? cw = null, Visibility visiblity = Visibility.Default, List<string>? choices = null, params string[] filePaths);
 
 		/// <summary>
 		/// 指定した投稿にリアクションを送ります。リアクションをサポートしない環境では代替となる挙動を示します。例: いいね
@@ -102,7 +102,7 @@ namespace Citrine.Core.Api
 		/// <param name="cw">警告文。</param>
 		/// <param name="visiblity">公開範囲。</param>
 		/// <returns>作成した投稿。</returns>
-		Task<IPost> RepostAsync(IPost post, string text = null, string cw = null, Visiblity visiblity = Visiblity.Default);
+		Task<IPost?> RepostAsync(IPost post, string? text = null, string? cw = null, Visibility visiblity = Visibility.Default);
 
 		/// <summary>
 		/// 指定したユーザーにダイレクトメッセージを送信します。
@@ -110,7 +110,7 @@ namespace Citrine.Core.Api
 		/// <param name="user">ユーザー。</param>
 		/// <param name="text">テキスト。</param>
 		/// <returns>作成したメッセージ。</returns>
-		Task<IPost> SendDirectMessageAsync(IUser user, string text);
+		Task<IPost?> SendDirectMessageAsync(IUser user, string text);
 
 		/// <summary>
 		/// ファイルをアップロードします。
@@ -118,7 +118,7 @@ namespace Citrine.Core.Api
 		/// <param name="path">ファイルパス。</param>
 		/// <param name="name">ファイル名。</param>
 		/// <returns>作成したファイル。</returns>
-		Task<IAttachment> UploadAsync(string path, string name);
+		Task<IAttachment?> UploadAsync(string path, string? name);
 
 		/// <summary>
 		/// ファイルを削除します。
@@ -180,25 +180,25 @@ namespace Citrine.Core.Api
 		/// ID から投稿を取得します。
 		/// </summary>
 		/// <returns>取得した投稿。</returns>
-		Task<IPost> GetPostAsync(string id);
+		Task<IPost?> GetPostAsync(string id);
 		/// <summary>
 		/// ID からユーザーを取得します。
 		/// </summary>
 		/// <returns>取得したユーザー。</returns>
-		Task<IUser> GetUserAsync(string id);
+		Task<IUser?> GetUserAsync(string id);
 
 		/// <summary>
 		/// ユーザー名からユーザーを取得します。
 		/// </summary>
 		/// <returns>取得したユーザー。</returns>
-		Task<IUser> GetUserByNameAsync(string name);
+		Task<IUser?> GetUserByNameAsync(string name);
 
 		/// <summary>
 		/// ID からファイルを取得します。
 		/// </summary>
 		/// <param name="fileId"></param>
 		/// <returns>取得したファイル。</returns>
-		Task<IAttachment> GetAttachmentAsync(string fileId);
+		Task<IAttachment?> GetAttachmentAsync(string fileId);
 	}
 
 	/// <summary>

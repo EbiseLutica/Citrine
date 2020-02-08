@@ -78,7 +78,7 @@ namespace Citrine.Core.Modules
 		}
 
 		private readonly HttpClient cli = new HttpClient() { };
-		private readonly (string name, string id)[] areaDefinitions =
+		private readonly (string name, string id)[] areaDefinitions = new[]
 		{
 			( "北海道", "016010" ),
 			( "稚内", "011000" ),
@@ -239,61 +239,61 @@ namespace Citrine.Core.Modules
 			( "宮古島", "473000" ),
 			( "石垣島", "474010" ),
 			( "与那国島", "474020" )
-		};
+		}.OrderByDescending(rec => rec.Item1.Length).ToArray();
 
 		class TenkiModel
 		{
 			[JsonProperty("pinpointLocations")]
-			public List<PinpointLocation> PinpointLocations { get; set; }
+			public List<PinpointLocation> PinpointLocations { get; set; } = new List<PinpointLocation>();
 
 			[JsonProperty("link")]
-			public string Link { get; set; }
+			public string Link { get; set; } = "";
 
 			[JsonProperty("forecasts")]
-			public List<Forecast> Forecasts { get; set; }
+			public List<Forecast> Forecasts { get; set; } = new List<Forecast>();
 
 			[JsonProperty("title")]
-			public string Title { get; set; }
+			public string Title { get; set; } = "";
 
 			[JsonProperty("description")]
-			public Desc Description { get; set; }
+			public Desc Description { get; set; } = new Desc();
 
 			public class PinpointLocation
 			{
 				[JsonProperty("link")]
-				public string Link { get; set; }
+				public string Link { get; set; } = "";
 
 				[JsonProperty("name")]
-				public string Name { get; set; }
+				public string Name { get; set; } = "";
 			}
 
 			public class Forecast
 			{
 				[JsonProperty("dateLabel")]
-				public string DateLabel { get; set; }
+				public string DateLabel { get; set; } = "";
 
 				[JsonProperty("telop")]
-				public string Telop { get; set; }
+				public string Telop { get; set; } = "";
 
 				[JsonProperty("date")]
-				public string Date { get; set; }
+				public string Date { get; set; } = "";
 
 				[JsonProperty("temperature")]
-				public TemperatureModel Temperature { get; set; }
+				public TemperatureModel Temperature { get; set; } = new TemperatureModel();
 
 				public class TemperatureModel
 				{
 					[JsonProperty("min")]
-					public TemperatureChild Min { get; set; }
+					public TemperatureChild Min { get; set; } = new TemperatureChild();
 					[JsonProperty("max")]
-					public TemperatureChild Max { get; set; }
+					public TemperatureChild Max { get; set; } = new TemperatureChild();
 
 					public class TemperatureChild
 					{
 						[JsonProperty("celsius")]
-						public string Celsius { get; set; }
+						public string Celsius { get; set; } = "";
 						[JsonProperty("fahrenheit")]
-						public string Fahrenheit { get; set; }
+						public string Fahrenheit { get; set; } = "";
 					}
 				}
 			}
@@ -301,7 +301,7 @@ namespace Citrine.Core.Modules
 			public class Desc
 			{
 				[JsonProperty("text")]
-				public string Text { get; set; }
+				public string Text { get; set; } = "";
 			}
 		}
 	}

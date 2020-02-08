@@ -43,7 +43,7 @@ namespace Citrine.Core
 			}
 		}
 
-		private string GetDescription(CommandBase cmd) => $"/{cmd.Name} - {cmd.Description ?? "説明はありません。"}";
+		private string GetDescription(ICommand cmd) => $"/{cmd.Name} - {cmd.Description ?? "説明はありません。"}";
 
 		private string DumpPermission(PermissionFlag flag)
 		{

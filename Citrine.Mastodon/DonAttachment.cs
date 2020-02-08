@@ -36,6 +36,7 @@ namespace Citrine.Mastodon
 			Native = m;
 			Id = m.Id.ToString();
 			Comment = m.Description;
+			Name = "";
 			Url = m.Url;
 			PreviewUrl = m.PreviewUrl;
 		}

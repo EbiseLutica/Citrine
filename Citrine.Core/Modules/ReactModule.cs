@@ -11,7 +11,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-			if (n.User.Id == shell.Myself.Id)
+			if (n.User.Id == shell.Myself?.Id)
 				return false;
 
 			if (n.Text == null)
@@ -39,6 +39,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
+			await Task.Delay(0);
 			if (string.IsNullOrEmpty(n.Text))
 				return false;
 

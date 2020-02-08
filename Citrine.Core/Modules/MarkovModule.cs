@@ -13,8 +13,8 @@ namespace Citrine.Core.Modules
 {
 	public class MarkovModule : ModuleBase
 	{
-		public MarkovNode Root { get; private set; }
-		public List<MarkovNode> Nodes { get; private set; }
+		public MarkovNode? Root { get; private set; }
+		public List<MarkovNode>? Nodes { get; private set; }
 
 		public string MatchPattern => "(何|な[にん])か([喋話]|しゃべ|はな)([しっ]て|せ|れ)";
 
@@ -30,27 +30,35 @@ namespace Citrine.Core.Modules
 			RunGc();
 			Save(core);
 
+			await Task.Delay(0);
+
 			return false;
 		}
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			InitializeIfNeeded(core);
-			if (n.Text.IsMatch(MatchPattern))
+			if (n.Text is string text && text.IsMatch(MatchPattern))
 			{
 				await Task.Delay(4000);
 				var ctx = await shell.ReplyAsync(n, Say());
-				core.RegisterContext(ctx, this, null);
+				if (ctx != null)
+					core.RegisterContext(ctx, this, null);
 				return true;
 			}
 			return false;
 		}
 
-		public override async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core)
+		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
 		{
+			if (n.Text is string text && text.TrimMentions().IsMatch("^.{0,4}[終お]わり.{0,4}$"))
+			{
+				await shell.ReplyAsync(n, "ふう, 楽しかった. また話そうね");
+			}
 			await Task.Delay(4000);
 			var ctx = await shell.ReplyAsync(n, Say());
-			core.RegisterContext(ctx, this, null);
+			if (ctx != null)
+				core.RegisterContext(ctx, this, null);
 			return true;
 		}
 
@@ -82,7 +90,7 @@ namespace Citrine.Core.Modules
 				if (node == MarkovNode.End)
 					EON = node;
 
-				if (Nodes.Contains(node)) return;
+				if (Nodes == null || Nodes.Contains(node)) return;
 				Nodes.Add(node);
 				Pick(node.Children);
 			});
@@ -98,10 +106,10 @@ namespace Citrine.Core.Modules
 			File.WriteAllText("markov.root.json", serialized);
 		}
 
-		private string Say()
+		private string? Say()
 		{
-			var node = Root.Children.Random();
-			if (node == null) return null;
+			MarkovNode? node = Root?.Children.Random();
+			if (node == null!) return null;
 			var builder = new StringBuilder();
 			while (node != EON)
 			{
@@ -126,11 +134,11 @@ namespace Citrine.Core.Modules
 
 		private void Input(IPost n)
 		{
-			if (string.IsNullOrEmpty(n.Text) && n.IsRepost)
+			if (string.IsNullOrEmpty(n.Text) && n.Repost is IPost repost)
 			{
-				n = n.Repost;
+				n = repost;
 			}
-			if (!string.IsNullOrEmpty(n.Text) && n.Visiblity != Visiblity.Private && !n.Text.TrimMentions().StartsWith("/"))
+			if (!string.IsNullOrEmpty(n.Text) && n.Visiblity != Visibility.Private && !n.Text.TrimMentions().StartsWith("/"))
 			{
 				// 句点や感嘆符、疑問符などで区切る
 				var texts = Regex.Split(n.Text.TrimMentions(), @"([\.。．…‥？！\?!・･]+)");
@@ -152,6 +160,7 @@ namespace Citrine.Core.Modules
 		private void Learn(string text)
 		{
 			if (string.IsNullOrEmpty(text)) return;
+			if (Root == null) return;
 
 			var tokenized = TinySegmenter.Instance.Segment(text);
 
@@ -167,6 +176,8 @@ namespace Citrine.Core.Modules
 
 		private MarkovNode GetOrCreateNode(string token)
 		{
+			if (Root == null) throw new InvalidOperationException();
+			if (Nodes == null) throw new InvalidOperationException();
 			if (Nodes.FirstOrDefault(n => n.Value == token) is MarkovNode n)
 			{
 				// 参照された単語は新しいものとする
@@ -181,6 +192,8 @@ namespace Citrine.Core.Modules
 
 		private void RunGc()
 		{
+			if (Root == null) throw new InvalidOperationException();
+			if (Nodes == null) throw new InvalidOperationException();
 			bool IsGarvageNode(MarkovNode n) => DateTime.Now - n.CreatedAt > new TimeSpan(6, 0, 0);
 
 			// 12時間以上前の古いツリーは削除する

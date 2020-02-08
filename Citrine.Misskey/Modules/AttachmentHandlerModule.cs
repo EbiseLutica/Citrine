@@ -36,7 +36,7 @@ namespace Citrine.Misskey
 				}
 
 				var a = n.Attachments.First();
-				var file = (a as MiAttachment).Native;
+				var file = (a as MiAttachment)!.Native;
 				var path =
 					// 写真の場合普通にURL
 					file.Type.StartsWith("image")

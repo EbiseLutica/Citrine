@@ -12,7 +12,7 @@ namespace Citrine.Core
 		public List<string> Moderators { get; set; } = new List<string>();
 
 		[JsonProperty("admin")]
-		public string Admin { get; set; }
+		public string Admin { get; set; } = "";
 
 		[JsonProperty("loggingLevel")]
 		public LoggingLevel LoggingLevel { get; set; } = LoggingLevel.Info;

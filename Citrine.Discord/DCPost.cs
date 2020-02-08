@@ -17,27 +17,27 @@ namespace Citrine.Discord
 
 		public bool IsRepost => Repost != null;
 
-		public IPost Repost => null;
+		public IPost? Repost => null;
 
 		public bool IsReply => Reply != null;
 
-		public IPost Reply { get; }
+		public IPost? Reply { get; }
 
 		public long RepostCount => 0;
 
-		public Visiblity Visiblity => Visiblity.Public;
+		public Visibility Visiblity => Visibility.Public;
 
 		public string NativeVisiblity => "";
 
 		public string Via { get; }
 
-		public IPoll Poll => null;
+		public IPoll? Poll => null;
 
 		public IMessage Native { get; }
 
 		public List<C.IAttachment> Attachments { get; }
 
-		public DCPost(IMessage mes, IPost reply = null)
+		public DCPost(IMessage mes, IPost? reply = null)
 		{
 			Native = mes;
 			Id = mes.GetJumpUrl();
@@ -45,7 +45,7 @@ namespace Citrine.Discord
 			Text = TrimMentions(mes.Content);
 			Reply = reply;
 			Via = mes.Application?.Name ?? "";
-			Attachments = mes.Attachments?.Select(a => new DCAttachment(a) as C.IAttachment).ToList();
+			Attachments = mes.Attachments.Select(a => new DCAttachment(a) as C.IAttachment).ToList();
 		}
 
 		public static string TrimMentions(string s) => Regex.Replace(s, @"<@[0-9\!]+>", "").Trim();

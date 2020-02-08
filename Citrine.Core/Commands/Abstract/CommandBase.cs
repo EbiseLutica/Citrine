@@ -6,7 +6,7 @@ namespace Citrine.Core
 	/// <summary>
 	/// コマンドの基底クラスです。
 	/// </summary>
-	public abstract class CommandBase
+	public abstract class CommandBase : ICommand
 	{
 		/// <summary>
 		/// コマンド名を取得します。
@@ -16,7 +16,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// コマンドのエイリアス一覧を取得します。
 		/// </summary>
-		public virtual string[] Aliases { get; }
+		public virtual string[] Aliases { get; } = new string[0];
 
 		/// <summary>
 		/// コマンド名の大文字小文字を区別しないかどうかを示す値を取得します。
@@ -33,7 +33,7 @@ namespace Citrine.Core
 		/// </summary>
 		public abstract string Usage { get; }
 
-		public virtual string Description { get; }
+		public virtual string Description { get; } = "";
 
 		/// <summary>
 		/// コマンドを実行します。

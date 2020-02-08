@@ -98,7 +98,7 @@ namespace Citrine.Core.Modules
 
 	static class FortuneExtension
 	{
-		public static string GenerateWord(Random r = null)
+		public static string GenerateWord(Random? r = null)
 		{
 			var sb = new StringBuilder();
 			var p = ItemPrefix(r);
@@ -112,9 +112,9 @@ namespace Citrine.Core.Modules
 			return sb.ToString();
 		}
 
-		public static string Item(Random r = null) => Items.Random(r);
-		public static string ItemPrefix(Random r = null) => ItemPrefixes.Random(r);
-		public static string ItemSuffix(Random r = null) => ItemSuffixes.Random(r);
+		public static string Item(Random? r = null) => Items.Random(r);
+		public static string ItemPrefix(Random? r = null) => ItemPrefixes.Random(r);
+		public static string ItemSuffix(Random? r = null) => ItemSuffixes.Random(r);
 
 		static Random rnd = new Random();
 	}

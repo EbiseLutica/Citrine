@@ -21,13 +21,13 @@ namespace Citrine.Core
 				new KeyValuePair<string, string>("name", body)
 			}) : new StringContent("") as HttpContent;
 			var res = await (await Server.Http.PostAsync("https://ojichat.appspot.com/post", req)).Content.ReadAsStringAsync();
-			return JsonConvert.DeserializeObject<OjichatResponse>(res).Message;
+			return JsonConvert.DeserializeObject<OjichatResponse>(res).Message ?? "";
 		}
 
 		class OjichatResponse
 		{
 			[JsonProperty("message")]
-			public string Message { get; set; }
+			public string? Message { get; set; }
 		}
 	}
 }

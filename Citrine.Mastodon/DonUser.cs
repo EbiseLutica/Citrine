@@ -38,7 +38,7 @@ namespace Citrine.Mastodon
 			IconUrl = user.Avatar;
 			Id = user.Id.ToString();
 			Description = user.Note;
-			Host = user.Acct?.Split('@').Skip(1).FirstOrDefault();
+			Host = user.Acct?.Split('@').Skip(1).FirstOrDefault() ?? "";
 			IsVerified = false;
 			IsBot = user.IsBot ?? false;
 			FollowingsCount = user.FollowingCount;

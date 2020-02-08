@@ -6,35 +6,35 @@ using Newtonsoft.Json;
 
 namespace Citrine.Sea
 {
-    public class CPost : IPost
-    {
-        public string Id { get; set; }
+	public class CPost : IPost
+	{
+		public string Id { get; set; }
 
-        public IUser User { get; set; }
+		public IUser User { get; set; }
 
-        public string Text { get; set; }
+		public string Text { get; set; }
 
-        public string Via { get; set; }
+		public string Via { get; set; }
 
-        public List<IAttachment> Attachments { get; set; }
+		public List<IAttachment> Attachments { get; set; }
 
-        public bool IsRepost => false;
+		public bool IsRepost => false;
 
-        public IPost? Repost => null;
+		public IPost? Repost => null;
 
-        public bool IsReply => false;
+		public bool IsReply => false;
 
-        public IPost? Reply => null;
+		public IPost? Reply => null;
 
-        public long RepostCount => 0;
+		public long RepostCount => 0;
 
-        public Visiblity Visiblity => Visiblity.Public;
+		public Visibility Visiblity => Visibility.Public;
 
-        public string NativeVisiblity => "public";
+		public string NativeVisiblity => "public";
 
-        public IPoll? Poll => null;
+		public IPoll? Poll => null;
 
-        public CPost(Post p)
+		public CPost(Post p)
 		{
 			Id = p.Id.ToString();
 			User = new CUser(p.User, p.Application.IsAutomated);
@@ -42,5 +42,5 @@ namespace Citrine.Sea
 			Via = p.Application.Name;
 			Attachments = p.Files.Select(f => new CAttachment(f) as IAttachment).ToList();
 		}
-    }
+	}
 }

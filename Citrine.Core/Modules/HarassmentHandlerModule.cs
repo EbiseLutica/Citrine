@@ -76,6 +76,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
+			await Task.Delay(0);
 			// セクハラ投稿であれば見なかったことにする
 			return n.Text is string t && IsHarassmented(t);
 		}

@@ -3,7 +3,7 @@ using Citrine.Core.Api;
 
 namespace Citrine.Core
 {
-    public static class ServerExtension
+	public static class ServerExtension
 	{
 		/// <summary>
 		/// リミテーション付きで好感度を上げます。30秒以内に指定したユーザーの好感度を既に上げている場合は何もしません。
@@ -36,7 +36,7 @@ namespace Citrine.Core
 				return false;
 		}
 
-		public static UserStorage.UserRecord GetMyStorage(this Server core) => core.Storage[core.Shell.Myself];
+		public static UserStorage.UserRecord GetMyStorage(this Server core) => core.Storage[core.Shell.Myself!];
 	}
 
 }

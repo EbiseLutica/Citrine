@@ -32,18 +32,15 @@ namespace Citrine.Core
 		/// </summary>
 		public static string Version => "5.6.0";
 
-		[Obsolete("6.0.0で廃止されます。")]
-		public static string VersionAsXelticaBot => Version;
-
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
 		/// </summary>
-		public List<ModuleBase> Modules { get; }
+		public List<IModule> Modules { get; }
 
 		/// <summary>
 		/// 読み込まれているコマンド一覧を取得します。
 		/// </summary>
-		public List<CommandBase> Commands { get; }
+		public List<ICommand> Commands { get; }
 
 		/// <summary>
 		/// シェルを取得します。
@@ -55,25 +52,23 @@ namespace Citrine.Core
 		/// <summary>
 		/// 文脈の一覧を取得します。
 		/// </summary>
-		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextPostDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
+		public Dictionary<string, (IModule, Dictionary<string, object>)> ContextPostDictionary { get; } = new Dictionary<string, (IModule, Dictionary<string, object>)>();
 
 		/// <summary>
 		/// ユーザーの一覧を取得します。
 		/// </summary>
-		public Dictionary<string, (ModuleBase, Dictionary<string, object>)> ContextUserDictionary { get; } = new Dictionary<string, (ModuleBase, Dictionary<string, object>)>();
-
-		/// <summary>
-		/// ニックネームの辞書を取得します。
-		/// </summary>
-		/// <value></value>
-		[Obsolete("常に null を返します。 6.0.0 から削除されます。SetNicknameOf() メソッドなどを使用してください。")]
-		public Dictionary<string, string> NicknameMap { get; }
+		public Dictionary<string, (IModule, Dictionary<string, object>)> ContextUserDictionary { get; } = new Dictionary<string, (IModule, Dictionary<string, object>)>();
 
 		/// <summary>
 		/// ユーザーストレージを取得します。
 		/// </summary>
 		/// <returns></returns>
 		public UserStorage Storage { get; } = new UserStorage();
+
+		/// <summary>
+		/// 乱数ジェネレーターのインスタンスを取得します。
+		/// </summary>
+		public Random Random { get; } = new Random();
 
 		static Server()
 		{
@@ -87,15 +82,21 @@ namespace Citrine.Core
 		{
 			Shell = shell;
 			Modules = Assembly.GetExecutingAssembly().GetTypes()
-						.Where(a => a.IsSubclassOf(typeof(ModuleBase)))
-						.Select(a => Activator.CreateInstance(a) as ModuleBase)
+						.Where(typeof(IModule).IsAssignableFrom)
+						.Where(a => a.GetConstructor(Type.EmptyTypes) != null)
+						.Select(a => Activator.CreateInstance(a))
+						.OfType<IModule>()
 						.OrderBy(mod => mod.Priority)
 						.ToList();
 
 			Commands = Assembly.GetExecutingAssembly().GetTypes()
-						.Where(a => a.IsSubclassOf(typeof(CommandBase)))
-						.Select(a => Activator.CreateInstance(a) as CommandBase)
+						.Where(typeof(ICommand).IsAssignableFrom)
+						.Where(a => a.GetConstructor(Type.EmptyTypes) != null)
+						.Select(a => Activator.CreateInstance(a))
+						.OfType<ICommand>()
 						.ToList();
+
+			string adminId = "";
 
 			if (File.Exists("./admin"))
 			{
@@ -145,7 +146,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// モジュールを追加します。
 		/// </summary>
-		public void AddModule(ModuleBase mod)
+		public void AddModule(IModule mod)
 		{
 			if (Modules.Contains(mod))
 				return;
@@ -160,14 +161,14 @@ namespace Citrine.Core
 		/// <summary>
 		/// コマンドを追加します。
 		/// </summary>
-		public void AddCommand(CommandBase cmd)
+		public void AddCommand(ICommand cmd)
 		{
 			if (Commands.Contains(cmd))
 				return;
 			Commands.Add(cmd);
 		}
 
-		public CommandBase TryGetCommand(string n) => Commands.FirstOrDefault(c =>
+		public ICommand TryGetCommand(string n) => Commands.FirstOrDefault(c =>
 		{
 			var cn = c.Name;
 			var cnl = c.Name.ToLowerInvariant();
@@ -233,10 +234,6 @@ namespace Citrine.Core
 		/// <param name="user"></param>
 		/// <returns></returns>
 		public bool IsLocal(IUser user) => string.IsNullOrEmpty(user.Host);
-
-
-		[Obsolete("Use " + nameof(IsSuperUser) + " instead")]
-		public bool IsAdmin(IUser user) => IsSuperUser(user);
 
 		/// <summary>
 		/// 指定したユーザーが管理者またはモデレーターであるかどうかを取得します。
@@ -343,11 +340,11 @@ namespace Citrine.Core
 				return;
 			await Task.Delay(1000);
 
-			if (mention.IsReply && ContextPostDictionary.ContainsKey(mention.Reply.Id))
+			if (mention.Reply is IPost reply && ContextPostDictionary.ContainsKey(reply.Id))
 			{
 				var (mod, arg) = ContextPostDictionary[mention.Reply.Id];
-				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
 				ContextPostDictionary.Remove(mention.Reply.Id);
+				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
 				return;
 			}
 
@@ -400,8 +397,8 @@ namespace Citrine.Core
 			if (ContextUserDictionary.ContainsKey(post.User.Id))
 			{
 				var (mod, arg) = ContextUserDictionary[post.User.Id];
-				await mod.OnRepliedContextually(post, null, arg, Shell, this);
 				ContextUserDictionary.Remove(post.User.Id);
+				await mod.OnRepliedContextually(post, null, arg, Shell, this);
 				return;
 			}
 
@@ -416,7 +413,7 @@ namespace Citrine.Core
 				}
 				catch (Exception ex)
 				{
-					await Shell.ReplyAsync(post, "ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。)");
+					await Shell.ReplyAsync(post, $"ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。@{Config.Instance.Admin} はコンソールを確認して下さい。)");
 					WriteException(ex);
 				}
 			}
@@ -465,15 +462,15 @@ namespace Citrine.Core
 			}
 		}
 
-		public void RegisterContext(IPost post, ModuleBase mod, Dictionary<string, object> args = null)
+		public void RegisterContext(IPost post, IModule mod, Dictionary<string, object>? args = null)
 		{
 			if (post is IDirectMessage dm)
 			{
-				ContextUserDictionary[dm.Recipient.Id] = (mod, args);
+				ContextUserDictionary[dm.Recipient.Id] = (mod, args ?? new Dictionary<string, object>());
 			}
 			else
 			{
-				ContextPostDictionary[post.Id] = (mod, args);
+				ContextPostDictionary[post.Id] = (mod, args ?? new Dictionary<string, object>());
 			}
 		}
 
@@ -494,6 +491,5 @@ namespace Citrine.Core
 		}
 
 		public static readonly HttpClient Http = new HttpClient();
-		readonly string adminId;
 	}
 }

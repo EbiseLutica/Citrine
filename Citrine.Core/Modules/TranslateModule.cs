@@ -14,7 +14,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-			if (n.User.Id == shell.Myself.Id)
+			if (n.User.Id == shell.Myself?.Id)
 				return false;
 
 			if (n.Text == null)
@@ -27,6 +27,8 @@ namespace Citrine.Core.Modules
 				{
 					var result = await core.ExecCommand("/translate auto " + lang.code + " " + HttpUtility.UrlEncode(m.Groups[1].Value));
 					var reply = await shell.ReplyAsync(n, result);
+					if (reply == null)
+						return true;
 
 					EconomyModule.Pay(n, shell, core);
 					core.LikeWithLimited(n.User);
@@ -42,9 +44,9 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
-		public override async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core)
+		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
 		{
-			if (n.User.Id == shell.Myself.Id)
+			if (n.User.Id == shell.Myself?.Id)
 				return false;
 
 			if (n.Text == null)
@@ -58,6 +60,9 @@ namespace Citrine.Core.Modules
 					core.LikeWithLimited(n.User);
 					var result = await core.ExecCommand($"/translate {store["code"]} {lang.code} {store["result"]}");
 					var reply = await shell.ReplyAsync(n, result);
+
+					if (reply == null)
+						return true;
 
 					EconomyModule.Pay(n, shell, core);
 					core.LikeWithLimited(n.User);

@@ -16,7 +16,7 @@ namespace Citrine.Misskey
 			Text = mes.Text;
 			IsRead = mes.IsRead;
 			Recipient = new MiUser(mes.Recipient);
-			Attachments = mes.File != null ? new List<IAttachment> { new MiAttachment(mes.File) } : null;
+			Attachments = mes.File != null ? new List<IAttachment> { new MiAttachment(mes.File) } : new List<IAttachment>();
 		}
 
 		public string Id { get; }
@@ -34,21 +34,21 @@ namespace Citrine.Misskey
 		#region unsupported props
 		public bool IsRepost => false;
 
-		public IPost Repost => default;
+		public IPost? Repost => default;
 
 		public bool IsReply => false;
 
-		public IPost Reply => default;
+		public IPost? Reply => default;
 
 		public long RepostCount => 0;
 
-		public Visiblity Visiblity => Visiblity.Default;
+		public Visibility Visiblity => Visibility.Default;
 
-		public string NativeVisiblity => default;
+		public string? NativeVisiblity => default;
 
-		public string Via => default;
+		public string? Via => default;
 
-		public IPoll Poll => default;
+		public IPoll? Poll => default;
 		#endregion
 	}
 }

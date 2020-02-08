@@ -8,7 +8,7 @@ namespace Citrine.Core.Modules
 	/// <summary>
 	/// Citrine のモジュールベース。
 	/// </summary>
-	public abstract class ModuleBase
+	public abstract class ModuleBase : IModule
 	{
 		public virtual int Priority => 0;
 
@@ -20,6 +20,6 @@ namespace Citrine.Core.Modules
 
 		public virtual async Task<bool> OnFollowedAsync(IUser user, IShell shell, Server core) => false;
 
-		public virtual async Task<bool> OnRepliedContextually(IPost n, IPost context, Dictionary<string, object> store, IShell shell, Server core) => false;
+		public virtual async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core) => false;
 	}
 }
