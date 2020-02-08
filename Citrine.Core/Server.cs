@@ -30,7 +30,7 @@ namespace Citrine.Core
 		/// <summary>
 		/// バージョンを取得します。
 		/// </summary>
-		public static string Version => "5.6.0";
+		public static string Version => "6.0.0";
 
 		/// <summary>
 		/// 読み込まれているモジュール一覧を取得します。
