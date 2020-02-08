@@ -27,6 +27,12 @@ namespace Citrine.Core.Modules
 		{
 			if (n.Text == null) return false;
 			var player = NormalizeHand(n.Text);
+			if (player == null)
+			{
+				var r = await shell.ReplyAsync(n, "じゃんけんの手を出してね...もしちゃんと出してるのにって思ったら, 「グー, チョキ, パー」か、肌の色が真っ黄色な手の絵文字であることを確認してね.");
+				core.RegisterContext(r, this);
+				return true;
+			}
 			var me = new[] { "✊", "✌", "✋" }[rnd.Next(3)];
 
 			Result result = DoBSPGame(player, me);
@@ -48,7 +54,7 @@ namespace Citrine.Core.Modules
 			return true;
 		}
 
-		private static string NormalizeHand(string text)
+		private static string? NormalizeHand(string text)
 		{
 			return text switch
 			{
@@ -58,10 +64,13 @@ namespace Citrine.Core.Modules
 				"グー" => "✊",
 				"ぐー" => "✊",
 				"✊" => "✊",
+				"👊" => "✊",
 				"パー" => "✋",
 				"ぱー" => "✋",
 				"✋" => "✋",
-				_ => throw new Exception(),
+				"🤚" => "✋",
+				"🖐" => "✋",
+				_ => null,
 			};
 		}
 
