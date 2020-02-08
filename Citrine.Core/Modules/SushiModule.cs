@@ -6,7 +6,7 @@ namespace Citrine.Core.Modules
 {
 	public class SushiModule : ModuleBase
 	{
-		public readonly string StatSushiCount = "stat.sushi-count";
+		public static readonly string StatSushiCount = "stat.sushi-count";
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
