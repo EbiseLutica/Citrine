@@ -336,33 +336,32 @@ namespace Citrine.Core
 
 		public async Task HandleMentionAsync(IPost mention)
 		{
-			if (mention.User.IsBot)
-				return;
-			await Task.Delay(1000);
-
-			if (mention.Reply is IPost reply && ContextPostDictionary.ContainsKey(reply.Id))
+			try
 			{
-				var (mod, arg) = ContextPostDictionary[mention.Reply.Id];
-				ContextPostDictionary.Remove(mention.Reply.Id);
-				await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
-				return;
-			}
+				if (mention.User.IsBot)
+					return;
+				await Task.Delay(1000);
 
-			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
-			foreach (var mod in Modules.ToList())
-			{
-				try
+				if (mention.Reply is IPost reply && ContextPostDictionary.ContainsKey(reply.Id))
+				{
+					var (mod, arg) = ContextPostDictionary[mention.Reply.Id];
+					ContextPostDictionary.Remove(mention.Reply.Id);
+					await mod.OnRepliedContextually(mention, mention.Reply, arg, Shell, this);
+					return;
+				}
+
+				// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+				foreach (var mod in Modules.ToList())
 				{
 					// module が true を返したら終わり
 					if (await mod.ActivateAsync(mention, Shell, this))
 						break;
 				}
-				catch (Exception ex)
-				{
-					WriteException(ex);
-					await Shell.ReplyAsync(mention, "ん...何の話してたんだっけ...?　(エラーが発生したようです。コンソールを確認してください。)");
-					break;
-				}
+			}
+			catch (Exception ex)
+			{
+				WriteException(ex);
+				await Shell.ReplyAsync(mention, "ん...何の話してたんだっけ...?　(エラーが発生したようです。コンソールを確認してください。)");
 			}
 		}
 
@@ -390,32 +389,32 @@ namespace Citrine.Core
 
 		public async Task HandleDmAsync(IPost post)
 		{
-			if (post.User.IsBot)
-				return;
-			await Task.Delay(250);
-
-			if (ContextUserDictionary.ContainsKey(post.User.Id))
+			try
 			{
-				var (mod, arg) = ContextUserDictionary[post.User.Id];
-				ContextUserDictionary.Remove(post.User.Id);
-				await mod.OnRepliedContextually(post, null, arg, Shell, this);
-				return;
-			}
+				if (post.User.IsBot)
+					return;
+				await Task.Delay(250);
 
-			// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
-			foreach (var mod in Modules.ToList())
-			{
-				try
+				if (ContextUserDictionary.ContainsKey(post.User.Id))
+				{
+					var (mod, arg) = ContextUserDictionary[post.User.Id];
+					ContextUserDictionary.Remove(post.User.Id);
+					await mod.OnRepliedContextually(post, null, arg, Shell, this);
+					return;
+				}
+
+				// 非同期実行中にモジュール追加されると例外が発生するので毎回リストをクローン
+				foreach (var mod in Modules.ToList())
 				{
 					// module が true を返したら終わり
 					if (await mod.OnDmReceivedAsync(post, Shell, this))
 						break;
 				}
-				catch (Exception ex)
-				{
-					await Shell.ReplyAsync(post, $"ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。@{Config.Instance.Admin} はコンソールを確認して下さい。)");
-					WriteException(ex);
-				}
+			}
+			catch (Exception ex)
+			{
+				await Shell.ReplyAsync(post, $"ん...何の話してたんだっけ...?\n\n(エラーが発生したようです。@{Config.Instance.Admin} はコンソールを確認して下さい。)");
+				WriteException(ex);
 			}
 		}
 
