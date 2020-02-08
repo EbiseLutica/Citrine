@@ -60,7 +60,6 @@ namespace Citrine.Core.Modules
 		{
 			// 好感度に応じて、ランダムな量のお金をあげる
 			var storage = core.Storage[n.User];
-			var balance = storage.Get("economy.balance", 0);
 			int addition = rnd.Next(1, 10) *
 				core.GetRatingOf(n.User) switch
 				{
@@ -70,7 +69,7 @@ namespace Citrine.Core.Modules
 					Rating.Hate => 0,
 					_ => 1,
 				};
-			storage.Set("economy.balance", balance + addition);
+			storage.Add("economy.balance", addition);
 		}
 
 		public static bool TryUseMoney(IUser user, int amount, Server core)

@@ -139,6 +139,27 @@ namespace Citrine.Core.Api
 				Updated?.Invoke();
 			}
 
+			public void Add(string key, int value = 1)
+			{
+				Set(key, Get(key, 0) + value);
+
+				Updated?.Invoke();
+			}
+
+			public void Add(string key, float value)
+			{
+				Set(key, Get(key, 0f) + value);
+
+				Updated?.Invoke();
+			}
+
+			public void Add(string key, double value)
+			{
+				Set(key, Get(key, 0d) + value);
+
+				Updated?.Invoke();
+			}
+
 			public void Clear(string key)
 			{
 				if (!Has(key)) return;

@@ -22,7 +22,7 @@ namespace Citrine.Core
 		public static void OnHarassment(this Server core, IUser user, int decrementation = 1)
 		{
 			core.Dislike(user.Id, decrementation);
-			core.Storage[user].Set(StorageKey.HarrasmentedCount, core.Storage[user].Get(StorageKey.HarrasmentedCount, 0) + decrementation);
+			core.Storage[user].Add(StorageKey.HarrasmentedCount);
 		}
 
 		public static bool TryApologyze(this Server core, IUser user, int incrementation = 1)
