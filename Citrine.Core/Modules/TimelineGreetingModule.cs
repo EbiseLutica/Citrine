@@ -8,9 +8,9 @@ namespace Citrine.Core.Modules
 	public class TimelineGreetingModule : ModuleBase
 	{
 		public static readonly string StatGoodMorningCount = "stat.good-morning-count";
-		public static readonly string StatGoodNightCount = "stat.good-morning-count";
-		public static readonly string StatSeeYouLaterCount = "stat.good-morning-count";
-		public static readonly string StatWelcomeBackCount = "stat.good-morning-count";
+		public static readonly string StatGoodNightCount = "stat.good-night-count";
+		public static readonly string StatSeeYouLaterCount = "stat.see-you-later-count";
+		public static readonly string StatWelcomeBackCount = "stat.welcome-back-count";
 		public static readonly string StatWithoutSleepingCount = "stat.without-sleeping-count";
 
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
