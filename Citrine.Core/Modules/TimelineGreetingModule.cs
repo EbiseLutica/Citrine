@@ -19,6 +19,9 @@ namespace Citrine.Core.Modules
 				return false;
 			if (core.GetRatingOf(n.User) < Rating.Like)
 				return false;
+			// リプライであれば邪魔しない
+			if (n.Reply != null)
+				return false;
 
 			var storage = core.Storage[n.User];
 
