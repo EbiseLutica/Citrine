@@ -1,13 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using Citrine.Core.Api;
 
 namespace Citrine.Core.Modules
 {
 	public class BirthdayModule : ModuleBase
 	{
+		public BirthdayModule()
+		{
+			timer = new Timer(1000)
+			{
+				AutoReset = true,
+				Enabled = true,
+			};
+			timer.Elapsed += OnTick;
+		}
+
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
 			if (n.Text == null)
@@ -52,6 +64,13 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
+		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
+		{
+			(this.core, this.shell) = (core, shell);
+			await Task.Delay(0);
+			return false;
+		}
+
 		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
 		{
 			if (n.Text == null)
@@ -67,6 +86,40 @@ namespace Citrine.Core.Modules
 
 			await SetBirthday(n, shell, core, m.Groups[1].Value);
 			return true;
+		}
+		private async void OnTick(object sender, ElapsedEventArgs e)
+		{
+			if (core == null || shell == null)
+				return;
+
+			// 祝う対象を抽出する
+			var birthDayPeople = core.Storage.Records.Where(kv =>
+			{
+				var (userId, storage) = kv;
+
+				// 好感度が Like 以上
+				var isLike = core.GetRatingOf(userId) >= Rating.Like;
+
+				// 本日が誕生日である
+				var birthday = storage.Get(StorageKey.Birthday, DateTime.MinValue);
+				var today = DateTime.Today;
+				var birthdayIsToday = birthday.Month == today.Month && birthday.Day == today.Day;
+
+				// まだ祝ってない
+				var isNotCelebratedYet = storage.Get(keyLastCelebratedYear, 0) != today.Year;
+
+				return isLike && birthdayIsToday && isNotCelebratedYet;
+			});
+
+			foreach (var (id, storage) in birthDayPeople)
+			{
+				var user = await shell.GetUserAsync(id);
+				if (user == null) continue;
+
+				await shell.SendDirectMessageAsync(user, $"誕生日おめでとう, {core.GetNicknameOf(user)}");
+				storage.Set(keyLastCelebratedYear, DateTime.Today.Year);
+			}
+
 		}
 
 		private async Task SetBirthday(IPost n, IShell shell, Server core, string value)
@@ -89,5 +142,11 @@ namespace Citrine.Core.Modules
 		private static readonly Regex patternSetBirthday = new Regex($"誕生日は{date}");
 		private static readonly Regex patternStartBirthdayRegister = new Regex("誕生日を?(覚|おぼ)");
 		private static readonly Regex patternQueryBirthday = new Regex("誕生日(わか|分か|知って)");
+		private static readonly string keyLastCelebratedYear = "birthday.last-celebrated";
+
+		private readonly Timer timer;
+		private DateTime prevDate;
+		private Server? core;
+		private IShell? shell;
 	}
 }
