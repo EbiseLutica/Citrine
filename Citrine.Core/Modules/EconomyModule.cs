@@ -31,8 +31,8 @@ namespace Citrine.Core.Modules
 					return true;
 				}
 				var mention = StringExtension.RegexMentions.ToString();
-				var m1 = Regex.Match(text, $@"({mention})[にへ](\d+)ク[オォ]ーツを?送金$");
-				var m2 = Regex.Match(text, $@"(\d+)ク[オォ]ーツを? *({mention}) *[にへ]送金$");
+				var m1 = Regex.Match(text, $@"({mention})[にへ](\d+)ク[オォ]ーツを?送金");
+				var m2 = Regex.Match(text, $@"(\d+)ク[オォ]ーツを? *({mention}) *[にへ]送金");
 				if (m1.Success)
 					await TransferQuartzAsync(m1.Groups[1].Value, m1.Groups[2].Value, n, shell, core);
 				else if (m2.Success)
