@@ -23,7 +23,7 @@ namespace Citrine.Misskey
 
 	public class Shell : IShell
 	{
-		public static string Version => "2.2.1";
+		public static string Version => "2.3.0";
 
 		public MisskeyClient Misskey { get; private set; }
 
@@ -252,7 +252,18 @@ namespace Citrine.Misskey
 
 		public async Task<IUser?> GetUserAsync(string id) => new MiUser((await Misskey.Users.ShowAsync(userId: id)).First());
 
-		public async Task<IUser?> GetUserByNameAsync(string name) => new MiUser((await Misskey.Users.ShowAsync(username: name)).First());
+		public async Task<IUser?> GetUserByNameAsync(string name)
+		{
+			var splitted = name.Split('@').Where(s => !string.IsNullOrEmpty(s)).ToArray();
+			var acct = (splitted.Length switch
+			{
+				0 => throw new ArgumentException(nameof(name)),
+				1 => await Misskey.Users.ShowAsync(username: splitted[0]),
+				_ => await Misskey.Users.ShowAsync(username: splitted[0], host: splitted[1]),
+			}).FirstOrDefault();
+			
+			return acct != null ? new MiUser(acct) : null;
+		}
 
 		public async Task LikeAsync(IPost post)
 		{
