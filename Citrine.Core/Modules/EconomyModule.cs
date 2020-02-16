@@ -30,6 +30,13 @@ namespace Citrine.Core.Modules
 					await shell.ReplyAsync(n, builder.ToString());
 					return true;
 				}
+				var mention = StringExtension.RegexMentions.ToString();
+				var m1 = Regex.Match(text, $@"({mention})[にへ](\d+)ク[オォ]ーツを?送金$");
+				var m2 = Regex.Match(text, $@"(\d+)ク[オォ]ーツを? *({mention}) *[にへ]送金$");
+				if (m1.Success)
+					await TransferQuartzAsync(m1.Groups[1].Value, m1.Groups[2].Value, n, shell, core);
+				else if (m2.Success)
+					await TransferQuartzAsync(m2.Groups[2].Value, m2.Groups[1].Value, n, shell, core);
 				foreach (var item in ShopItems)
 				{
 					if (text.TrimMentions().IsMatch($"^{Regex.Escape(item.DisplayName)}を(ください|ちょうだい|くれ|頂戴)"))
@@ -87,6 +94,24 @@ namespace Citrine.Core.Modules
 		public static void GiveItem(IUser user, string itemId, Server core) => core.Storage[user].Set("economy.items." + itemId, true);
 
 		public static void TakeItem(IUser user, string itemId, Server core) => core.Storage[user].Set("economy.items." + itemId, false);
+
+		private async Task TransferQuartzAsync(string targetMention, string value2, IPost n, IShell shell, Server core)
+		{
+			var target = await shell.GetUserByNameAsync(targetMention);
+			if (target == null)
+			{
+				await shell.ReplyAsync(n, "ユーザーが見つからなかったため, 送金に失敗しました.");
+				return;
+			}
+			var amount = int.Parse(value2);
+			if (!TryUseMoney(n.User, amount, core))
+			{
+				await shell.ReplyAsync(n, "所持金が送金分よりも少ないため, 送金に失敗しました. あなたの残高は, " + core.Storage[n.User].Get("economy.balance", 0) + "クォーツです.");
+				return;
+			}
+			core.Storage[target].Add("economy.balance", amount);
+			await shell.ReplyAsync(n, "送金しました. あなたの残高は, " + core.Storage[n.User].Get("economy.balance", 0) + "クォーツです.");
+		}
 
 		private static readonly Random rnd = new Random();
 
