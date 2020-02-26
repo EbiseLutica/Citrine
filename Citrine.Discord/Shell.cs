@@ -267,8 +267,8 @@ namespace Citrine.Discord
 		private async Task<IMessage?> PostAsync(string? text, string? cw, List<Core.Api.IAttachment>? attachments)
 		{
 			// Discord has no api to send file from ID
-			if (cw != null && text != null && CurrentChannel != null)
-				return await CurrentChannel.SendMessageAsync(Cw(cw, text));
+			if (text != null && CurrentChannel != null)
+				return await CurrentChannel.SendMessageAsync(cw != null ? Cw(cw, text) : text);
 			return null;
 		}
 
