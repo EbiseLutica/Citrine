@@ -109,7 +109,7 @@ namespace Citrine.Discord
 			if (string.IsNullOrEmpty(text))
 				return null;
 			var mention = (post.User as DCUser)?.Native.Mention;
-			if (await PostAsync($"@{mention ?? "null"} {text}", cw, attachments) is IMessage mes)
+			if (await PostAsync($"{mention ?? "null"} {text}", cw, attachments) is IMessage mes)
 				return new DCPost(mes, post);
 			return null;
 		}
