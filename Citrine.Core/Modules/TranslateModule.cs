@@ -25,21 +25,22 @@ namespace Citrine.Core.Modules
 
 			foreach (var lang in langs)
 			{
-				var m = Regex.Match(n.Text.TrimMentions(), $"(.+)を{lang.pattern}[にへ]翻訳");
-				if (m.Success)
+				var matchNormal = Regex.Match(n.Text.TrimMentions(), $"(.+)を{lang.pattern}[にへ]翻訳");
+				var matchReposted = Regex.Match(n.Text.TrimMentions(), $"これを?{lang.pattern}[にへ]翻訳");
+				if (matchReposted.Success && n.Repost != null)
 				{
-					var result = await core.ExecCommand("/translate auto " + lang.code + " " + HttpUtility.UrlEncode(m.Groups[1].Value));
-					var reply = await shell.ReplyAsync(n, result);
-					if (reply == null)
-						return true;
-
-					EconomyModule.Pay(n, shell, core);
-					core.LikeWithLimited(n.User);
-					core.RegisterContext(reply, this, new Dictionary<string, object>()
+					if (string.IsNullOrEmpty(n.Repost.Text))
 					{
-						{ "result", result},
-						{ "code", lang.code},
-					});
+						await shell.ReplyAsync(n, "ん, その投稿にはテキストが含まれていないよ? 無いものは翻訳できないよね...");
+						return true;
+					}
+					await TranslateAsync("auto", lang.code, n.Repost.Text, n, shell, core);
+					core.Storage[n.User].Add(StatTranslatedCount);
+					return true;
+				}
+				else if (matchNormal.Success)
+				{
+					await TranslateAsync("auto", lang.code, HttpUtility.UrlEncode(matchNormal.Groups[1].Value), n, shell, core);
 					core.Storage[n.User].Add(StatTranslatedCount);
 					return true;
 				}
@@ -61,26 +62,31 @@ namespace Citrine.Core.Modules
 				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再翻訳");
 				if (m.Success)
 				{
-					core.LikeWithLimited(n.User);
-					var result = await core.ExecCommand($"/translate {store["code"]} {lang.code} {store["result"]}");
-					var reply = await shell.ReplyAsync(n, result);
-
-					if (reply == null)
-						return true;
-
-					EconomyModule.Pay(n, shell, core);
-					core.LikeWithLimited(n.User);
+					await TranslateAsync((string)store["code"], lang.code, (string)store["result"], n, shell, core);
 					core.Storage[n.User].Add(StatRetranslatedCount);
-					core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
-					{
-						{ "result", result},
-						{ "code", lang.code},
-					});
 					return true;
 				}
 			}
 
 			return false;
+		}
+
+		private async Task TranslateAsync(string from, string to, string text, IPost n, IShell shell, Server core)
+		{
+			core.LikeWithLimited(n.User);
+			var result = await core.ExecCommand($"/translate {from} {to} {text}");
+			var reply = await shell.ReplyAsync(n, result);
+
+			if (reply == null)
+				return;
+
+			EconomyModule.Pay(n, shell, core);
+			core.LikeWithLimited(n.User);
+			core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
+			{
+				{ "result", result},
+				{ "code", to },
+			});
 		}
 
 		private (string pattern, string code)[] langs = {
