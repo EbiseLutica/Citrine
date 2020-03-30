@@ -33,7 +33,6 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"どこ〜って言われた回数: {StatOf(ImHereModule.StatImHereCount)}回");
 				builder.AppendLine($"じゃんけんで勝った回数: {StatOf(JankenModule.StatWinCount)}回");
 				builder.AppendLine($"じゃんけんで負けた回数: {StatOf(JankenModule.StatLoseCount)}回");
-				builder.AppendLine($"何か喋らせた回数: {StatOf(MarkovModule.StatMarkovCount)}回");
 				builder.AppendLine($"セクハラした回数: {StatOf(StorageKey.HarrasmentedCount)}回");
 				builder.AppendLine($"悪口を言った回数: {StatOf(ReactModule.StatBadMouthCount)}回");
 				builder.AppendLine($"寿司を握った回数: {StatOf(SushiModule.StatSushiCount)}回");
