@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<LangVersion>Latest</LangVersion>
+		<Nullable>Enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="BotBone.Core" Version="1.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources/*" />
+	</ItemGroup>
+</Project>
