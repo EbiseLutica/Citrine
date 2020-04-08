@@ -2,71 +2,18 @@
 
 [English](README.md) ・ 日本語
 
-Citrine は、オープンソースな bot フレームワークです。
+シトリンは、可愛くて賢い chatbot な BotBone プラグインです。
 
-特定のソーシャルメディアから独立した API を持ち、多くのソーシャルメディアで動作するように設計されています。
+## 使用法
 
+まずはビルド。
 
-## モジュール
-
-モジュールは、Citrine の脳にあたります。リプライ, リアクションなどを行う為には、モジュールを bot の機能として作成し、 Citrine に読み込ませます。
-
-## モジュールを自作する方法
-
-シトリンに対応するモジュールを自作するためには、 [これを読んでください(工事中)](/docs/ja/module)
-
-## プラットフォームアダプター
-
-Citrine API は 各ソーシャルメディアの持つ API を抽象化したものです。
-
-プラットフォームアダプターは Citrine API の実装であり、特定のプラットフォーム上で Citrine を動作させる為のものです。 hubot のアダプターのような役割を持ちます。
-
-[✔] は実装済み, [ ] は計画中のもの。
-
-- [x] Misskey 11 (と互換性のあるサーバー)
-- [x] Mastodon
-- [x] Standalone
-	- 対話型シェル
-- [x] Discord
-- [x] [rinsuki/sea](https://github.com/rinsuki/sea)
-- [ ] Slack
-- [ ] LINE
-- [ ] Twitter
-
-
-### プラットフォームアダプターを自作する方法
-
-シトリンに対応するプラットフォームアダプターを自作するためには、 [これを読んでください(工事中)](/docs/ja/adapter)
-
-## 必要なソフトウェア
-
-- .NET Core 2.1
-
-## ビルド方法
-
-```shell
-git clone --recursive https://github.com/Xeltica/Citrine.git
-
-cd Citrine
-
-# --recursive を忘れた場合
-git submodule update --init
-
+```
 dotnet build
-
-# Citrine for Misskey を実行
-cd Citrine.Misskey && dotnet run
-
-# Citrine for Mastodon を実行
-cd Citrine.Mastodon && dotnet run
-
-# Citrine for Discord を実行
-cd Citrine.Discord && dotnet run
-
-# Citrine Interactive を実行
-cd Citrine.Standalone && dotnet run
 ```
 
+BotBoneの /plugins フォルダに、Citrine.dllを導入
+BotBone を起動するだけ
 
 ## 貢献
 
