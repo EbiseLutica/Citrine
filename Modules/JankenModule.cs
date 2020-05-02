@@ -34,6 +34,7 @@ namespace Citrine.Core.Modules
 			if (player == null)
 			{
 				var r = await shell.ReplyAsync(n, "じゃんけんの手を出してね...もしちゃんと出してるのにって思ったら, 「グー, チョキ, パー」か、肌の色が真っ黄色な手の絵文字であることを確認してね.");
+				if (r == null) return true;
 				core.RegisterContext(r, this);
 				return true;
 			}

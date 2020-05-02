@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using BotBone.Core;
 using BotBone.Core.Api;
 using BotBone.Core.Modules;
-using BotBone.Core.Modules;
 
 namespace Citrine.Core
 {
