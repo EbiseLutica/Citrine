@@ -20,16 +20,14 @@ namespace Citrine.Core.Modules
 	public class GreetingModule : ModuleBase
 	{
 		public override int Priority => 10000;
-		List<Pattern> patterns;
+		readonly List<Pattern> patterns;
 		readonly Random random = new Random();
 		public static readonly string StatTalkedCount = "stat.talked-count";
 
 		public GreetingModule()
 		{
-			using (var reader = new StreamReader(GetType().Assembly.GetManifestResourceStream("Citrine.Resources.greeting.json")))
-			{
-				patterns = JsonConvert.DeserializeObject<List<Pattern>>(reader.ReadToEnd());
-			}
+			using var reader = new StreamReader(GetType().Assembly.GetManifestResourceStream("Citrine.Resources.greeting.json"));
+			patterns = JsonConvert.DeserializeObject<List<Pattern>>(reader.ReadToEnd());
 		}
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
