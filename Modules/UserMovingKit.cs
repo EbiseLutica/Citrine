@@ -84,7 +84,7 @@ namespace Citrine.Core.Modules
 				return "ユーザーから実行してください.";
 			}
 
-			if (!(movingCodesSet.FirstOrDefault(m => m.movingCode == body) is (string userId, string movingCode) set))
+			if (!(movingCodesSet.FirstOrDefault(m => m.movingCode == body.Trim()) is (string userId, string movingCode) set))
 			{
 				return "その引っ越し手続きコードは存在しないよ. コードが正しいかもう一度確認してね.";
 			}
