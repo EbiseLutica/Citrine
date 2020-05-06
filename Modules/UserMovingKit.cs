@@ -76,7 +76,8 @@ namespace Citrine.Core.Modules
 			{
 				if (!sender.IsAdmin)
 					return "admin only";
-				string.Join("\n", movingCodesSet.Select(s => $"{s.userId}: {s.movingCode}"));
+				var dumped = string.Join("\n", movingCodesSet.Select(s => $"{s.userId}: {s.movingCode}"));
+				return string.IsNullOrEmpty(dumped) ? "no set" : dumped;
 			}
 			if (!(sender is PostCommandSender s))
 			{
