@@ -48,7 +48,6 @@ namespace Citrine.Core.Modules
 					}
 					movingCodesSet.Add((n.User.Id, code));
 					message = $"はい, 引っ越し手続きコードを発行したよ. 引っ越ししたいアカウントで私に、リプライで次のようなコマンドを送ってね.\n/moving-code {code}";
-
 				}
 			}
 			else if (n.Text.IsMatch("(引っ?越|ひっこ)しキャンセル"))
@@ -73,12 +72,18 @@ namespace Citrine.Core.Modules
 
 		public async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
+			if (body.ToLowerInvariant() == "dump")
+			{
+				if (!sender.IsAdmin)
+					return "admin only";
+				string.Join("\n", movingCodesSet.Select(s => $"{s.userId}: {s.movingCode}"));
+			}
 			if (!(sender is PostCommandSender s))
 			{
 				return "ユーザーから実行してください.";
 			}
 
-			if (!(movingCodesSet.FirstOrDefault(m => m.userId == s.User.Id) is (string userId, string movingCode) set))
+			if (!(movingCodesSet.FirstOrDefault(m => m.movingCode == body) is (string userId, string movingCode) set))
 			{
 				return "その引っ越し手続きコードは存在しないよ. コードが正しいかもう一度確認してね.";
 			}
