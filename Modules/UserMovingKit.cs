@@ -29,7 +29,7 @@ namespace Citrine.Core.Modules
 
 			string? message = null;
 
-			if (n.Text.IsMatch("(引っ?越|ひっこ)ししたい"))
+			if (n.Text.IsMatch("(引っ?越|ひっこ)しし?たい"))
 			{
 				if (movingCodesSet.FirstOrDefault(m => m.userId == n.User.Id) is (string userId, string movingCode) set)
 				{
