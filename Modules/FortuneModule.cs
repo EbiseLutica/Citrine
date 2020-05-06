@@ -96,8 +96,6 @@ namespace Citrine.Core.Modules
 
 		public override Task<bool> OnDmReceivedAsync(IPost n, IShell shell, Server core) => ActivateAsync(n, shell, core);
 
-		static Random rnd = new Random();
-
 		static string GetStar(int value, int maxValue) => new string('★', value) + new string('☆', maxValue - value);
 
 	}
@@ -122,7 +120,7 @@ namespace Citrine.Core.Modules
 		public static string ItemPrefix(Random? r = null) => ItemPrefixes.Random(r);
 		public static string ItemSuffix(Random? r = null) => ItemSuffixes.Random(r);
 
-		static Random rnd = new Random();
+		static readonly Random rnd = new Random();
 	}
 
 }

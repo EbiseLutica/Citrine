@@ -62,40 +62,6 @@ namespace Citrine.Core.Modules
 			return text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !text.IsMatch("(じゃ|では?)な[いく]");
 		}
 
-		private static readonly Random rnd = new Random();
-		private static readonly string[] otsukarePattern =
-		{
-			"おつかれ〜!",
-			"おつかれ.",
-			"お疲れ様です",
-			"おつです",
-			"今日も一日お疲れ様でした.",
-		};
-
-		private static readonly string[] ohayouPattern =
-		{
-			"おはよ〜!",
-			"おはよ!",
-			"おはようございます!",
-			"おはよう",
-		};
-
-		private static readonly string[] oyasumiPattern =
-		{
-			"おやすみ!",
-			"おやすみ〜!",
-			"良い夢を!",
-			"おやすみなさい!",
-		};
-
-		private static readonly string[] itteraPattern =
-		{
-			"いってらっしゃいませ!",
-			"いってら!",
-			"いってらっしゃい!",
-			"いってら〜!",
-		};
-
 		private static readonly string[] ponkotsuPattern =
 		{
 			"酷いです...",

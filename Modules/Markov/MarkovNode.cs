@@ -36,11 +36,7 @@ namespace Citrine.Core.Modules.Markov
 
 		public override int GetHashCode()
 		{
-			int hashCode = -1319415750;
-			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Value);
-			hashCode = hashCode * -1521134295 + EqualityComparer<List<MarkovNode>>.Default.GetHashCode(Children);
-			hashCode = hashCode * -1521134295 + CreatedAt.GetHashCode();
-			return hashCode;
+			return HashCode.Combine(Value, Children, CreatedAt);
 		}
 	}
 }

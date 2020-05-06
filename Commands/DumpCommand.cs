@@ -28,9 +28,9 @@ host: {n.User.Host ?? "NULL"}
 screenName: {n.User.ScreenName ?? "NULL"}
 text: {n.Text ?? "NULL"}
 visibility: {n.Visiblity}");
-				return "この投稿をコンソールに出力しました. コンソール画面を確認してください.";
+			return "この投稿をコンソールに出力しました. コンソール画面を確認してください.";
 		}
 
-		private Logger logger = new Logger(nameof(DumpCommand));
+		private readonly Logger logger = new Logger(nameof(DumpCommand));
 	}
 }

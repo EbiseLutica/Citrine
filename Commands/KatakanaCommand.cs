@@ -24,6 +24,6 @@ namespace Citrine.Core
 			return string.Concat(Enumerable.Repeat(0, count).Select(_ => katakana.Random()));
 		}
 
-		char[] katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンヴガギグゲゴザジズゼゾダヂヅデドバビブベボパポプペポァィゥェォャュョヮッヵヶ".ToArray();
+		readonly char[] katakana = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンヴガギグゲゴザジズゼゾダヂヅデドバビブベボパポプペポァィゥェォャュョヮッヵヶ".ToArray();
 	}
 }

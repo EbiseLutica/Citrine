@@ -44,29 +44,15 @@ namespace Citrine.Core.Modules
 
 			await Task.Delay(2000 + random.Next(7000));
 
-			string message;
-
-			switch (core.GetRatingOf(n.User))
+			var message = (core.GetRatingOf(n.User)) switch
 			{
-				case Rating.Hate:
-					message = pattern.Hate();
-					break;
-				case Rating.Normal:
-					message = pattern.Normal();
-					break;
-				case Rating.Like:
-					message = pattern.Like();
-					break;
-				case Rating.BestFriend:
-					message = pattern.BestFriend();
-					break;
-				case Rating.Partner:
-					message = pattern.Partner();
-					break;
-				default:
-					message = "...?";
-					break;
-			}
+				Rating.Hate => pattern.Hate(),
+				Rating.Normal => pattern.Normal(),
+				Rating.Like => pattern.Like(),
+				Rating.BestFriend => pattern.BestFriend(),
+				Rating.Partner => pattern.Partner(),
+				_ => "...?",
+			};
 
 			message = message
 						.Replace("$user$", core.GetNicknameOf(n.User))

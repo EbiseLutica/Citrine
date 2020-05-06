@@ -14,7 +14,7 @@ namespace Citrine.Core.Modules
 
 			int StatOf(string key) => storage.Get(key, 0);
 
-			string GetRatingString(Rating r) => r switch
+			static string GetRatingString(Rating r) => r switch
 			{
 				Rating.Partner => "大好き",
 				Rating.BestFriend => "親友",

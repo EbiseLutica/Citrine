@@ -25,10 +25,10 @@ namespace Citrine.Core.Modules
 			if (n.Text == null)
 				return false;
 
-			foreach (var lang in langs)
+			foreach (var (pattern, code) in langs)
 			{
-				var matchNormal = Regex.Match(n.Text.TrimMentions(), $"(.+)を{lang.pattern}[にへ]翻訳");
-				var matchReposted = Regex.Match(n.Text.TrimMentions(), $"これを?{lang.pattern}[にへ]翻訳");
+				var matchNormal = Regex.Match(n.Text.TrimMentions(), $"(.+)を{pattern}[にへ]翻訳");
+				var matchReposted = Regex.Match(n.Text.TrimMentions(), $"これを?{pattern}[にへ]翻訳");
 				if (matchReposted.Success && n.Repost != null)
 				{
 					if (string.IsNullOrEmpty(n.Repost.Text))
@@ -36,13 +36,13 @@ namespace Citrine.Core.Modules
 						await shell.ReplyAsync(n, "ん, その投稿にはテキストが含まれていないよ? 無いものは翻訳できないよね...");
 						return true;
 					}
-					await TranslateAsync("auto", lang.code, n.Repost.Text, n, shell, core);
+					await TranslateAsync("auto", code, n.Repost.Text, n, shell, core);
 					core.Storage[n.User].Add(StatTranslatedCount);
 					return true;
 				}
 				else if (matchNormal.Success)
 				{
-					await TranslateAsync("auto", lang.code, HttpUtility.UrlEncode(matchNormal.Groups[1].Value), n, shell, core);
+					await TranslateAsync("auto", code, HttpUtility.UrlEncode(matchNormal.Groups[1].Value), n, shell, core);
 					core.Storage[n.User].Add(StatTranslatedCount);
 					return true;
 				}
@@ -59,12 +59,12 @@ namespace Citrine.Core.Modules
 			if (n.Text == null)
 				return false;
 
-			foreach (var lang in langs)
+			foreach (var (pattern, code) in langs)
 			{
-				var m = Regex.Match(n.Text.TrimMentions(), $"{lang.pattern}[にへ]再翻訳");
+				var m = Regex.Match(n.Text.TrimMentions(), $"{pattern}[にへ]再翻訳");
 				if (m.Success)
 				{
-					await TranslateAsync((string)store["code"], lang.code, (string)store["result"], n, shell, core);
+					await TranslateAsync((string)store["code"], code, (string)store["result"], n, shell, core);
 					core.Storage[n.User].Add(StatRetranslatedCount);
 					return true;
 				}
@@ -91,7 +91,7 @@ namespace Citrine.Core.Modules
 			});
 		}
 
-		private (string pattern, string code)[] langs = {
+		private readonly (string pattern, string code)[] langs = {
 			("アイスランド語", "is"),
 			("アイルランド語", "ga"),
 			("アゼルバイジャン語", "az"),

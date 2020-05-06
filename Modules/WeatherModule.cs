@@ -31,14 +31,14 @@ namespace Citrine.Core.Modules
 				EconomyModule.Pay(n, shell, core);
 				core.LikeWithLimited(n.User);
 				var place = m.Groups[1].Value;
-				var pair = areaDefinitions.FirstOrDefault(k => place.Contains(k.name));
-				if (pair.id == default)
+				var (name, id) = areaDefinitions.FirstOrDefault(k => place.Contains(k.name));
+				if (id == default)
 				{
 					await shell.ReplyAsync(n, $"ごめん, {place}という場所は聞いたことがないのでわからない.");
 					return true;
 				}
 
-				var res = await cli.GetAsync(endPoint + pair.id);
+				var res = await cli.GetAsync(endPoint + id);
 				var tenki = JsonConvert.DeserializeObject<TenkiModel>(await res.Content.ReadAsStringAsync());
 				var result = $@"{RenderForecasts(tenki.Forecasts)}
 > {tenki.Description.Text}

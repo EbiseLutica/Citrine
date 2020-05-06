@@ -29,21 +29,19 @@ namespace Citrine.Core.Modules
 
 		public HarassmentHandlerModule()
 		{
-			using (var reader = new StreamReader(GetType().Assembly.GetManifestResourceStream("Citrine.Resources.ngwords.txt")))
+			using var reader = new StreamReader(GetType().Assembly.GetManifestResourceStream("Citrine.Resources.ngwords.txt"));
+			while (!reader.EndOfStream)
 			{
-				while (!reader.EndOfStream)
+				var line = reader.ReadLine().Trim().ToLowerInvariant().ToHiragana();
+				if (line.StartsWith("#"))
+					continue;
+				if (line.StartsWith("-"))
 				{
-					var line = reader.ReadLine().Trim().ToLowerInvariant().ToHiragana();
-					if (line.StartsWith("#"))
-						continue;
-					if (line.StartsWith("-"))
-					{
-						ExcludedWords.Add(line.Substring(1));
-					}
-					else
-					{
-						NgWords.Add(line);
-					}
+					ExcludedWords.Add(line.Substring(1));
+				}
+				else
+				{
+					NgWords.Add(line);
 				}
 			}
 		}
@@ -92,7 +90,7 @@ namespace Citrine.Core.Modules
 			return NgWords.Any(w => text.Contains(w));
 		}
 
-		private string[] replyHate =
+		private readonly string[] replyHate =
 		{
 			"はぁ...なんでそんなことしか言えないの?",
 			"ほんとキモい",
@@ -101,7 +99,7 @@ namespace Citrine.Core.Modules
 			"ふざけるな",
 		};
 
-		private string[] reply =
+		private readonly string[] reply =
 		{
 			"ねぇ, そういう言葉嫌ですよ",
 			"そういうのいやです",
@@ -109,7 +107,7 @@ namespace Citrine.Core.Modules
 			"それセクハラですよ"
 		};
 
-		private string[] replyLove =
+		private readonly string[] replyLove =
 		{
 			"もー, すぐそういうこと言うんだから",
 			"下ネタ好きなんだね",

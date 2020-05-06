@@ -65,7 +65,7 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
-		public static void Pay(IPost n, IShell shell, Server core)
+		public static void Pay(IPost n, IShell _, Server core)
 		{
 			// 好感度に応じて、ランダムな量のお金をあげる
 			var storage = core.Storage[n.User];

@@ -26,6 +26,6 @@ namespace Citrine.Core
 			return string.Concat(Enumerable.Repeat(0, count).Select(_ => hiragana.Random()));
 		}
 
-		char[] hiragana = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんゔがぎぐげござじずぜぞだぢづでどばびぶべぼぱぽぷぺぽぁぃぅぇぉゃゅょゎっ".ToArray();
+		readonly char[] hiragana = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんゔがぎぐげござじずぜぞだぢづでどばびぶべぼぱぽぷぺぽぁぃぅぇぉゃゅょゎっ".ToArray();
 	}
 }

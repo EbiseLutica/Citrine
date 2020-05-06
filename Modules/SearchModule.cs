@@ -54,13 +54,13 @@ namespace Citrine.Core.Modules
 				{
 					query = mpedia.Groups[1].Value.TrimMentions();
 					response = FromMyKnowledge(query);
-					response = response ?? await FromWikipediaAsync(query, WikipediaApiUrl, "ja");
-					response = response ?? await FromWikipediaAsync(query, EnWikipediaApiUrl, "en");
-					response = response ?? await FromNicopediaAsync(query);
+					response ??= await FromWikipediaAsync(query, WikipediaApiUrl, "ja");
+					response ??= await FromWikipediaAsync(query, EnWikipediaApiUrl, "en");
+					response ??= await FromNicopediaAsync(query);
 					core.Storage[n.User].Add(StatSearchedCount);
 				}
 
-				response = response ?? $"{query} について調べてみたけどわからなかった. ごめん...";
+				response ??= $"{query} について調べてみたけどわからなかった. ごめん...";
 				await shell.ReplyAsync(n, response);
 
 				EconomyModule.Pay(n, shell, core);

@@ -34,7 +34,7 @@ namespace Citrine.Core.Modules
 			if (m.Success)
 			{
 				var birthday = storage.Get(StorageKey.Birthday, DateTime.MinValue);
-				var output = birthday == DateTime.MinValue ? "知らないよ〜?" : $"{birthday.ToString("yyyy年MM月dd日")}だよね";
+				var output = birthday == DateTime.MinValue ? "知らないよ〜?" : $"{birthday:yyyy年MM月dd日}だよね";
 				await shell.ReplyAsync(n, $"{core.GetNicknameOf(n.User)}の誕生日は" + output);
 				return true;
 			}
@@ -147,7 +147,6 @@ namespace Citrine.Core.Modules
 		private static readonly string keyLastCelebratedYear = "birthday.last-celebrated";
 
 		private readonly Timer timer;
-		private DateTime prevDate;
 		private Server? core;
 		private IShell? shell;
 	}
