@@ -39,7 +39,7 @@ namespace Citrine.Core.Modules
 					response = $"No such command.";
 				}
 
-				if (response != default)
+				if (!string.IsNullOrWhiteSpace(response))
 				{
 					await shell.ReplyAsync(n, response);
 				}
