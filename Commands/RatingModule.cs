@@ -6,7 +6,7 @@ using BotBone.Core.Modules;
 
 namespace Citrine.Core
 {
-    public class RatingModule : CommandBase
+    public class RatingCommand : CommandBase
 	{
 		public override string Name => "rating";
 
@@ -18,15 +18,15 @@ namespace Citrine.Core
 				return "use from post";
 			if (args.Length < 1)
 				throw new CommandException();
-			
+
 			switch (args[0].ToLowerInvariant().Trim())
 			{
-				case "set": 
+				case "set":
 					if (!sender.IsAdmin)
 						throw new AdminOnlyException();
 					core.SetRatingValueOf(p.User.Id, int.Parse(args[1]));
 					break;
-				case "add": 
+				case "add":
 					if (!sender.IsAdmin)
 						throw new AdminOnlyException();
 					core.Like(p.User.Id, int.Parse(args[1]));
