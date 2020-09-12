@@ -19,7 +19,7 @@ namespace Citrine.Core.Modules
 
         public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
         {
-			if (n.Text == null) return false;
+            if (n.Text == null) return false;
             if (n.Text.IsMatch("フォロ[ーバ](バック)?し"))
             {
                 if (core.GetRatingOf(n.User) == Rating.Hate)
@@ -36,7 +36,7 @@ namespace Citrine.Core.Modules
                 await shell.ReactAsync(n, "👋");
                 return true;
             }
+            return false;
         }
-
 	}
 }
