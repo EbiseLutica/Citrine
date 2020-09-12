@@ -29,10 +29,10 @@ namespace Citrine.Core.Modules
                 await shell.ReactAsync(n, "✌️");
                 return true;
             }
-            if (n.Text.IsMatch("フォロ[ーバ](バック)(解除|外し|[や辞]め)"))
+            if (n.Text.IsMatch("フォロ[ーバ](バック)?(解除|外し|[や辞]め)"))
             {
                 core.LikeWithLimited(n.User);
-                await shell.FollowAsync(n.User);
+                await shell.UnfollowAsync(n.User);
                 await shell.ReactAsync(n, "👋");
                 return true;
             }
