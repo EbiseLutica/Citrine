@@ -16,5 +16,27 @@ namespace Citrine.Core.Modules
 			await shell.FollowAsync(user);
 			return false;
 		}
+
+        public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
+        {
+			if (n.Text == null) return false;
+            if (n.Text.IsMatch("フォロ[ーバ](バック)?し"))
+            {
+                if (core.GetRatingOf(n.User) == Rating.Hate)
+                    return true;
+                core.LikeWithLimited(n.User);
+                await shell.FollowAsync(n.User);
+                await shell.ReactAsync(n, "✌️");
+                return true;
+            }
+            if (n.Text.IsMatch("フォロ[ーバ](バック)(解除|外し|[や辞]め)"))
+            {
+                core.LikeWithLimited(n.User);
+                await shell.FollowAsync(n.User);
+                await shell.ReactAsync(n, "👋");
+                return true;
+            }
+        }
+
 	}
 }

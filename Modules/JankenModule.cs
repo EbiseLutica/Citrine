@@ -30,7 +30,7 @@ namespace Citrine.Core.Modules
 		public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
 		{
 			if (n.Text == null) return false;
-			var player = NormalizeHand(n.Text);
+			var player = NormalizeHand(n.Text.TrimMentions());
 			if (player == null)
 			{
 				var r = await shell.ReplyAsync(n, "じゃんけんの手を出してね...もしちゃんと出してるのにって思ったら, 「グー, チョキ, パー」か、肌の色が真っ黄色な手の絵文字であることを確認してね.");

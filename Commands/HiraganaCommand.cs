@@ -14,7 +14,7 @@ namespace Citrine.Core
 
 		public override string Usage => "/hiragana <count=3>";
 
-		public override string[] Aliases { get; } = { "kana" };
+		public override string[] Aliases { get; } = { "kana", "hiraganya", "kanya" };
 
 		public override string Description => "ひらがなをランダムに出します";
 

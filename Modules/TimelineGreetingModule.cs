@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BotBone.Core;
@@ -36,8 +37,10 @@ namespace Citrine.Core.Modules
 					storage.Set(postWithoutSleepingCountKey, 0);
 					await Task.Delay(2000);
 					core.Storage[n.User].Add(statKey);
-					await shell.ReplyAsync(n, replyPattern.Random().Replace("$user$", core.GetNicknameOf(n.User)));
-					break;
+					var ctx = await shell.ReplyAsync(n, replyPattern.Random().Replace("$user$", core.GetNicknameOf(n.User)));
+					if (ctx != null)
+	                    core.RegisterContext(ctx, this);
+                    break;
 				}
 			}
 
@@ -59,6 +62,25 @@ namespace Citrine.Core.Modules
 			return false;
 		}
 
+        public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
+        {
+			// 本人でなければ無視
+			if (n.User.Id != context?.Reply?.User.Id) return false;
+			if (n.Text == null) return false;
+
+			var storage = core.Storage[n.User];
+
+            if (n.Text.IsMatch("(ちが|違)う|じゃない|([寝ね](ない|ね|ません))") && storage.Has("last-greeted-datetime.cache"))
+            {
+                await shell.ReplyAsync(n, "あれ, 勘違いだった? ごめんね. 忘れておく");
+                storage.Set(KeyOf(Greeting.GoodNight), storage.Get("last-greeted-datetime.cache", DateTime.MinValue));
+                storage.Clear("last-greeted-datetime.cache");
+                return true;
+            }
+
+            return false;
+        }
+
 		public bool IsAlreadyDone(Greeting greeting, IUser user, Server core)
 		{
 			var storage = core.Storage[user];
@@ -69,7 +91,11 @@ namespace Citrine.Core.Modules
 		public void UpdateGreeting(Greeting greeting, IUser user, Server core)
 		{
 			var storage = core.Storage[user];
-			storage.Set(KeyOf(greeting), DateTime.Now);
+
+            if (greeting == Greeting.GoodNight)
+                storage.Set("last-greeted-datetime.cache", storage.Get(KeyOf(greeting), DateTime.MinValue));
+
+            storage.Set(KeyOf(greeting), DateTime.Now);
 		}
 
 		public string KeyOf(Greeting greeting) => $"last-greeted-datetime.{greeting}";

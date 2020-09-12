@@ -14,7 +14,9 @@ namespace Citrine.Core
 
 		public override string Usage => "/katakana <count=3>";
 
-		public override string Description => "カタカナをランダムに出します";
+        public override string[] Aliases { get; } = { "katakanya" };
+
+        public override string Description => "カタカナをランダムに出します";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{

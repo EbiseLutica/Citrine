@@ -27,8 +27,8 @@ namespace Citrine.Core.Modules
 
 			foreach (var (pattern, code) in langs)
 			{
-				var matchNormal = Regex.Match(n.Text.TrimMentions(), $"(.+)を{pattern}[にへ]翻訳");
-				var matchReposted = Regex.Match(n.Text.TrimMentions(), $"これを?{pattern}[にへ]翻訳");
+				var matchNormal = Regex.Match(n.Text.TrimMentions(), $"(.+)を{pattern}[にへ]?翻?訳");
+				var matchReposted = Regex.Match(n.Text.TrimMentions(), $"これを?{pattern}[にへ]?翻?訳");
 				if (matchReposted.Success && n.Repost != null)
 				{
 					if (string.IsNullOrEmpty(n.Repost.Text))
