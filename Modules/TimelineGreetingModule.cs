@@ -64,8 +64,6 @@ namespace Citrine.Core.Modules
 
         public override async Task<bool> OnRepliedContextually(IPost n, IPost? context, Dictionary<string, object> store, IShell shell, Server core)
         {
-			// 本人でなければ無視
-			if (n.User.Id != context?.Reply?.User.Id) return false;
 			if (n.Text == null) return false;
 
 			var storage = core.Storage[n.User];
@@ -106,7 +104,7 @@ namespace Citrine.Core.Modules
 		{
 			(Greeting.GoodMorning, patternGoodMorning, 11, new []
 			{
-				"おはよ〜!",
+				"おはよー",
 				"おはよ, $user$.",
 			}, StatGoodMorningCount),
 			(Greeting.GoodNight, patternGoodNight, 9, new []
@@ -114,31 +112,31 @@ namespace Citrine.Core.Modules
 				"おやすみなさい",
 				"おやすみ, $user$.",
 				"おやすみ",
-				"ちゃんと寝るんだぞ〜$user$."
+				"ちゃんと寝るんだぞー$user$."
 			}, StatGoodNightCount),
 			(Greeting.SeeYouLater, patternSeeYouLater, 9, new []
 			{
-				"いってらっしゃい!",
-				"いってら!",
-				"頑張ってね〜!",
+				"いってらっしゃい",
+				"いってら",
+				"頑張ってねー",
 				"いってらっしゃい, $user$.",
 			}, StatSeeYouLaterCount),
 			(Greeting.WelcomeBack, patternWelcomeBack, 12, new []
 			{
 				"おかえり",
-				"おつかれ〜!",
-				"おかえり, $user$!",
+				"おつかれー",
+				"おかえり, $user$",
 				"おかえりなさい, $user$.",
 			}, StatWelcomeBackCount),
 		};
 
 		private readonly string[] postWithoutSleepingReply =
 		{
-			"寝るんじゃないの〜?",
+			"寝るんじゃないの?",
 			"おやすみじゃなかったのかい, $user$.",
-			"寝る寝る詐欺はよくないよ〜",
-			"おやすみって言ってたのにいつまで投稿してんの〜!早く寝なさい!",
-			"$user$, おやすみじゃなかったのか〜?"
+			"寝る寝る詐欺はよくないよ",
+			"おやすみって言ってたのにいつまで投稿してんのー?",
+			"$user$, おやすみじゃなかったの"
 		};
 
 		public enum Greeting
@@ -149,7 +147,7 @@ namespace Citrine.Core.Modules
 			WelcomeBack,
 		}
 
-		private static readonly Regex patternGoodMorning = new Regex("^おはよ$|おはよ[うおー〜]");
+		private static readonly Regex patternGoodMorning = new Regex("^おはよ$|おはよ[うおーー]");
 		private static readonly Regex patternGoodNight = new Regex("おやすみ|[寝ね](ます|る)");
 		private static readonly Regex patternSeeYouLater = new Regex("[い行]って(きます|くる)");
 		private static readonly Regex patternWelcomeBack = new Regex("ただいま");
