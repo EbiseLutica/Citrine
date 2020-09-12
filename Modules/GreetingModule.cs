@@ -51,7 +51,7 @@ namespace Citrine.Core.Modules
 				Rating.Like => pattern.Like(),
 				Rating.BestFriend => pattern.BestFriend(),
 				Rating.Partner => pattern.Partner(),
-				_ => "...?",
+				_ => "",
 			};
 
 			message = message
