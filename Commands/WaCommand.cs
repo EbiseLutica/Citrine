@@ -21,7 +21,7 @@ namespace Citrine.Core
 			return string.Concat(Wa(amount));
 		}
 
-		private IEnumerator<char> Wa(int amount)
+		private IEnumerable<char> Wa(int amount)
 		{
 			yield return '#';
 			yield return 'わ';
