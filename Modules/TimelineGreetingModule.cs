@@ -68,7 +68,7 @@ namespace Citrine.Core.Modules
 
 			var storage = core.Storage[n.User];
 
-            if (n.Text.IsMatch("(ちが|違)う|じゃない|([寝ね](ない|ね|ません))") && storage.Has("last-greeted-datetime.cache"))
+            if (n.Text.IsMatch("(ちが|違)う|じゃない|([寝ね](ない|にゃい|ね|ません))") && storage.Has("last-greeted-datetime.cache"))
             {
                 await shell.ReplyAsync(n, "あれ, 勘違いだった? ごめんね. 忘れておく");
                 storage.Set(KeyOf(Greeting.GoodNight), storage.Get("last-greeted-datetime.cache", DateTime.MinValue));
