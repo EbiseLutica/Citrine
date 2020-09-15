@@ -12,7 +12,7 @@
 dotnet build
 ```
 
-BotBoneの /plugins フォルダに、Citrine.dllを導入
+BotBoneの /plugins フォルダに、[Citrine.dll](bin/Debug/netstandard2.1/publish/Citrine.dll) を導入
 BotBone を起動するだけ
 
 ## 貢献
