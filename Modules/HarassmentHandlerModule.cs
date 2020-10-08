@@ -86,14 +86,17 @@ namespace Citrine.Core.Modules
         {
             text = Regex.Replace(text.TrimMentions(), @"[\s\.,/／○●◯]", "").ToLowerInvariant().ToHiragana();
             foreach (var w in ExcludedWords)
-                text = text.Replace(w, "");
+                text = text.Replace(w.ToHiragana(), "");
             var m = "";
             var res = NgWords.Any(w =>
             {
                 m = w;
-                return text.Contains(w);
+                return text.Contains(w.ToHiragana());
             });
-            logger.Info($"Detected NG word '{m}' at the text '{text}'");
+            if (res)
+            {
+                logger.Info($"Detected NG word '{m}' at the text '{text}'");
+            }
             return res;
         }
 
