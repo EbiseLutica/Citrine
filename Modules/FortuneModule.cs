@@ -76,13 +76,13 @@ namespace Citrine.Core.Modules
 				if (isPremium)
 				{
 					var orderby = list.OrderByDescending(r => r.value);
-					var best = orderby.First();
+					var (name, emoji, value, bestMessage, worstMessage) = orderby.First();
 					var worst = orderby.Last();
 					builder
 						.AppendLine()
 						.Append("シトリンから一言: ")
 						.Append($"{worst.name}が低いね. {worst.worstMessage}")
-						.AppendLine($"{best.name}が高いね. {best.bestMessage}");
+						.AppendLine($"{name}が高いね. {bestMessage}");
 				}
 
 				core.Storage[n.User].Add(StatFortuneCount);

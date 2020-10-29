@@ -18,7 +18,7 @@ namespace Citrine.Core
 		{
 			if (args.Length < 2)
 				throw new CommandException();
-			body = body.Substring(args[0].Length + 1);
+			body = body[(args[0].Length + 1)..];
 			return args[0] + body + args[0];
 		}
 	}

@@ -13,7 +13,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> ActivateAsync(IPost n, IShell shell, Server core)
 		{
-            if (n.Text is string text)
+			if (n.Text is string)
             {
                 var m = Regex.Match(n.Text.TrimMentions(), "^(.+)(握|にぎ)");
                 if (m.Success)

@@ -16,7 +16,7 @@ namespace Citrine.Core
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			if (!(sender is PostCommandSender p)) return "call from post";
+			if (sender is not PostCommandSender p) return "call from post";
 
 			switch (args[0])
 			{

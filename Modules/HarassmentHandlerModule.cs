@@ -37,7 +37,7 @@ namespace Citrine.Core.Modules
                     continue;
                 if (line.StartsWith("-"))
                 {
-                    ExcludedWords.Add(line.Substring(1));
+                    ExcludedWords.Add(line[1..]);
                 }
                 else
                 {
@@ -125,7 +125,7 @@ namespace Citrine.Core.Modules
             "そうだね^^"
         };
 
-        private Logger logger = new Logger(nameof(HarassmentHandlerModule));
+        private readonly Logger logger = new Logger(nameof(HarassmentHandlerModule));
     }
 
 }

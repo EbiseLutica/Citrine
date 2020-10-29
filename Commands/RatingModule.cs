@@ -14,7 +14,7 @@ namespace Citrine.Core
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			if(!(sender is PostCommandSender p))
+			if(sender is not PostCommandSender p)
 				return "use from post";
 			if (args.Length < 1)
 				throw new CommandException();

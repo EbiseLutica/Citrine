@@ -18,7 +18,7 @@ namespace Citrine.Core.Modules
 
 		public override async Task<bool> OnTimelineAsync(IPost n, IShell shell, Server core)
 		{
-			if (!(n.Text?.TrimMentions() is string text))
+			if (n.Text?.TrimMentions() is not string text)
 				return false;
 			if (core.GetRatingOf(n.User) < Rating.Like)
 				return false;

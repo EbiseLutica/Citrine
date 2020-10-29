@@ -17,7 +17,7 @@ namespace Citrine.Core
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
-			if (!(sender is PostCommandSender p))
+			if (sender is not PostCommandSender p)
 				return "このコマンドはユーザーが実行してください.";
 			var n = p.Post;
 
