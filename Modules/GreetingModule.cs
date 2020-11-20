@@ -42,7 +42,7 @@ namespace Citrine.Core.Modules
 			if (pattern == null)
 				return false;
 
-			await Task.Delay(2000 + random.Next(7000));
+			await Task.Delay(random.Next(3000));
 
 			var message = (core.GetRatingOf(n.User)) switch
 			{
