@@ -34,7 +34,7 @@ namespace Citrine.Core.Modules
 				if (movingCodesSet.FirstOrDefault(m => m.userId == n.User.Id) is (string userId, string movingCode) set)
 				{
 					// 既にコードがあればそれを返す
-					message = $"ん, あなたには既に引っ越し手続きコードを発行しているね. 引っ越ししたいアカウントで私に、リプライで次のようなコマンドを送ってね.\n/moving-code {set.movingCode}";
+					message = $"ん？，あなたには既に引っ越し手続きコードを発行しているね. 引っ越ししたいアカウントで私に、リプライで次のようなコマンドを送ってね.\n/moving-code {set.movingCode}";
 				}
 				else
 				{
@@ -47,14 +47,14 @@ namespace Citrine.Core.Modules
 						code = GenerateCode(10);
 					}
 					movingCodesSet.Add((n.User.Id, code));
-					message = $"はい, 引っ越し手続きコードを発行したよ. 引っ越ししたいアカウントで私に、リプライで次のようなコマンドを送ってね.\n/moving-code {code}";
+					message = $"はい，引っ越し手続きコードを発行したよ. 引っ越ししたいアカウントで私に、リプライで次のようなコマンドを送ってね.\n/moving-code {code}";
 				}
 			}
 			else if (n.Text.IsMatch("(引っ?越|ひっこ)しキャンセル"))
 			{
 				if (!(movingCodesSet.FirstOrDefault(m => m.userId == n.User.Id) is (string userId, string movingCode) set))
 				{
-					message = "ん...? あなたは元々引っ越し手続きをしていないみたいだよ? 引っ越しをしたかったら, 引っ越ししたい って言ってね.";
+					message = "ん...? あなたは元々引っ越し手続きをしていないみたいだよ? 引っ越しをしたかったら，引っ越ししたい って言ってね.";
 				}
 				else
 				{

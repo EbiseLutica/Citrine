@@ -57,7 +57,7 @@ namespace Citrine.Core.Modules
 				if (core.GetRatingOf(n.User) <= Rating.Hate)
 					return false;
 
-				var res = await shell.ReplyAsync(n, "いいよ〜! 誕生日の日付を教えて〜!");
+				var res = await shell.ReplyAsync(n, "いいよ〜. 誕生日の日付を教えてね(2020/4/10 みたいな形式でお願い)");
 				if (res != null)
 					core.RegisterContext(res, this, null);
 				return true;
@@ -82,7 +82,7 @@ namespace Citrine.Core.Modules
 
 			if (!m.Success)
 			{
-				await shell.ReplyAsync(n, "ごめん, 正しい日付じゃないよそれ...");
+				await shell.ReplyAsync(n, "ごめん，正しい日付でお願い");
 				return true;
 			}
 
@@ -118,7 +118,7 @@ namespace Citrine.Core.Modules
 				var user = await shell.GetUserAsync(id);
 				if (user == null) continue;
 
-				await shell.SendDirectMessageAsync(user, $"誕生日おめでとう, {core.GetNicknameOf(user)}");
+				await shell.SendDirectMessageAsync(user, $"誕生日おめでとう，{core.GetNicknameOf(user)}");
 				storage.Set(keyLastCelebratedYear, DateTime.Today.Year);
 			}
 
@@ -131,7 +131,7 @@ namespace Citrine.Core.Modules
 			{
 				var birthday = DateTime.Parse(value);
 				storage.Set(StorageKey.Birthday, birthday);
-				await shell.ReplyAsync(n, "覚えたよ〜.");
+				await shell.ReplyAsync(n, "覚えたよ");
 			}
 			catch (FormatException)
 			{

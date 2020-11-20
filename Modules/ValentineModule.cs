@@ -84,8 +84,8 @@ namespace Citrine.Core.Modules
 		private readonly string[] thanksMessage =
 		{
 			"ありがと〜!",
-			"ほんと!? 嬉しい, ありがとう",
-			"わぁ, ありがとう!",
+			"わぁ！ありがとう！",
+			"わぁ，ありがとう!",
 			"私に!? ありがとう!",
 		};
 	}

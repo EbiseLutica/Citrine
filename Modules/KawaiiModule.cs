@@ -49,7 +49,7 @@ namespace Citrine.Core.Modules
 					await Task.Delay(4000);
 					var target = questionPattern.Groups[1].Value.Trim().ToLowerInvariant();
 
-					var response = map.ContainsKey(target) ? map[target] : "わからない";
+					var response = map.ContainsKey(target) ? map[target] : "わかりません";
 					core.Storage[n.User].Add(StatKawaiiQuestionedCount);
 					await shell.ReplyAsync(n, response);
 				}
@@ -85,7 +85,7 @@ namespace Citrine.Core.Modules
 
 					var suggest = regex != null ? map.Where(kv => kv.Value.IsMatch(regex)).Select(kv => kv.Key).Random() : null;
 					core.Storage[n.User].Add(StatKawaiiQueriedCount);
-					await shell.ReplyAsync(n, suggest != null ? $"{suggest}はどう? {adj}よ" : $"{adj}ものをまだ知らない");
+					await shell.ReplyAsync(n, suggest != null ? $"{suggest}はどう？ {adj}よ" : $"{adj}もの，知らないです");
 				}
 				else
 				{

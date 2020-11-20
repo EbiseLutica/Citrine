@@ -42,7 +42,7 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"言葉を調べた回数: {StatOf(SearchModule.StatSearchedCount)}回");
 				builder.AppendLine($"おやすみって言っておきながら寝なかった回数: {StatOf(TimelineGreetingModule.StatWithoutSleepingCount)}回");
 				builder.AppendLine($"バレンタインチョコを貰った回数: {StatOf(ValentineModule.StatValentineCount)}回");
-				await shell.ReplyAsync(n, builder.ToString(), $"{core.GetNicknameOf(n.User)}のステータスカードを作ったよ〜");
+				await shell.ReplyAsync(n, builder.ToString(), $"{core.GetNicknameOf(n.User)}のステータスカードを作ったよ");
 				return true;
 			}
 			return false;

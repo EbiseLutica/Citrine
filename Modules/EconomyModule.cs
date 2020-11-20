@@ -20,15 +20,15 @@ namespace Citrine.Core.Modules
 				if (text.Contains("所持金"))
 				{
 					var balance = core.Storage[n.User].Get("economy.balance", 0);
-					await shell.ReplyAsync(n, $"{core.GetNicknameOf(n.User)}の所持金は, {balance} クォーツです!");
+					await shell.ReplyAsync(n, $"{core.GetNicknameOf(n.User)}の所持金は，{balance} クォーツです");
 					return true;
 				}
 				if (text.IsMatch("[買か]い(物|もの)|ク[オォ]ーツショップ"))
 				{
 					var builder = new StringBuilder();
-					builder.AppendLine("ようこそクォーツショップへ!お取り扱いしている商品はこちらです.");
+					builder.AppendLine("ようこそクォーツショップへ．お取り扱いしている商品はこちらです");
 					builder.AppendLine(string.Join("\n\n", ShopItems.Select(i => $"{i.DisplayName} {i.Price}クォーツ\n　{i.Description}")));
-					builder.Append("欲しい商品があったら、「〜〜をください」って話しかけてください.");
+					builder.Append("欲しい商品があったら，「〜〜をください」って話しかけてくださいね");
 					await shell.ReplyAsync(n, builder.ToString());
 					return true;
 				}
@@ -46,12 +46,12 @@ namespace Citrine.Core.Modules
 						string res;
 						if (HasItem(n.User, item.Id, core))
 						{
-							res = item.DisplayName + " は既に持ってるみたいですよ.";
+							res = item.DisplayName + " は既に持ってるみたいですよ";
 						}
 						else if (TryUseMoney(n.User, item.Price, core))
 						{
 							GiveItem(n.User, item.Id, core);
-							res = $"お買い上げありがとうございます! ({item.DisplayName} を手に入れました)";
+							res = $"お買い上げありがとうございます． ({item.DisplayName} を手に入れました)";
 						}
 						else
 						{

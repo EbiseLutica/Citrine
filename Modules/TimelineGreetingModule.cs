@@ -70,7 +70,7 @@ namespace Citrine.Core.Modules
 
             if (n.Text.IsMatch("(ちが|違)う|じゃない|([寝ね](ない|にゃい|ね|ません))") && storage.Has("last-greeted-datetime.cache"))
             {
-                await shell.ReplyAsync(n, "あれ, 勘違いだった? ごめんね. 忘れておく");
+                await shell.ReplyAsync(n, "あれ，勘違いだった? ごめんね．忘れておく");
                 storage.Set(KeyOf(Greeting.GoodNight), storage.Get("last-greeted-datetime.cache", DateTime.MinValue));
                 storage.Clear("last-greeted-datetime.cache");
                 return true;
@@ -105,38 +105,38 @@ namespace Citrine.Core.Modules
 			(Greeting.GoodMorning, patternGoodMorning, 11, new []
 			{
 				"おはよー",
-				"おはよ, $user$.",
+				"おはよ，$user$.",
 			}, StatGoodMorningCount),
 			(Greeting.GoodNight, patternGoodNight, 9, new []
 			{
 				"おやすみなさい",
-				"おやすみ, $user$.",
+				"おやすみ，$user$.",
 				"おやすみ",
-				"ちゃんと寝るんだぞー$user$."
+				"$user$，良い夢を😴"
 			}, StatGoodNightCount),
 			(Greeting.SeeYouLater, patternSeeYouLater, 9, new []
 			{
 				"いってらっしゃい",
 				"いってら",
 				"頑張ってねー",
-				"いってらっしゃい, $user$.",
+				"いってらっしゃい，$user$.",
 			}, StatSeeYouLaterCount),
 			(Greeting.WelcomeBack, patternWelcomeBack, 12, new []
 			{
 				"おかえり",
 				"おつかれー",
-				"おかえり, $user$",
-				"おかえりなさい, $user$.",
+				"おかえり，$user$",
+				"おかえりなさい，$user$.",
 			}, StatWelcomeBackCount),
 		};
 
 		private readonly string[] postWithoutSleepingReply =
 		{
 			"寝るんじゃないの?",
-			"おやすみじゃなかったのかい, $user$.",
+			"おやすみじゃなかったのかい，$user$.",
 			"寝る寝る詐欺はよくないよ",
 			"おやすみって言ってたのにいつまで投稿してんのー?",
-			"$user$, おやすみじゃなかったの"
+			"$user$，おやすみじゃなかったの"
 		};
 
 		public enum Greeting

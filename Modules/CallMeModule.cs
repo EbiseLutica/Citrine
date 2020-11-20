@@ -18,17 +18,17 @@ namespace Citrine.Core.Modules
 				switch (core.GetRatingOf(n.User))
 				{
 					case Rating.Hate:
-						await shell.ReplyAsync(n, "嫌だ.");
+						await shell.ReplyAsync(n, "...");
 						break;
 					case Rating.Normal:
-						await shell.ReplyAsync(n, "もう少し仲良くなってからね.");
+						await shell.ReplyAsync(n, "もう少し仲良くなってから，もう一度お願いしてね");
 						break;
 					default:
 						var nick = m.Groups[1].Value;
 						core.SetNicknameOf(n.User, nick);
 						EconomyModule.Pay(n, shell, core);
 						core.LikeWithLimited(n.User);
-						await shell.ReplyAsync(n, $"わかった. これからはあなたのことを{core.GetNicknameOf(n.User)}と呼ぶね.");
+						await shell.ReplyAsync(n, $"わかった．これからは{core.GetNicknameOf(n.User)}と呼ぶね．\nよろしくね，{core.GetNicknameOf(n.User)}");
 						break;
 				}
 				return true;

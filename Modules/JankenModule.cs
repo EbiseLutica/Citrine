@@ -16,7 +16,7 @@ namespace Citrine.Core.Modules
 			if (n.Text != null && n.Text.Contains("じゃんけん"))
 			{
 				core.LikeWithLimited(n.User);
-				var note = await shell.ReplyAsync(n, "いいね〜, じゃあやろう. 最初は✊, じゃんけん――");
+				var note = await shell.ReplyAsync(n, "負けませんよ．最初は✊，じゃんけん――");
 				if (note == null)
 					return true;
 				EconomyModule.Pay(n, shell, core);
@@ -33,7 +33,7 @@ namespace Citrine.Core.Modules
 			var player = NormalizeHand(n.Text.TrimMentions());
 			if (player == null)
 			{
-				var r = await shell.ReplyAsync(n, "じゃんけんの手を出してね...もしちゃんと出してるのにって思ったら, 「グー, チョキ, パー」か、肌の色が真っ黄色な手の絵文字であることを確認してね.");
+				var r = await shell.ReplyAsync(n, "ちゃんと手を出してね．もしちゃんと出してるのにって思ったら，「グー，チョキ，パー」か，肌の色が黄色な手の絵文字であることを確認してね.");
 				if (r == null) return true;
 				core.RegisterContext(r, this);
 				return true;
@@ -43,9 +43,9 @@ namespace Citrine.Core.Modules
 			Result result = DoBSPGame(player, me);
 			var output = result switch
 			{
-				Result.Draw => "あいこだ... はーい, あいこで",
-				Result.Win => "私の勝ち! " + winMessage.Random().Replace("$user$", core.GetNicknameOf(n.User)),
-				Result.Lose => $"私の負け..." + loseMessage.Random().Replace("$user$", core.GetNicknameOf(n.User)),
+				Result.Draw => "あーいこで",
+				Result.Win => "私の勝ちです！" + winMessage.Random().Replace("$user$", core.GetNicknameOf(n.User)),
+				Result.Lose => $"私の負けです．" + loseMessage.Random().Replace("$user$", core.GetNicknameOf(n.User)),
 				_ => $"(Bug) Invalid State {result}",
 			};
 
@@ -98,18 +98,17 @@ namespace Citrine.Core.Modules
 		private readonly Random rnd = new Random();
 
 		private readonly string[] loseMessage = {
-			"$user$って強いね. またやろうね.",
-			"楽しかった. ありがとう!",
-			"悔しい... 次は負けないよ〜.",
-			"ぐぐぐ... 次こそは",
-			"うぐぐ, $user$, 泣きの一回...😢"
+			"$user$強いな．またやりましょ",
+			"楽しかった．ありがとう！",
+			"悔しい... 次は負けないよ．",
+			"うーむ... 次こそは",
+			"うーん，$user$...，泣きの一回はダメですか😢"
 		};
 
 		private readonly string[] winMessage = {
-			"たかがじゃんけん, そう思っていませんか!",
 			"楽しかった. ありがとう!",
 			"$user$, 落ち込まないで...またやろ?",
-			"わーい, 勝った."
+			"またやりましょう👍"
 		};
 
 		private enum Result

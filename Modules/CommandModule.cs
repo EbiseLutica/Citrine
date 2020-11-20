@@ -24,15 +24,15 @@ namespace Citrine.Core.Modules
 				}
 				catch (AdminOnlyException)
 				{
-					response = "ごめん, そのコマンドは管理者以外に言われても実行するなと言われてるの";
+					response = "ごめん，そのコマンドは管理者以外に言われても実行するなと言われてるの";
 				}
 				catch (LocalOnlyException)
 				{
-					response = "このコマンドは同じインスタンスのユーザーしか使えないよ. ごめんね.";
+					response = "このコマンドは同じインスタンスのユーザーしか使えないよ．ごめんね.";
 				}
 				catch (RemoteOnlyException)
 				{
-					response = "このコマンドは違うインスタンスのユーザーしか使えないよ. ごめんね.";
+					response = "このコマンドは違うインスタンスのユーザーしか使えないよ．ごめんね.";
 				}
 				catch (NoSuchCommandException)
 				{

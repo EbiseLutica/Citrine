@@ -21,7 +21,7 @@ namespace Citrine.Core.Modules
 			var reg2 = Regex.Match(n.Text.TrimMentions(), @"褒めて|(えら|偉)い\?？");
 			if (reg.Success)
 			{
-				await shell.ReplyAsync(n, $"{reg.Groups[1].Value}のえらい!");
+				await shell.ReplyAsync(n, $"{reg.Groups[1].Value}のえらいです");
 				core.Storage[n.User].Add(StatEraitedCount);
 				core.LikeWithLimited(n.User);
 				EconomyModule.Pay(n, shell, core);
@@ -29,7 +29,7 @@ namespace Citrine.Core.Modules
 			}
 			else if (reg2.Success)
 			{
-				await shell.ReplyAsync(n, "えらい!");
+				await shell.ReplyAsync(n, "えらいです");
 				core.Storage[n.User].Add(StatEraitedCount);
 				EconomyModule.Pay(n, shell, core);
 				core.LikeWithLimited(n.User);

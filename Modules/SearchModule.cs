@@ -26,8 +26,8 @@ namespace Citrine.Core.Modules
 		private static readonly Regex regexPedia = new Regex(@"(.+?)((っ?て|と?は)(何|なに|なん|誰|だれ|どなた|何方)|について(教|おし)えて)");
 
 		private static readonly (string regex, string value)[] myDictionary = {
-			("シトリン|citrine|しとりん", "私の名前"),
-			("ゼルチカ|ぜるちか|xeltica|ぜるち", "私の生みの親"),
+			("シトリン|citrine|しとりん", "私の名前です．"),
+			("ゼルチカ|ぜるちか|xeltica|ぜるち", "私の生みの親です．"),
 			("生命、?宇宙、?そして万物についての究極の疑問の(答|こた)え|answer to the ultimate question of life,? the universe,? and everything|人類、?宇宙、?(全|すべ)ての(答|こた)え", "42"),
 		};
 
@@ -60,7 +60,7 @@ namespace Citrine.Core.Modules
 					core.Storage[n.User].Add(StatSearchedCount);
 				}
 
-				response ??= $"{query} について調べてみたけどわからなかった. ごめん...";
+				response ??= $"すみません，調べてみたけどわかりませんでした．";
 				await shell.ReplyAsync(n, response);
 
 				EconomyModule.Pay(n, shell, core);
@@ -83,7 +83,7 @@ namespace Citrine.Core.Modules
 			var res = JObject.Parse(json);
 			var summary = res["summary"].ToObject<string>();
 			var title = res["title"].ToObject<string>().Replace(" ", "_");
-			return $@"「{title}」について調べてきたよ〜.
+			return $@"「{title}」について調べてきました．
 > {summary}...
 
 出典: https://dic.nicovideo.jp/a/{HttpUtility.UrlEncode(title)}
@@ -96,7 +96,7 @@ namespace Citrine.Core.Modules
 			var res = await (await Server.Http.GetAsync(CreateUrl(CalcApiUrl, query))).Content.ReadAsStringAsync();
 			var json = JsonConvert.DeserializeObject<CalcModel>(res);
 			if (json.Status > 0)
-				return json.Status == 60 ? $"{query} は計算できないよ..." : default;
+				return json.Status == 60 ? $"{query} は計算できないよ" : default;
 			return $"{json.Expression} = {json.Value[0].CalculatedValue}";
 		}
 
@@ -127,7 +127,7 @@ namespace Citrine.Core.Modules
 				text = text.Substring(0, 240);
 			text = text.Replace("\n", "").Replace("\r", "");
 
-			return $@"「{title}」について調べてきたよ〜.
+			return $@"「{title}」について調べてきました．
 > {text}
 
 出典: https://{langCode}.wikipedia.org/wiki/{HttpUtility.UrlEncode(title.Replace(" ", "_"))}";

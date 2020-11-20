@@ -33,7 +33,7 @@ namespace Citrine.Core.Modules
 				{
 					if (string.IsNullOrEmpty(n.Repost.Text))
 					{
-						await shell.ReplyAsync(n, "ん, その投稿にはテキストが含まれていないよ? 無いものは翻訳できないよね...");
+						await shell.ReplyAsync(n, "ん，その投稿にはテキストが含まれていないですね．無いものは翻訳できないです");
 						return true;
 					}
 					await TranslateAsync("auto", code, n.Repost.Text, n, shell, core);
@@ -84,7 +84,7 @@ namespace Citrine.Core.Modules
 
 			EconomyModule.Pay(n, shell, core);
 			core.LikeWithLimited(n.User);
-			core.RegisterContext(reply, this, new System.Collections.Generic.Dictionary<string, object>()
+			core.RegisterContext(reply, this, new Dictionary<string, object>()
 			{
 				{ "result", result},
 				{ "code", to },

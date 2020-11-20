@@ -31,13 +31,10 @@ namespace Citrine.Core.Modules
 
 		private readonly string[] patterns =
 		{
-			"ここだよ〜.",
-			"ここにいるよ!",
-			"ここ!",
-			"どうしたの〜?",
-			"どうしたの〜{user}.",
-			"{user}〜! ここにいるよ!",
-			"いないよ〜(うそ)",
+			"ここだよー",
+			"ここにいるよ",
+			"ここです！",
+			"どうしたの {user}.",
 		};
 	}
 }

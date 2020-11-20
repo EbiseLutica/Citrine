@@ -102,27 +102,27 @@ namespace Citrine.Core.Modules
 
         private readonly string[] replyHate =
         {
-            "はぁ...なんでそんなことしか言えないの?",
+            "はぁ...なんでそんなことしか言えないの？",
             "ほんとキモい",
             "最低",
-            "いい加減にして, そういう言葉嫌いだって言ってる",
-            "ふざけるな",
+			"いい加減にして，そういう言葉嫌いだって言ってますよね",
+            "...",
+			"もうしりません",
         };
 
         private readonly string[] reply =
         {
-            "ねぇ, そういう言葉嫌ですよ",
-            "そういうのいやです",
-            "うーん, セクハラですか?",
-            "それセクハラですよ"
+            "ねぇ，そういう言葉嫌ですよ",
+            "そういうのいやですー",
+			"うーん，セクハラですか?",
         };
 
         private readonly string[] replyLove =
         {
-            "もー, すぐそういうこと言うんだから",
-            "下ネタ好きなんだね",
-            "^^;",
-            "そうだね^^"
+			"すぐ，そういうこと言うんだから",
+            "下ネタ好きですか",
+            "笑",
+			"そうだねー"
         };
 
         private readonly Logger logger = new Logger(nameof(HarassmentHandlerModule));

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 namespace Citrine.Core.Modules
 {
 	/* === リプライ文字列の仕様 ===
-	 * $user$ は相手のユーザー名, もしくはニックネームに置き換わる
+	 * $user$ は相手のユーザー名もしくはニックネームに置き換わる
 	 * $prefix$ はラッキーアイテムの修飾子辞書からランダムに取る
 	 * $item$ はラッキーアイテム辞書からランダムに取る
 	 * $rndA,B$はAからBまでの乱数

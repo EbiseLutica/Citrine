@@ -64,7 +64,7 @@ namespace Citrine.Core.Modules
 
         private readonly string[] messagesNigiri =
         {
-			"$user$の$thing$, 握ったよ",
+			"$user$の$thing$，握ったよ",
             "$user$の$thing$を握りました",
             "$user$の$thing$は私の物です🥴",
         };
