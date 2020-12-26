@@ -31,8 +31,8 @@ namespace Citrine.Core
 			if (isMatch && isFamily)
 			{
 				// 既に反応したノートとしてリストアップする
-				s.Set(CitrineIntegrationInteractedNoteIds, list);
 				list.Add(post.Id);
+				s.Set(CitrineIntegrationInteractedNoteIds, list);
 				await Task.Delay(1200);
 
 				await shell.RepostAsync(post);
