@@ -104,6 +104,7 @@ namespace Citrine.Core.Modules
 
 				// 本日が誕生日である
 				var birthday = storage.Get(StorageKey.Birthday, DateTime.MinValue);
+				if (birthday == DateTime.MinValue) return false;
 				var today = DateTime.Today;
 				var birthdayIsToday = birthday.Month == today.Month && birthday.Day == today.Day;
 
