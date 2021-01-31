@@ -54,21 +54,22 @@ namespace Citrine.Core.Modules
             if (IsHarassmented(n.Text))
             {
                 // セクハラ
-                switch (core.GetRatingOf(n.User))
-                {
-                    case Rating.Hate:
-                        await shell.ReplyAsync(n, replyHate.Random());
-                        break;
-                    case Rating.Normal:
-                    case Rating.Like:
-                        await shell.ReplyAsync(n, reply.Random());
-                        break;
-                    case Rating.BestFriend:
-                    case Rating.Partner:
-                        await shell.ReplyAsync(n, replyLove.Random());
-                        return true;
-                }
-                core.OnHarassment(n.User, 1);
+                // switch (core.GetRatingOf(n.User))
+                // {
+                //     case Rating.Hate:
+                //         await shell.ReplyAsync(n, replyHate.Random());
+                //         break;
+                //     case Rating.Normal:
+                //     case Rating.Like:
+                //         await shell.ReplyAsync(n, reply.Random());
+                //         break;
+                //     case Rating.BestFriend:
+                //     case Rating.Partner:
+                //         await shell.ReplyAsync(n, replyLove.Random());
+                //         return true;
+                // }
+				await shell.ReactAsync(n, reactions.Random());
+                // core.OnHarassment(n.User, 1);
                 return true;
             }
             return false;
@@ -124,6 +125,10 @@ namespace Citrine.Core.Modules
             "笑",
 			"そうだねー"
         };
+
+		private readonly string[] reactions = {
+			"🥴", "🤔", "😇", "🤯"
+		};
 
         private readonly Logger logger = new Logger(nameof(HarassmentHandlerModule));
     }

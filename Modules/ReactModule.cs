@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BotBone.Core;
 using BotBone.Core.Api;
 using BotBone.Core.Modules;
+using Citrine.Core.Modules.Markov;
 
 namespace Citrine.Core.Modules
 {
@@ -59,8 +61,28 @@ namespace Citrine.Core.Modules
 
 		private bool IsTerribleText(string text)
 		{
-			return text.IsMatch("ぽんこつ|ポンコツ|バカ|馬鹿|ばか|あほ|アホ|阿呆|間抜け|まぬけ|ごみ|ゴミ|死ね|ブス|ぶす|ぶさいく|ブサイク|不細工|無能|キモ[いイ]|殺す|ハゲ|禿") && !text.IsMatch("(じゃ|では?)な[いく]");
+			var token = TinySegmenter.Instance.Segment(text).Select(t => t.ToHiragana()).ToArray();
+			var detected = token.Any(dic.Contains);
+			return detected && !text.IsMatch("(じゃ|では?)な[いく]");
 		}
+
+		private static readonly string[] dic = {
+			"ぽんこつ",
+			"馬鹿",
+			"ばか",
+			"あほ",
+			"阿呆",
+			"間抜け",
+			"まぬけ",
+			"ごみ",
+			"死ね",
+			"ぶす",
+			"ぶさいく",
+			"不細工",
+			"無能",
+			"きもい",
+			"殺す",
+		};
 
 		private static readonly string[] ponkotsuPattern =
 		{
