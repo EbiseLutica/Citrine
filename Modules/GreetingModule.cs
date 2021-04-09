@@ -17,11 +17,12 @@ namespace Citrine.Core.Modules
 	 * $item$ はラッキーアイテム辞書からランダムに取る
 	 * $rndA,B$はAからBまでの乱数
 	 */
-	public class GreetingModule : ModuleBase
+	public partial class GreetingModule : ModuleBase, ICommand
 	{
 		public override int Priority => 10000;
+
 		readonly List<Pattern> patterns;
-		readonly Random random = new Random();
+		readonly Random random = new();
 		public static readonly string StatTalkedCount = "stat.talked-count";
 
 		public GreetingModule()
@@ -75,7 +76,6 @@ namespace Citrine.Core.Modules
 
 			return true;
 		}
-
 
 		public class Pattern
 		{
