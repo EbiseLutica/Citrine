@@ -40,7 +40,6 @@ namespace Citrine.Core.Modules
 				builder.AppendLine($"寿司を握った回数: {StatOf(SushiModule.StatSushiCount)}回");
 				builder.AppendLine($"計算回数: {StatOf(SearchModule.StatCalculatedCount)}回");
 				builder.AppendLine($"言葉を調べた回数: {StatOf(SearchModule.StatSearchedCount)}回");
-				builder.AppendLine($"おやすみって言っておきながら寝なかった回数: {StatOf(TimelineGreetingModule.StatWithoutSleepingCount)}回");
 				builder.AppendLine($"バレンタインチョコを貰った回数: {StatOf(ValentineModule.StatValentineCount)}回");
 				await shell.ReplyAsync(n, builder.ToString(), $"{core.GetNicknameOf(n.User)}のステータスカードを作ったよ");
 				return true;
