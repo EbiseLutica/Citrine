@@ -11,9 +11,9 @@ namespace Citrine.Core
 	{
 		public override string Name => "translate";
 
-		public override string Usage => "/translate <from(autoで自動判定)> <to> <text>";
+		public override string Usage => "/translate <from (specify 'auto' to use auto-detection)> <to> <text>";
 
-		public override string Description => "テキストを翻訳します。";
+		public override string Description => "Translate the input text.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{

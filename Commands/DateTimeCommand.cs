@@ -13,7 +13,7 @@ namespace Citrine.Core
 
 		public override string Usage => "/datetime";
 
-		public override string Description => "現在時刻を返します。";
+		public override string Description => "Return the current date.";
 
 		public override string[] Aliases => new[] { "date", "time", "dt" };
 

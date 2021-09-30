@@ -12,7 +12,7 @@ namespace Citrine.Core
 
 		public override string Usage => "/isadmin";
 
-		public override string Description => "管理者であるかどうか取得します";
+		public override string Description => "Get whether you are an admin.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{

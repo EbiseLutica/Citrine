@@ -15,13 +15,13 @@ namespace Citrine.Core
 
 		public override string Usage => "/tochar <data>";
 
-		public override string Description => "16進文字列をテキストに変換します。";
+		public override string Description => "Converts Hexadecimal array to string.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			body = Regex.Replace(body, @"\s", "");
 			if (body.Length % 2 != 0)
-				return "正しい16進文字列ではありません.";
+				return "Incorrect hexadecimal string.";
 
 			var data = new byte[body.Length / 2];
 			for (var i = 0; i < body.Length / 2; i++)

@@ -12,9 +12,9 @@ namespace Citrine.Core
 	{
 		public override string Name => "pipe";
 
-		public override string Usage => "/pipe (これ以降にコマンドを | で区切って並べます。)";
+		public override string Usage => "/pipe (| separated command line)";
 
-		public override string Description => "各種コマンドを連結して実行します。前のコマンドの出力は、次のコマンドの末尾に追記されます。";
+		public override string Description => "Execute commands continuously. The previous command output is added to the end of the argument for the next command.";
 
 		public override Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{

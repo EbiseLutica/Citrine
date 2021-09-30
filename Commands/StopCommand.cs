@@ -14,12 +14,12 @@ namespace Citrine.Core
 
 		public override PermissionFlag Permission => PermissionFlag.AdminOnly;
 
-		public override string Description => "シトリンを停止します。";
+		public override string Description => "Stop me.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
 			if (sender is PostCommandSender s)
-				await shell.ReplyAsync(s.Post, "またねー。");
+				await shell.ReplyAsync(s.Post, "Goodbye.");
 			Environment.Exit(0);
 			return null;
 		}

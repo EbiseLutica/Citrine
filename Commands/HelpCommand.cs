@@ -15,7 +15,7 @@ namespace Citrine.Core
 
 		public override string Usage => "/help [name]";
 
-		public override string Description => "コマンドのヘルプを表示します。";
+		public override string Description => "Show help.";
 
 		public override string[] Aliases { get; } = { "h" };
 
@@ -32,10 +32,10 @@ namespace Citrine.Core
 				var name = args[0];
 				var cmd = core.TryGetCommand(name);
 				if (cmd == null)
-					return $"コマンド {name} は見つかりませんでした.";
+					return $"No such command named {name}.";
 				var sb = new StringBuilder();
 				sb.AppendLine(GetDescription(cmd));
-				sb.Append("使い方: ");
+				sb.Append("Usage: ");
 				sb.AppendLine(cmd.Usage);
 				if (cmd.Aliases != null)
 					sb.AppendLine(string.Join(", ", cmd.Aliases));
@@ -45,15 +45,15 @@ namespace Citrine.Core
 			}
 		}
 
-		private string GetDescription(ICommand cmd) => $"/{cmd.Name} - {cmd.Description ?? "説明はありません。"}";
+		private string GetDescription(ICommand cmd) => $"/{cmd.Name} - {cmd.Description ?? "No such descriptions."}";
 
 		private string DumpPermission(PermissionFlag flag)
 		{
 			var sb = new StringBuilder();
 			if (flag.HasFlag(PermissionFlag.AdminOnly))
-				sb.Append("(管理者限定)");
+				sb.Append("(Admin Only)");
 			if (flag.HasFlag(PermissionFlag.LocalOnly))
-				sb.Append("(ローカルユーザー限定)");
+				sb.Append("(Local User Only)");
 			return sb.ToString();
 		}
 	}

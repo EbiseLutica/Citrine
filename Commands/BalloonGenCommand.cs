@@ -12,11 +12,11 @@ namespace Citrine.Core
 	{
 		public override string Name => "balloongen";
 
-		public override string Usage => "/balloongen <好きな文字列>";
+		public override string Usage => "/balloongen <text>";
 
 		public override string[] Aliases { get; } = { "balloon-gen", "balloon", "genballoon" };
 
-		public override string Description => "ギザギザ吹き出しを作ります。";
+		public override string Description => "Make an ASCII-art balloon.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{

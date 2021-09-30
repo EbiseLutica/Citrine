@@ -13,7 +13,7 @@ namespace Citrine.Core
 
 		public override string Usage => "/reverse <text>";
 
-		public override string Description => "テキストを逆さに変換します。";
+		public override string Description => "Converts the input text upside down.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{

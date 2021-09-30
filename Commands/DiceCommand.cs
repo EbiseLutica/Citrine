@@ -15,7 +15,7 @@ namespace Citrine.Core
 		public override string Usage => @"/dice [times] [max]
 /dice [times]d<max>";
 
-		public override string Description => "サイコロを振ります。通常の引数指定か、ダイスロール記法で指定します。省略時は1d6に相当。";
+		public override string Description => "Roll the dice. Specify with normal argument or dice notation. When omitted, it corresponds to 1d6.";
 
 		public static readonly Random Rand = new Random();
 

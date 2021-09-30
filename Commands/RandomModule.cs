@@ -15,7 +15,7 @@ namespace Citrine.Core
 
 		public override string Usage => "/random <items...>";
 
-		public override string Description => "指定した引数の中からどれか1つを返します。";
+		public override string Description => "Returns one of the specified arguments at random.";
 
 		public override async Task<string> OnActivatedAsync(ICommandSender sender, Server core, IShell shell, string[] args, string body)
 		{
