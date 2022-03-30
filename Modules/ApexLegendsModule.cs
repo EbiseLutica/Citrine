@@ -135,9 +135,11 @@ namespace Citrine.Core.Modules
 				"Overflow" => "オーバーフロー",
 				"Encore" => "アンコール",
 				"Habitat" => "生息地4",
+				"Drop Off" => "ドロップオフ",
 
 				"Hammond Labs" => "ハモンド研究所",
 				"Barometer" => "バロメーター",
+				"Caustic Treatment" => "コースティックの処理施設",
 				null => "無し",
 				_ => mapName,
 			};
