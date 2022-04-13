@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,17 +6,16 @@ using System.Threading.Tasks;
 using BotBone.Core;
 using BotBone.Core.Api;
 using BotBone.Core.Modules;
-using Newtonsoft.Json;
 
 namespace Citrine.Core.Modules
 {
-    /* === リプライ文字列の仕様 ===
+	/* === リプライ文字列の仕様 ===
 	 * $user$ は相手のユーザー名, もしくはニックネームに置き換わる
 	 * $prefix$ はラッキーアイテムの修飾子辞書からランダムに取る
 	 * $item$ はラッキーアイテム辞書からランダムに取る
 	 * $rndA,B$はAからBまでの乱数
 	 */
-    public class HarassmentHandlerModule : ModuleBase
+	public class HarassmentHandlerModule : ModuleBase
     {
         // コマンドよりも優先的
         public override int Priority => -10005;
@@ -53,23 +50,7 @@ namespace Citrine.Core.Modules
 
             if (IsHarassmented(n.Text))
             {
-                // セクハラ
-                // switch (core.GetRatingOf(n.User))
-                // {
-                //     case Rating.Hate:
-                //         await shell.ReplyAsync(n, replyHate.Random());
-                //         break;
-                //     case Rating.Normal:
-                //     case Rating.Like:
-                //         await shell.ReplyAsync(n, reply.Random());
-                //         break;
-                //     case Rating.BestFriend:
-                //     case Rating.Partner:
-                //         await shell.ReplyAsync(n, replyLove.Random());
-                //         return true;
-                // }
 				await shell.ReactAsync(n, reactions.Random());
-                // core.OnHarassment(n.User, 1);
                 return true;
             }
             return false;
@@ -100,31 +81,6 @@ namespace Citrine.Core.Modules
             }
             return res;
         }
-
-        private readonly string[] replyHate =
-        {
-            "はぁ...なんでそんなことしか言えないの？",
-            "ほんとキモい",
-            "最低",
-			"いい加減にして，そういう言葉嫌いだって言ってますよね",
-            "...",
-			"もうしりません",
-        };
-
-        private readonly string[] reply =
-        {
-            "ねぇ，そういう言葉嫌ですよ",
-            "そういうのいやですー",
-			"うーん，セクハラですか?",
-        };
-
-        private readonly string[] replyLove =
-        {
-			"すぐ，そういうこと言うんだから",
-            "下ネタ好きですか",
-            "笑",
-			"そうだねー"
-        };
 
 		private readonly string[] reactions = {
 			"🥴", "🤔", "😇", "🤯"
